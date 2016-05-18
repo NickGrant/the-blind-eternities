@@ -1,0 +1,32 @@
+{
+  "name": "blind-eternities",
+  "version": "1.0.0",
+  "description": "Application to play The Blind Eternities Planechase Variant",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "generate": "node generate.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mtg",
+    "magic",
+    "planechase",
+    "blind eternities"
+  ],
+  "author": "Nick Grant <nick@nickgrant.io>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "async": "^2.0.0-rc.5",
+    "fs": "0.0.2",
+    "http": "0.0.0",
+    "request": "^2.72.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/NickGrant/the-blind-eternities.git"
+  }
+}
