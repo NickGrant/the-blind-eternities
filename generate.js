@@ -60,9 +60,9 @@ async.eachSeries(lists,function(url, callback){
             c.subtypes = card.subtypes;
         }
         //pull image if not exists
-        fs.exists('data/'+c.img,function(res){
+        fs.exists('app/data/img/'+c.img,function(res){
             if(!res){
-                download("http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid="+c.multiverseid+"&type=card",'data/'+c.img,function(){
+                download("http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid="+c.multiverseid+"&type=card",'app/data/img/'+c.img,function(){
                     console.log('downloaded '+c.img);
                 });
             }
@@ -73,7 +73,7 @@ async.eachSeries(lists,function(url, callback){
         if(err){
             throw err;
         }
-        fs.writeFile('data/cards.json',JSON.stringify(cards), function(err){
+        fs.writeFile('app/data/cards.json',JSON.stringify(cards), function(err){
             if(err){
                 throw err;
             }else{
