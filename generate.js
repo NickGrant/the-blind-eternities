@@ -54,7 +54,7 @@ async.eachSeries(lists,function(url, callback){
             multiverseid: card.multiverseid,
             type: card.type,
             text: card.text,
-            img: card.multiverseid+'.jpg'
+            img: 'card_'.card.multiverseid+'.jpg'
         }
         if(card.subtypes){
             c.subtypes = card.subtypes;
