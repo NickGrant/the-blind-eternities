@@ -33,7 +33,8 @@ node_modules
 .node_repl_history
 
 # data directory, generate this with "node generate.js"
-app/data/*
+app/data/*.*
+app/data/img/*
 
 #netbeans
 nbproject

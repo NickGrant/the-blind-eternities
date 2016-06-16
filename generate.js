@@ -50,11 +50,11 @@ async.eachSeries(lists,function(url, callback){
     /** PARSE RAW CARDS **/
     async.each(raw_cards,function(card, callback){
         var c = {
-            name: card.name,
-            multiverseid: card.multiverseid,
-            type: card.type,
-            text: card.text,
-            img: 'card_'.card.multiverseid+'.jpg'
+            name: card.name ? card.name : null,
+            multiverseid: card.multiverseid ? card.multiverseid : null,
+            type: card.type ? card.type : null,
+            text: card.text ? card.text : null,
+            img: card.multiverseid ? 'card_'+card.multiverseid+'.jpg' : null
         }
         if(card.subtypes){
             c.subtypes = card.subtypes;
@@ -62,9 +62,11 @@ async.eachSeries(lists,function(url, callback){
         //pull image if not exists
         fs.exists('app/data/img/'+c.img,function(res){
             if(!res){
-                download("http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid="+c.multiverseid+"&type=card",'app/data/img/'+c.img,function(){
-                    console.log('downloaded '+c.img);
-                });
+                if(c.multiverseid){
+                    download("http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid="+c.multiverseid+"&type=card",'app/data/img/'+c.img,function(){
+                        console.log('downloaded '+c.img);
+                    });    
+                }
             }
         });
         cards.push(c);
