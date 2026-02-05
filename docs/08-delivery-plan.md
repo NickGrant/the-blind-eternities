@@ -29,6 +29,10 @@ Definition of Done (DoD) before being considered complete.
 
 # Milestone 0 — Project Skeleton & Contracts
 
+## Status
+
+Complete
+
 ## Goal
 The application boots cleanly, contracts are enforceable, and no gameplay logic executes.
 

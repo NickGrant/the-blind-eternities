@@ -52,9 +52,21 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const cmp = fixture.componentInstance;
 
-    const reloadSpy = vi.spyOn(window.location, 'reload').mockImplementation(() => {});
+    const original = window.location.reload;
+    const reloadMock = vi.fn();
+
+    Object.defineProperty(window.location, 'reload', {
+      value: reloadMock,
+      configurable: true,
+    });
+
     cmp.onReload();
-    expect(reloadSpy).toHaveBeenCalledTimes(1);
-    reloadSpy.mockRestore();
+    expect(reloadMock).toHaveBeenCalledTimes(1);
+
+    Object.defineProperty(window.location, 'reload', {
+      value: original,
+      configurable: true,
+    });
   });
+
 });

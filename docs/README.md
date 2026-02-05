@@ -90,9 +90,9 @@ This document answers:
 
 ## 🚦 Project Status
 
-- Phase: **Pre-kickoff / Architecture Locked**
-- Code implementation has not yet begun
-- Next milestone: **Project scaffolding + state store skeleton**
+- Phase: **Development Started**
+- Code implementation is under way
+- Next milestone: **Core State & FSM Engine**
 
 ---
 

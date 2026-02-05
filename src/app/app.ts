@@ -1,12 +1,13 @@
 import { AfterViewInit, Component, ElementRef, ViewChild, computed, inject } from "@angular/core";
 import { ErrorBannerComponent } from "./ui/error-banner.component";
+import { DebugPanelComponent } from "./ui/debug-panel.component";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [ErrorBannerComponent],
+  imports: [ErrorBannerComponent, DebugPanelComponent],
   templateUrl: "./app.html",
   styleUrl: "./app.scss",
 })

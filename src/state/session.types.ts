@@ -1,5 +1,16 @@
 export type CoordKey = string;
 
+export type FsmState =
+  | "SETUP"
+  | "BOOTSTRAP_REVEAL"
+  | "IDLE"
+  | "ROLLING"
+  | "AWAIT_MOVE"
+  | "CONFIRM_MOVE"
+  | "MOVING"
+  | "MODAL_OPEN"
+  | "ERROR";
+
 export type SessionState = {
   meta: {
     version: number;
@@ -8,16 +19,7 @@ export type SessionState = {
   };
 
   fsm: {
-    state:
-      | "SETUP"
-      | "BOOTSTRAP_REVEAL"
-      | "IDLE"
-      | "ROLLING"
-      | "AWAIT_MOVE"
-      | "CONFIRM_MOVE"
-      | "MOVING"
-      | "MODAL_OPEN"
-      | "ERROR";
+    state: FsmState;
 
     context?: {
       lastIntent?: {
@@ -106,7 +108,7 @@ export type ModalDescriptor = {
   planeId?: string;
   title?: string;
   body?: string;
-  resumeToState?: SessionState["fsm"]["state"];
+  resumeToState?: FsmState;
 };
 
 export type LogEntry = {
