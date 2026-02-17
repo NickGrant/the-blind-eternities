@@ -211,7 +211,7 @@ export class DebugPanelComponent {
   errorCode = "E_TEST";
   errorDetail = "";
 
-  readonly state = this.sessionStore.state;
+  readonly state;
 
   readonly fsmState = computed(() => this.state().fsm.state);
   readonly sessionId = computed(() => this.state().meta.sessionId);
@@ -227,7 +227,9 @@ export class DebugPanelComponent {
     private readonly sessionStore: SessionStore,
     private readonly orchestrator: SessionOrchestrator,
     @Inject(DEV_MODE) readonly devMode: boolean,
-  ) {}
+  ) {
+    this.state = this.sessionStore.state;
+  }
 
   toggle(): void {
     this.collapsed.update((v) => !v);
