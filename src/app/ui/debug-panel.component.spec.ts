@@ -1,5 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { signal } from "@angular/core";
+import { describe, it, expect, vi } from "vitest";
 
 import { DebugPanelComponent } from "./debug-panel.component";
 import { DEV_MODE } from "../core/dev-mode";
@@ -12,23 +13,21 @@ describe("DebugPanelComponent", () => {
     const initial = createNewSessionState({ atMs: 123 });
     initial.fsm.state = "SETUP";
 
-    class TestSessionStore {
-      private readonly _state = signal(initial);
-      readonly state = this._state.asReadonly();
-      setState(next: any) {
-        this._state.set(next);
-      }
-    }
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next as any),
+    };
 
     const orchestrator = {
-      dispatch: jasmine.createSpy("dispatch"),
+      dispatch: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [DebugPanelComponent],
       providers: [
         { provide: DEV_MODE, useValue: true },
-        { provide: SessionStore, useClass: TestSessionStore },
+        { provide: SessionStore, useValue: storeMock },
         { provide: SessionOrchestrator, useValue: orchestrator },
       ],
     }).compileComponents();
@@ -42,12 +41,12 @@ describe("DebugPanelComponent", () => {
     ) as HTMLButtonElement;
 
     expect(startButton).toBeTruthy();
-    expect(startButton.disabled).toBeFalse();
+    expect(startButton.disabled).toBe(false);
 
     startButton.click();
-    expect(orchestrator.dispatch).toHaveBeenCalled();
+    expect(orchestrator.dispatch).toHaveBeenCalledTimes(1);
 
-    const arg = orchestrator.dispatch.calls.mostRecent().args[0];
+    const arg = (orchestrator.dispatch as any).mock.calls[0][0];
     expect(arg.type).toBe("domain/start_session");
   });
 });

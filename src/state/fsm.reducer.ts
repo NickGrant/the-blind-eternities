@@ -1,5 +1,13 @@
 import type { SessionState } from "./session.types";
 import type { DomainIntent } from "./intents.types";
+import { isAdjacentCardinal, neighborsCardinal, parseCoordKey, toCoordKey } from "./map/coord";
+import {
+  applyDecay,
+  createTile,
+  ensurePlusBounded,
+  stubPlaneIdForCoord,
+  withDistancesFromParty,
+} from "./map/map-model";
 
 type FsmState = SessionState["fsm"]["state"];
 
@@ -40,11 +48,125 @@ function transition(
   return withLastIntent(base, intent);
 }
 
+function initMapForSession(state: SessionState, intent: DomainIntent): SessionState {
+  const centerKey = toCoordKey({ x: 0, y: 0 });
+
+  // Seed center tile (stub plane ids for Milestone 2).
+  const tilesSeeded = {
+    [centerKey]: createTile({
+      coordKey: centerKey,
+      planeId: stubPlaneIdForCoord(centerKey),
+      atMs: intent.atMs,
+      isFaceUp: true,
+    }),
+  };
+
+  // Ensure-plus around party within decayDistance to bound growth.
+  const ensured = state.config.ensurePlusEnabled
+    ? ensurePlusBounded({
+        tilesByCoord: tilesSeeded,
+        partyCoord: centerKey,
+        radius: state.config.decayDistance,
+        atMs: intent.atMs,
+      }).tilesByCoord
+    : tilesSeeded;
+
+  const withDistances = withDistancesFromParty(ensured, centerKey);
+
+  return {
+    ...state,
+    deck: {
+      ...state.deck,
+      currentPlaneId: withDistances[centerKey]?.planeId,
+    },
+    map: {
+      ...state.map,
+      tilesByCoord: withDistances,
+      partyCoord: centerKey,
+      highlights: { eligibleMoveCoords: [] },
+    },
+  };
+}
+
+function setEligibleMoves(state: SessionState): SessionState {
+  const partyCoord = state.map.partyCoord;
+  if (!partyCoord) return state;
+  const party = parseCoordKey(partyCoord);
+  const candidates = neighborsCardinal(party).map(toCoordKey);
+  const eligible = candidates.filter((k) => Boolean(state.map.tilesByCoord[k]));
+
+  return {
+    ...state,
+    map: {
+      ...state.map,
+      highlights: { eligibleMoveCoords: eligible },
+    },
+  };
+}
+
+function applyMapPostMove(state: SessionState, atMs: number): SessionState {
+  const pending = state.fsm.context?.pendingMove;
+  if (!pending) return state;
+
+  const partyCoord = pending.toCoord;
+
+  // Ensure-plus bounded by decayDistance (keeps growth controlled).
+  const ensuredOnce = state.config.ensurePlusEnabled
+    ? ensurePlusBounded({
+        tilesByCoord: state.map.tilesByCoord,
+        partyCoord,
+        radius: state.config.decayDistance,
+        atMs,
+      }).tilesByCoord
+    : state.map.tilesByCoord;
+
+  const decayed = applyDecay({
+    tilesByCoord: ensuredOnce,
+    partyCoord,
+    decayDistance: state.config.decayDistance,
+  }).tilesByCoord;
+
+  // Ensure-plus again to restore plus-invariant after removals.
+  const ensuredTwice = state.config.ensurePlusEnabled
+    ? ensurePlusBounded({
+        tilesByCoord: decayed,
+        partyCoord,
+        radius: state.config.decayDistance,
+        atMs,
+      }).tilesByCoord
+    : decayed;
+
+  const withDistances = withDistancesFromParty(ensuredTwice, partyCoord);
+  const currentPlaneId = withDistances[partyCoord]?.planeId;
+
+  return {
+    ...state,
+    deck: {
+      ...state.deck,
+      currentPlaneId,
+    },
+    map: {
+      ...state.map,
+      tilesByCoord: withDistances,
+      partyCoord,
+      highlights: { eligibleMoveCoords: [] },
+    },
+    ui: {
+      ...state.ui,
+      selections: {
+        ...(state.ui.selections ?? {}),
+        selectedCoord: undefined,
+      },
+    },
+  };
+}
+
 export function reduceSessionState(state: SessionState, intent: DomainIntent): SessionState {
   switch (state.fsm.state) {
     case "SETUP": {
       if (intent.type === "domain/start_session") {
-        return transition(state, "BOOTSTRAP_REVEAL", intent);
+        const seeded = initMapForSession(state, intent);
+        return transition(seeded, "BOOTSTRAP_REVEAL", intent);
       }
       return state;
     }
@@ -69,7 +191,8 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
           return transition(state, "IDLE", intent);
         }
         if (intent.outcome === "planeswalk") {
-          return transition(state, "AWAIT_MOVE", intent);
+          const next = transition(state, "AWAIT_MOVE", intent);
+          return setEligibleMoves(next);
         }
         if (intent.outcome === "chaos") {
           return transition(state, "MODAL_OPEN", intent);
@@ -80,12 +203,28 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
 
     case "AWAIT_MOVE": {
       if (intent.type === "domain/select_plane") {
-        return transition(state, "CONFIRM_MOVE", intent, {
-          pendingMove: {
-            fromCoord: state.map.partyCoord!,
-            toCoord: intent.toCoord,
-          },
+        const from = state.map.partyCoord;
+        if (!from) return state;
+        if (!state.map.tilesByCoord[intent.toCoord]) return state;
+
+        const fromCoord = parseCoordKey(from);
+        const toCoord = parseCoordKey(intent.toCoord);
+        if (!isAdjacentCardinal(fromCoord, toCoord)) return state;
+
+        const next = transition(state, "CONFIRM_MOVE", intent, {
+          pendingMove: { fromCoord: from, toCoord: intent.toCoord },
         });
+
+        return {
+          ...next,
+          ui: {
+            ...next.ui,
+            selections: {
+              ...(next.ui.selections ?? {}),
+              selectedCoord: intent.toCoord,
+            },
+          },
+        };
       }
       if (intent.type === "domain/cancel_move") {
         return transition(state, "IDLE", intent);
@@ -105,9 +244,8 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
 
     case "MOVING": {
       if (intent.type === "domain/movement_complete") {
-        return transition(state, "IDLE", intent, {
-          pendingMove: undefined,
-        });
+        const mapped = applyMapPostMove(state, intent.atMs);
+        return transition(mapped, "IDLE", intent, { pendingMove: undefined });
       }
       return state;
     }

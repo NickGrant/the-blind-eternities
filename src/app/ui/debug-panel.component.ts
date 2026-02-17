@@ -224,9 +224,9 @@ export class DebugPanelComponent {
   readonly stateJson = computed(() => JSON.stringify(this.state(), null, 2));
 
   constructor(
-    private readonly sessionStore: SessionStore,
+    @Inject(DEV_MODE) public readonly devMode: boolean,
     private readonly orchestrator: SessionOrchestrator,
-    @Inject(DEV_MODE) readonly devMode: boolean,
+    private readonly sessionStore: SessionStore,
   ) {
     this.state = this.sessionStore.state;
   }

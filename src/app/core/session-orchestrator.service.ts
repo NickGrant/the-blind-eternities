@@ -19,20 +19,18 @@ export class SessionOrchestrator {
 
   dispatch(intent: DomainIntent): void {
     const current = this.store.state();
-    const result = reduceSessionState(current, intent);
+    const next = reduceSessionState(current, intent);
+    const handled = next !== current;
 
-    if (!result.handled && this.devMode) {
+    if (!handled && this.devMode) {
       console.warn(
         `[FSM] Ignored intent "${intent.type}" in state "${current.fsm.state}"`,
         intent
       );
     }
 
-    // Persist state if reducer returned a new object
-    // (e.g. lastIntent updated even when unhandled)
-    if (result.next !== current) {
-      this.store.setState(result.next);
+    if (next !== current) {
+      this.store.setState(next);
     }
   }
-
 }

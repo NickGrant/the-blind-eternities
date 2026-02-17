@@ -4,6 +4,11 @@ import { DebugPanelComponent } from "./ui/debug-panel.component";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 
+/** Small indirection to keep reload testable under JSDOM/Vitest. */
+export function reloadPage(): void {
+  window.location.reload();
+}
+
 @Component({
   selector: "app-root",
   standalone: true,
@@ -35,6 +40,6 @@ export class AppComponent implements AfterViewInit {
 
   onReload(): void {
     // minimal recovery path: refresh. (Operational fatal behavior)
-    window.location.reload();
+    reloadPage();
   }
 }
