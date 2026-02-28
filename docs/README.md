@@ -92,7 +92,7 @@ This document answers:
 
 - Phase: **Development Started**
 - Code implementation is under way
-- Next milestone: **Core State & FSM Engine**
+- Next milestone: **Deck, Reveal, and Modal Sequencing (Milestone 3)**
 
 ---
 
@@ -102,3 +102,4 @@ If you are new to the project, start with:
 3. **Build Pipeline**
 
 in that order.
+

@@ -71,6 +71,10 @@ And contains no state mutation logic
 
 # Milestone 1 — Core State & FSM Engine
 
+## Status
+
+Complete
+
 ## Goal
 The game can exist logically without rendering.
 
@@ -102,6 +106,10 @@ And no direct state mutation is allowed elsewhere
 ---
 
 # Milestone 2 — Map Model & Ensure-Plus Logic
+
+## Status
+
+Complete
 
 ## Goal
 Planes exist, adjacency is enforced, and map growth is bounded.
@@ -137,6 +145,10 @@ And removed from the map
 ---
 
 # Milestone 3 — Deck, Reveal, and Modal Sequencing
+
+## Status
+
+Ready to start
 
 ## Goal
 Planes are revealed deterministically and safely.
