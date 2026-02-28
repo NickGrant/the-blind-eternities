@@ -1,13 +1,19 @@
+// src/app/app.ts
 import { AfterViewInit, Component, ElementRef, ViewChild, computed, inject } from "@angular/core";
 import { ErrorBannerComponent } from "./ui/error-banner.component";
 import { DebugPanelComponent } from "./ui/debug-panel.component";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 
-/** Small indirection to keep reload testable under JSDOM/Vitest. */
-export function reloadPage(): void {
-  window.location.reload();
-}
+/**
+ * Indirection to keep reload testable under Vitest/JSDOM.
+ * (Spying on same-module exported functions is unreliable with ESM bindings.)
+ */
+export const Navigation = {
+  reload(): void {
+    window.location.reload();
+  },
+};
 
 @Component({
   selector: "app-root",
@@ -39,7 +45,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   onReload(): void {
-    // minimal recovery path: refresh. (Operational fatal behavior)
-    reloadPage();
+    Navigation.reload();
   }
 }

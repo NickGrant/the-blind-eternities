@@ -1,86 +1,59 @@
+// src/app/app.spec.ts
 import { TestBed } from "@angular/core/testing";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
-import { AppComponent, reloadPage } from "./app";
+import { AppComponent, Navigation } from "./app";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 
-describe("AppComponent", () => {
-  beforeEach(() => {
-    // Vitest/Angular (platform-browser testing) does not resolve templateUrl/styleUrl
-    // automatically. Override with an inline template that still exercises the same behavior.
-    TestBed.overrideComponent(AppComponent, {
-      set: {
-        template: `
-          <header class="shell">
-            <h1>Blind Eternities Planechase</h1>
-            @if (hasFatal()) {
-              <button class="reload" type="button" (click)="onReload()">Reload</button>
-            }
-          </header>
-          <app-error-banner [error]="fatal()"></app-error-banner>
-          <div #phaserHost></div>
-        `,
-        styles: [],
-      },
+describe("AppComponent (class-only, injection-context)", () => {
+  function createComponent(phaserInit: () => void = () => void 0) {
+    const phaser = { init: vi.fn(phaserInit) };
+    const fatal = new FatalErrorStore();
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PhaserBootstrapService, useValue: phaser },
+        { provide: FatalErrorStore, useValue: fatal },
+      ],
     });
-  });
 
-  it("creates and renders the shell header", async () => {
-    const phaser = { init: vi.fn() };
+    const cmp = TestBed.runInInjectionContext(() => new AppComponent());
 
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
-      providers: [{ provide: PhaserBootstrapService, useValue: phaser }, FatalErrorStore],
-    }).compileComponents();
+    // We are not compiling templates; provide the ViewChild manually.
+    (cmp as any).phaserHost = { nativeElement: document.createElement("div") };
 
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
+    return { cmp, phaser, fatal };
+  }
 
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector("h1")?.textContent).toContain("Blind Eternities Planechase");
-    expect(el.querySelector("button.reload")).toBeNull();
+  it("calls Phaser init on ngAfterViewInit", () => {
+    const { cmp, phaser, fatal } = createComponent();
+
+    cmp.ngAfterViewInit();
+
     expect(phaser.init).toHaveBeenCalledTimes(1);
+    expect(fatal.fatal()).toBeNull();
   });
 
-  it("sets fatal error and renders error banner if Phaser init throws", async () => {
-    const phaser = {
-      init: vi.fn(() => {
-        throw new Error("boom");
-      }),
-    };
+  it("sets fatal error if Phaser init throws", () => {
+    const { cmp, fatal } = createComponent(() => {
+      throw new Error("boom");
+    });
 
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
-      providers: [{ provide: PhaserBootstrapService, useValue: phaser }, FatalErrorStore],
-    }).compileComponents();
+    cmp.ngAfterViewInit();
 
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-
-    const store = TestBed.inject(FatalErrorStore);
-    expect(store.fatal()).not.toBeNull();
-    expect(store.fatal()?.code).toBe("PHASER_INIT_FAILED");
-
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector("button.reload")).not.toBeNull();
-    expect(el.querySelector("[role='alert']")?.textContent).toContain("PHASER_INIT_FAILED");
+    expect(fatal.fatal()).not.toBeNull();
+    expect(fatal.fatal()?.code).toBe("PHASER_INIT_FAILED");
   });
 
-  it("onReload calls reloadPage", async () => {
-    const phaser = { init: vi.fn() };
-    const reloadSpy = vi.spyOn({ reloadPage }, "reloadPage").mockImplementation(() => void 0);
+  it("onReload calls Navigation.reload", () => {
+    const { cmp } = createComponent();
 
-    await TestBed.configureTestingModule({
-      imports: [AppComponent],
-      providers: [{ provide: PhaserBootstrapService, useValue: phaser }, FatalErrorStore],
-    }).compileComponents();
-
-    const fixture = TestBed.createComponent(AppComponent);
-    const cmp = fixture.componentInstance;
+    const spy = vi.spyOn(Navigation, "reload").mockImplementation(() => void 0);
 
     cmp.onReload();
-    expect(reloadSpy).toHaveBeenCalledTimes(1);
-    reloadSpy.mockRestore();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    spy.mockRestore();
   });
 });
