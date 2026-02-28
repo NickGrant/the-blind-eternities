@@ -2,6 +2,7 @@ import { signal } from "@angular/core";
 import { describe, it, expect, vi } from "vitest";
 
 import { DebugPanelComponent } from "./debug-panel.component";
+import { DeckService } from "../core/deck.service";
 import type { SessionStore } from "../core/session.store";
 import type { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { createNewSessionState } from "../../state/session.factory";
@@ -26,6 +27,7 @@ describe("DebugPanelComponent (class-only)", () => {
       true, // devMode
       orchestratorMock as SessionOrchestrator,
       storeMock as SessionStore,
+      new DeckService(),
     );
 
     // This is what the UI button ultimately does; test the behavior directly.

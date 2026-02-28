@@ -40,7 +40,14 @@ export type ModalType = "PLANE" | "PHENOMENON" | "ERROR" | "CONFIRM_MOVE";
  */
 export type DomainIntent =
   // Session lifecycle
-  | { type: "domain/start_session"; atMs: number }
+  | {
+      type: "domain/start_session";
+      atMs: number;
+      initialDeck?: {
+        drawPile: string[];
+        discardPile: string[];
+      };
+    }
   | { type: "domain/restart_session"; atMs: number }
 
   // Bootstrap sequencing (system-driven; UI should not emit directly)

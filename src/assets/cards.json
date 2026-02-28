@@ -1,0 +1,20 @@
+{
+  "planes": [
+    { "id": "plane-akoum", "name": "Akoum" },
+    { "id": "plane-bant", "name": "Bant" },
+    { "id": "plane-cliffside-market", "name": "Cliffside Market" },
+    { "id": "plane-edge-of-malacol", "name": "Edge of Malacol" },
+    { "id": "plane-furnace-layer", "name": "Furnace Layer" },
+    { "id": "plane-glen-elendra", "name": "Glen Elendra" },
+    { "id": "plane-immersturm", "name": "Immersturm" },
+    { "id": "plane-ivy-lane", "name": "Ivy Lane" },
+    { "id": "plane-kessig", "name": "Kessig" },
+    { "id": "plane-lethe-lake", "name": "Lethe Lake" },
+    { "id": "plane-minamo", "name": "Minamo" },
+    { "id": "plane-naar-isle", "name": "Naar Isle" },
+    { "id": "plane-orochi-colony", "name": "Orochi Colony" },
+    { "id": "plane-pools-of-becoming", "name": "Pools of Becoming" },
+    { "id": "plane-quicksilver-sea", "name": "Quicksilver Sea" },
+    { "id": "plane-sokenzan", "name": "Sokenzan" }
+  ]
+}

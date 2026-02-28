@@ -148,7 +148,7 @@ And removed from the map
 
 ## Status
 
-Ready to start
+Complete
 
 ## Goal
 Planes are revealed deterministically and safely.
@@ -184,6 +184,10 @@ And not shown until the current modal closes
 ---
 
 # Milestone 4 — Dice, Movement, and Turn Loop
+
+## Status
+
+Ready to start
 
 ## Goal
 A full Planechase turn can be completed.

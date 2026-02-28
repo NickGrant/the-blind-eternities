@@ -92,7 +92,7 @@ This document answers:
 
 - Phase: **Development Started**
 - Code implementation is under way
-- Next milestone: **Deck, Reveal, and Modal Sequencing (Milestone 3)**
+- Next milestone: **Dice, Movement, and Turn Loop (Milestone 4)**
 
 ---
 
@@ -102,4 +102,5 @@ If you are new to the project, start with:
 3. **Build Pipeline**
 
 in that order.
+
 

@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { DEV_MODE } from "../core/dev-mode";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
+import { DeckService } from "../core/deck.service";
 import type { DomainIntent, DieOutcome } from "../../state/intents.types";
 
 @Component({
@@ -83,6 +84,7 @@ import type { DomainIntent, DieOutcome } from "../../state/intents.types";
             <div class="meta">
               <div><strong>lastIntent</strong>: {{ lastIntentSummary() }}</div>
               <div><strong>sessionId</strong>: {{ sessionId() }}</div>
+              <div><strong>currentPlane</strong>: {{ currentPlaneLabel() }}</div>
             </div>
 
             <details class="json">
@@ -215,6 +217,11 @@ export class DebugPanelComponent {
 
   readonly fsmState = computed(() => this.state().fsm.state);
   readonly sessionId = computed(() => this.state().meta.sessionId);
+  readonly currentPlaneLabel = computed(() => {
+    const planeId = this.state().deck.currentPlaneId;
+    const name = this.deckService.getPlaneName(planeId);
+    return name ? `${name} (${planeId})` : (planeId ?? "(none)");
+  });
   readonly lastIntentSummary = computed(() => {
     const li = this.state().fsm.context?.lastIntent;
     if (!li) return "(none)";
@@ -227,6 +234,7 @@ export class DebugPanelComponent {
     @Inject(DEV_MODE) public readonly devMode: boolean,
     private readonly orchestrator: SessionOrchestrator,
     private readonly sessionStore: SessionStore,
+    private readonly deckService: DeckService,
   ) {
     this.state = this.sessionStore.state;
   }
@@ -256,14 +264,17 @@ export class DebugPanelComponent {
   }
 
   dispatchOpenPlaneModal(): void {
+    const planeId = this.state().deck.currentPlaneId;
+    const planeName = this.deckService.getPlaneName(planeId);
+
     this.orchestrator.dispatch({
       type: "domain/open_modal",
       atMs: Date.now(),
       modal: {
         id: `dbg_modal_${Date.now()}`,
         modalType: "PLANE",
-        planeId: this.state().deck.currentPlaneId,
-        title: "Debug: Plane Modal",
+        planeId,
+        title: planeName ? `Debug: ${planeName}` : "Debug: Plane Modal",
         body: "Opened from Debug Panel.",
         resumeToState: this.state().fsm.state,
       },

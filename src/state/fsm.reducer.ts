@@ -1,4 +1,4 @@
-import type { SessionState } from "./session.types";
+import type { CoordKey, ModalDescriptor, SessionState } from "./session.types";
 import type { DomainIntent } from "./intents.types";
 import { isAdjacentCardinal, neighborsCardinal, parseCoordKey, toCoordKey } from "./map/coord";
 import {
@@ -8,8 +8,10 @@ import {
   stubPlaneIdForCoord,
   withDistancesFromParty,
 } from "./map/map-model";
+import { drawPlanes } from "./deck/deck-model";
 
 type FsmState = SessionState["fsm"]["state"];
+type BootstrapSlot = SessionState["config"]["bootstrapRevealOrder"][number];
 
 function withLastIntent(state: SessionState, intent: DomainIntent): SessionState {
   return {
@@ -48,20 +50,116 @@ function transition(
   return withLastIntent(base, intent);
 }
 
-function initMapForSession(state: SessionState, intent: DomainIntent): SessionState {
-  const centerKey = toCoordKey({ x: 0, y: 0 });
+function bootstrapSlotToCoordKey(slot: BootstrapSlot): CoordKey {
+  switch (slot) {
+    case "C":
+      return "0,0";
+    case "N":
+      return "0,-1";
+    case "E":
+      return "1,0";
+    case "S":
+      return "0,1";
+    case "W":
+      return "-1,0";
+    default:
+      return "0,0";
+  }
+}
 
-  // Seed center tile (stub plane ids for Milestone 2).
+function toModalDescriptor(
+  modal: Extract<DomainIntent, { type: "domain/open_modal" }>['modal'],
+  resumeToState: FsmState
+): ModalDescriptor {
+  return {
+    id: modal.id,
+    type: modal.modalType,
+    planeId: modal.planeId,
+    title: modal.title,
+    body: modal.body,
+    resumeToState: modal.resumeToState ?? resumeToState,
+  };
+}
+
+function enqueueModal(state: SessionState, modal: ModalDescriptor): SessionState {
+  if (state.modal.isOpen && state.modal.active) {
+    return {
+      ...state,
+      modal: {
+        ...state.modal,
+        queue: [...state.modal.queue, modal],
+      },
+    };
+  }
+
+  return {
+    ...state,
+    modal: {
+      ...state.modal,
+      active: modal,
+      isOpen: true,
+    },
+  };
+}
+
+function closeModal(state: SessionState, intent: Extract<DomainIntent, { type: "domain/close_modal" }>): SessionState {
+  const active = state.modal.active;
+  if (!state.modal.isOpen || !active) return state;
+
+  if (intent.modalId && intent.modalId !== active.id) {
+    return state;
+  }
+
+  const [nextActive, ...rest] = state.modal.queue;
+  if (nextActive) {
+    return withLastIntent(
+      {
+        ...state,
+        modal: {
+          ...state.modal,
+          active: nextActive,
+          queue: rest,
+          isOpen: true,
+        },
+      },
+      intent
+    );
+  }
+
+  const resumeTo = (active.resumeToState as FsmState | undefined) ?? "IDLE";
+  const closed = {
+    ...state,
+    modal: {
+      ...state.modal,
+      active: undefined,
+      queue: [],
+      isOpen: false,
+    },
+  };
+
+  return transition(closed, resumeTo, intent);
+}
+
+function initMapForSession(
+  state: SessionState,
+  intent: Extract<DomainIntent, { type: "domain/start_session" }>
+): SessionState {
+  const centerKey = toCoordKey({ x: 0, y: 0 });
+  const deck = intent.initialDeck ?? {
+    drawPile: [...state.deck.drawPile],
+    discardPile: [...state.deck.discardPile],
+  };
+
+  // Seed center tile first, then ensure-plus to create C/N/E/S/W coordinates.
   const tilesSeeded = {
     [centerKey]: createTile({
       coordKey: centerKey,
       planeId: stubPlaneIdForCoord(centerKey),
       atMs: intent.atMs,
-      isFaceUp: true,
+      isFaceUp: false,
     }),
   };
 
-  // Ensure-plus around party within decayDistance to bound growth.
   const ensured = state.config.ensurePlusEnabled
     ? ensurePlusBounded({
         tilesByCoord: tilesSeeded,
@@ -71,7 +169,59 @@ function initMapForSession(state: SessionState, intent: DomainIntent): SessionSt
       }).tilesByCoord
     : tilesSeeded;
 
-  const withDistances = withDistancesFromParty(ensured, centerKey);
+  // Assign initial 5 planes deterministically in configured bootstrap reveal order.
+  const bootstrapCount = state.config.bootstrapRevealOrder.length;
+  const dealt = drawPlanes(deck.drawPile, bootstrapCount);
+  const withAssignedPlanes = { ...ensured };
+
+  state.config.bootstrapRevealOrder.forEach((slot, index) => {
+    const coordKey = bootstrapSlotToCoordKey(slot);
+    const tile = withAssignedPlanes[coordKey];
+    if (!tile) return;
+
+    withAssignedPlanes[coordKey] = {
+      ...tile,
+      planeId: dealt.drawn[index] ?? stubPlaneIdForCoord(coordKey),
+      isFaceUp: false,
+    };
+  });
+
+  const withDistances = withDistancesFromParty(withAssignedPlanes, centerKey);
+
+  return {
+    ...state,
+    deck: {
+      ...state.deck,
+      drawPile: [...dealt.drawPile],
+      discardPile: [...deck.discardPile],
+      currentPlaneId: undefined,
+    },
+    map: {
+      ...state.map,
+      tilesByCoord: withDistances,
+      partyCoord: centerKey,
+      highlights: { eligibleMoveCoords: [] },
+    },
+  };
+}
+
+function applyBootstrapReveal(state: SessionState, atMs: number): SessionState {
+  const centerKey = bootstrapSlotToCoordKey("C");
+  const revealedTiles = { ...state.map.tilesByCoord };
+
+  state.config.bootstrapRevealOrder.forEach((slot, idx) => {
+    const coordKey = bootstrapSlotToCoordKey(slot);
+    const tile = revealedTiles[coordKey];
+    if (!tile) return;
+
+    revealedTiles[coordKey] = {
+      ...tile,
+      isFaceUp: true,
+      revealedAtMs: atMs + idx,
+    };
+  });
+
+  const withDistances = withDistancesFromParty(revealedTiles, centerKey);
 
   return {
     ...state,
@@ -162,6 +312,20 @@ function applyMapPostMove(state: SessionState, atMs: number): SessionState {
 }
 
 export function reduceSessionState(state: SessionState, intent: DomainIntent): SessionState {
+  if (intent.type === "domain/open_modal") {
+    const resumeTo = state.fsm.state === "MODAL_OPEN"
+      ? ((state.modal.active?.resumeToState as FsmState | undefined) ?? "IDLE")
+      : state.fsm.state;
+
+    const withModal = enqueueModal(state, toModalDescriptor(intent.modal, resumeTo));
+
+    if (state.modal.isOpen && state.fsm.state === "MODAL_OPEN") {
+      return withLastIntent(withModal, intent);
+    }
+
+    return transition(withModal, "MODAL_OPEN", intent);
+  }
+
   switch (state.fsm.state) {
     case "SETUP": {
       if (intent.type === "domain/start_session") {
@@ -173,7 +337,8 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
 
     case "BOOTSTRAP_REVEAL": {
       if (intent.type === "domain/bootstrap_reveal_complete") {
-        return transition(state, "IDLE", intent);
+        const revealed = applyBootstrapReveal(state, intent.atMs);
+        return transition(revealed, "IDLE", intent);
       }
       return state;
     }
@@ -195,7 +360,17 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
           return setEligibleMoves(next);
         }
         if (intent.outcome === "chaos") {
-          return transition(state, "MODAL_OPEN", intent);
+          const withModal = enqueueModal(
+            state,
+            {
+              id: `chaos_${intent.atMs}`,
+              type: "PLANE",
+              planeId: state.deck.currentPlaneId,
+              title: "Current Plane",
+              resumeToState: "IDLE",
+            }
+          );
+          return transition(withModal, "MODAL_OPEN", intent);
         }
       }
       return state;
@@ -252,8 +427,7 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
 
     case "MODAL_OPEN": {
       if (intent.type === "domain/close_modal") {
-        const resumeTo = (state.modal.active?.resumeToState as FsmState | undefined) ?? "IDLE";
-        return transition(state, resumeTo, intent);
+        return closeModal(state, intent);
       }
       return state;
     }
