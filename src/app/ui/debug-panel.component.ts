@@ -205,7 +205,7 @@ import type { DomainIntent, DieOutcome } from "../../state/intents.types";
   ],
 })
 export class DebugPanelComponent {
-  readonly collapsed = signal(false);
+  readonly collapsed = signal(true);
 
   // Simple inputs for intent payloads.
   toCoord = "1,0";

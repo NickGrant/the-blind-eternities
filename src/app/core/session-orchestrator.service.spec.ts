@@ -138,4 +138,58 @@ describe("SessionOrchestrator", () => {
     expect(next.fsm.state).toBe("ERROR");
     expect(next.fsm.context?.error?.code).toBe("CARD_DATA_INIT_FAILED");
   });
+
+  it("auto-completes movement after confirm_move", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "CONFIRM_MOVE";
+    initial.fsm.context = { pendingMove: { fromCoord: "0,0", toCoord: "1,0" } };
+    initial.map.partyCoord = "0,0";
+    initial.map.tilesByCoord = {
+      "0,0": {
+        coord: { x: 0, y: 0 },
+        planeId: "plane-akoum",
+        revealedAtMs: 0,
+        isFaceUp: true,
+      },
+      "1,0": {
+        coord: { x: 1, y: 0 },
+        planeId: "plane-bant",
+        revealedAtMs: 0,
+        isFaceUp: false,
+      },
+    };
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      false
+    );
+
+    orchestrator.dispatch({ type: "domain/confirm_move", atMs: 200 });
+
+    const next = _state();
+    expect(next.fsm.state).toBe("MODAL_OPEN");
+    expect(next.map.partyCoord).toBe("1,0");
+    expect(next.map.tilesByCoord["1,0"].isFaceUp).toBe(true);
+    expect(next.fsm.context?.pendingMove).toBeUndefined();
+    expect(next.modal.active?.planeId).toBe(next.map.tilesByCoord["1,0"].planeId);
+  });
 });

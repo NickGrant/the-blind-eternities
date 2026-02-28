@@ -27,10 +27,6 @@ import { SessionStore } from "../core/session.store";
         <button type="button" class="secondary" (click)="dispatch('domain/cancel_move')">Back</button>
       }
 
-      @if (fsmState() === "MOVING") {
-        <button type="button" (click)="dispatch('domain/movement_complete')">Complete Movement</button>
-      }
-
       @if (fsmState() === "ERROR") {
         <button type="button" (click)="dispatch('domain/restart_session')">Restart Session</button>
       }
@@ -86,10 +82,8 @@ export class ControlBarComponent {
       | "domain/roll_die"
       | "domain/confirm_move"
       | "domain/cancel_move"
-      | "domain/movement_complete"
       | "domain/restart_session"
   ): void {
     this.orchestrator.dispatch({ type, atMs: Date.now() });
   }
 }
-

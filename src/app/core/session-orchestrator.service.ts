@@ -103,6 +103,14 @@ export class SessionOrchestrator {
       finalState = resolved;
     }
 
+    if (preparedIntent.type === "domain/confirm_move" && finalState.fsm.state === "MOVING") {
+      const completedIntent: DomainIntent = {
+        type: "domain/movement_complete",
+        atMs: finalStateIntentTime + 1,
+      };
+      finalState = reduceSessionState(finalState, completedIntent);
+    }
+
     if (finalState !== current) {
       this.store.setState(finalState);
     }

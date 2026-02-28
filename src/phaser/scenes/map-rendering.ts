@@ -25,3 +25,7 @@ export function isSelectableTile(state: SessionState, coordKey: CoordKey): boole
   return eligible.includes(coordKey);
 }
 
+export function isConfirmSelectionTile(state: SessionState, coordKey: CoordKey): boolean {
+  if (state.fsm.state !== "CONFIRM_MOVE") return false;
+  return state.ui.selections?.selectedCoord === coordKey;
+}

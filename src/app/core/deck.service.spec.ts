@@ -15,7 +15,20 @@ describe("DeckService", () => {
     const service = new DeckService();
 
     expect(service.getPlaneName("plane-akoum")).toBe("Akoum");
-    expect(service.getPlaneName("missing-plane")).toBeUndefined();
+    expect(service.getPlaneName("plane-missing-plane")).toBe("Missing Plane");
+  });
+
+  it("returns chaos text when available", () => {
+    const service = new DeckService();
+
+    expect(service.getPlaneChaosText("plane-akoum")).toContain("CHAOS");
+    expect(service.getPlaneChaosText("plane-missing-plane")).toBeUndefined();
+  });
+
+  it("returns modal rules text for known cards", () => {
+    const service = new DeckService();
+
+    expect(service.getPlaneRulesText("plane-akoum")).toContain("Whenever chaos ensues");
   });
 
   it("creates deterministic initial deck from catalog", () => {

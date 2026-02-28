@@ -9,7 +9,11 @@
     "test": "ng test",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "package": "git archive -o source.zip HEAD"
+    "package": "git archive -o source.zip HEAD",
+    "art:cache": "node scripts/cache-plane-art.mjs",
+    "art:cache:dry": "node scripts/cache-plane-art.mjs --dry-run",
+    "art:cache:fetch": "node scripts/cache-plane-art.mjs --fetch --max=2 --delay-ms=1500",
+    "cards:sync:mtgjson": "node scripts/sync-cards-from-mtgjson.mjs"
   },
   "prettier": {
     "printWidth": 100,

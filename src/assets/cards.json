@@ -1,20 +1,279 @@
 {
   "planes": [
-    { "id": "plane-akoum", "name": "Akoum" },
-    { "id": "plane-bant", "name": "Bant" },
-    { "id": "plane-cliffside-market", "name": "Cliffside Market" },
-    { "id": "plane-edge-of-malacol", "name": "Edge of Malacol" },
-    { "id": "plane-furnace-layer", "name": "Furnace Layer" },
-    { "id": "plane-glen-elendra", "name": "Glen Elendra" },
-    { "id": "plane-immersturm", "name": "Immersturm" },
-    { "id": "plane-ivy-lane", "name": "Ivy Lane" },
-    { "id": "plane-kessig", "name": "Kessig" },
-    { "id": "plane-lethe-lake", "name": "Lethe Lake" },
-    { "id": "plane-minamo", "name": "Minamo" },
-    { "id": "plane-naar-isle", "name": "Naar Isle" },
-    { "id": "plane-orochi-colony", "name": "Orochi Colony" },
-    { "id": "plane-pools-of-becoming", "name": "Pools of Becoming" },
-    { "id": "plane-quicksilver-sea", "name": "Quicksilver Sea" },
-    { "id": "plane-sokenzan", "name": "Sokenzan" }
+    {
+      "id": "plane-akoum",
+      "name": "Akoum",
+      "chaosText": "CHAOS - destroy target creature that isn't enchanted.",
+      "artUrl": "assets/plane-art/plane-akoum.jpg",
+      "rulesText": "Players may cast enchantment spells as though they had flash.\nWhenever chaos ensues, destroy target creature that isn't enchanted.",
+      "typeLine": "Plane — Zendikar",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Zendikar"
+      ],
+      "setCode": "OPCA",
+      "number": "12",
+      "mtgjsonId": "b7fe47be-84de-5785-acb0-d404d764c547",
+      "scryfallId": "a1c7f2eb-0654-46f9-ae3d-11efcac837b8"
+    },
+    {
+      "id": "plane-bant",
+      "name": "Bant",
+      "chaosText": "CHAOS - put a divinity counter on target green, white, or blue creature. That creature has indestructible for as long as it has a divinity counter on it.",
+      "artUrl": "assets/plane-art/plane-bant.jpg",
+      "rulesText": "All creatures have exalted. (Whenever a creature attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents its controller controls.)\nWhenever chaos ensues, put a divinity counter on target green, white, or blue creature. That creature has indestructible for as long as it has a divinity counter on it.",
+      "typeLine": "Plane — Alara",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Alara"
+      ],
+      "setCode": "OPCA",
+      "number": "15",
+      "mtgjsonId": "8d2b7ddb-cca1-5ee3-9800-5ee6ee1fb5a8",
+      "scryfallId": "434a2d09-5776-4168-b863-f3b0a736d19b"
+    },
+    {
+      "id": "plane-cliffside-market",
+      "name": "Cliffside Market",
+      "chaosText": "CHAOS - exchange control of two target permanents that share a card type.",
+      "rulesText": "When you planeswalk to Cliffside Market and at the beginning of your upkeep, you may exchange life totals with target player.\nWhenever chaos ensues, exchange control of two target permanents that share a card type.",
+      "artUrl": "assets/plane-art/plane-cliffside-market.jpg",
+      "typeLine": "Plane — Mercadia",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Mercadia"
+      ],
+      "setCode": "OPCA",
+      "number": "18",
+      "mtgjsonId": "daa9a24c-e4e9-5225-9cc3-97272ac129d5",
+      "scryfallId": "ff65643b-e8bb-49d6-8887-13a146ee5174"
+    },
+    {
+      "id": "plane-edge-of-malacol",
+      "name": "Edge of Malacol",
+      "chaosText": "CHAOS - untap each creature you control.",
+      "rulesText": "If a creature you control would untap during your untap step, put two +1/+1 counters on it instead.\nWhenever chaos ensues, untap each creature you control.",
+      "artUrl": "assets/plane-art/plane-edge-of-malacol.jpg",
+      "typeLine": "Plane — Belenon",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Belenon"
+      ],
+      "setCode": "OPCA",
+      "number": "20",
+      "mtgjsonId": "884871d9-d78f-5ffd-8681-5b9b50e10e9c",
+      "scryfallId": "ca4c429a-ca40-4656-aea5-86eb450e47b7"
+    },
+    {
+      "id": "plane-furnace-layer",
+      "name": "Furnace Layer",
+      "chaosText": "CHAOS - you may destroy target nonland permanent.",
+      "rulesText": "When you planeswalk to Furnace Layer and at the beginning of your upkeep, select target player at random. That player discards a card. If that player discards a land card this way, they lose 3 life.\nWhenever chaos ensues, you may destroy target nonland permanent.",
+      "artUrl": "assets/plane-art/plane-furnace-layer.jpg",
+      "typeLine": "Plane — New Phyrexia",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "New Phyrexia"
+      ],
+      "setCode": "OPCA",
+      "number": "26",
+      "mtgjsonId": "c6780bb7-6090-5110-9d8d-716a214fbcb3",
+      "scryfallId": "d89133d1-06e7-4b8f-8f42-e0551fd93a5b"
+    },
+    {
+      "id": "plane-glen-elendra",
+      "name": "Glen Elendra",
+      "chaosText": "CHAOS - gain control of target creature you own.",
+      "rulesText": "At end of combat, you may exchange control of target creature you control that dealt combat damage to a player this combat and target creature that player controls.\nWhenever chaos ensues, gain control of target creature you own.",
+      "artUrl": "assets/plane-art/plane-glen-elendra.jpg",
+      "typeLine": "Plane — Lorwyn",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Lorwyn"
+      ],
+      "setCode": "OPCA",
+      "number": "28",
+      "mtgjsonId": "de2fae7c-6bbf-5f1d-83dc-041f8cea0ba0",
+      "scryfallId": "fdaaef56-0c95-404a-8de5-e8f21e0282d3"
+    },
+    {
+      "id": "plane-immersturm",
+      "name": "Immersturm",
+      "chaosText": "CHAOS - exile target creature, then return it to the battlefield under its owner's control.",
+      "rulesText": "Whenever a creature enters, that creature's controller may have it deal damage equal to its power to any target of their choice.\nWhenever chaos ensues, exile target creature, then return it to the battlefield under its owner's control.",
+      "artUrl": "assets/plane-art/plane-immersturm.jpg",
+      "typeLine": "Plane — Valla",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Valla"
+      ],
+      "setCode": "OPCA",
+      "number": "38",
+      "mtgjsonId": "43d2ce27-1dd8-5810-8909-3679b955afab",
+      "scryfallId": "d44a959c-7a04-4342-8827-882349f786fc"
+    },
+    {
+      "id": "plane-ivy-lane",
+      "name": "Ivy Lane",
+      "chaosText": "CHAOS — Put a +1/+1 counter on each creature you control."
+    },
+    {
+      "id": "plane-kessig",
+      "name": "Kessig",
+      "chaosText": "CHAOS - each creature you control gets +2/+2, gains trample, and becomes a Werewolf in addition to its other types until end of turn.",
+      "rulesText": "Prevent all combat damage that would be dealt by non-Werewolf creatures.\nWhenever chaos ensues, each creature you control gets +2/+2, gains trample, and becomes a Werewolf in addition to its other types until end of turn.",
+      "artUrl": "assets/plane-art/plane-kessig.jpg",
+      "typeLine": "Plane — Innistrad",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Innistrad"
+      ],
+      "setCode": "OPCA",
+      "number": "42",
+      "mtgjsonId": "368fb6df-be97-5052-9200-d9b2845ec7e7",
+      "scryfallId": "5271d8fd-3657-45a3-8147-00cc1d19425f"
+    },
+    {
+      "id": "plane-lethe-lake",
+      "name": "Lethe Lake",
+      "chaosText": "CHAOS - target player mills ten cards.",
+      "rulesText": "At the beginning of your upkeep, mill ten cards.\nWhenever chaos ensues, target player mills ten cards.",
+      "artUrl": "assets/plane-art/plane-lethe-lake.jpg",
+      "typeLine": "Plane — Arkhos",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Arkhos"
+      ],
+      "setCode": "OPCA",
+      "number": "47",
+      "mtgjsonId": "8d43a0ac-086d-5f57-9edd-8a33ade5968b",
+      "scryfallId": "7a049235-2fda-48a7-b46e-d150a4893397"
+    },
+    {
+      "id": "plane-minamo",
+      "name": "Minamo",
+      "chaosText": "CHAOS - each player may return a blue card from their graveyard to their hand.",
+      "rulesText": "Whenever a player casts a spell, that player may draw a card.\nWhenever chaos ensues, each player may return a blue card from their graveyard to their hand.",
+      "artUrl": "assets/plane-art/plane-minamo.jpg",
+      "typeLine": "Plane — Kamigawa",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kamigawa"
+      ],
+      "setCode": "OPCA",
+      "number": "50",
+      "mtgjsonId": "af66027f-a317-5c3b-998c-ed56c2bf2766",
+      "scryfallId": "9c155a59-afee-4821-9715-10dafb9f9d9a"
+    },
+    {
+      "id": "plane-naar-isle",
+      "name": "Naar Isle",
+      "chaosText": "CHAOS - Naar Isle deals 3 damage to target player or planeswalker.",
+      "rulesText": "At the beginning of your upkeep, put a flame counter on Naar Isle, then Naar Isle deals damage to you equal to the number of flame counters on it.\nWhenever chaos ensues, Naar Isle deals 3 damage to target player or planeswalker.",
+      "artUrl": "assets/plane-art/plane-naar-isle.jpg",
+      "typeLine": "Plane — Wildfire",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Wildfire"
+      ],
+      "setCode": "OPCA",
+      "number": "54",
+      "mtgjsonId": "d6b2196b-2275-54df-b8af-1d8560c6ed15",
+      "scryfallId": "f63b82f9-ebc4-465c-b25e-5ee710525143"
+    },
+    {
+      "id": "plane-orochi-colony",
+      "name": "Orochi Colony",
+      "chaosText": "CHAOS - target creature can't be blocked this turn.",
+      "rulesText": "Whenever a creature you control deals combat damage to a player, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\nWhenever chaos ensues, target creature can't be blocked this turn.",
+      "artUrl": "assets/plane-art/plane-orochi-colony.jpg",
+      "typeLine": "Plane — Kamigawa",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kamigawa"
+      ],
+      "setCode": "OPCA",
+      "number": "59",
+      "mtgjsonId": "5e6ce502-f2f7-55e2-b4e6-6d0ab591f763",
+      "scryfallId": "f9fc5e0d-e605-468b-98da-34101087b8c4"
+    },
+    {
+      "id": "plane-pools-of-becoming",
+      "name": "Pools of Becoming",
+      "chaosText": "CHAOS - reveal the top three cards of your planar deck. Each of the revealed cards' chaos abilities triggers. Then put the revealed cards on the bottom of your planar deck in any order.",
+      "rulesText": "At the beginning of your end step, put the cards in your hand on the bottom of your library in any order, then draw that many cards.\nWhenever chaos ensues, reveal the top three cards of your planar deck. Each of the revealed cards' chaos abilities triggers. Then put the revealed cards on the bottom of your planar deck in any order.",
+      "typeLine": "Plane — Bolas's Meditation Realm",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Bolas's Meditation Realm"
+      ],
+      "setCode": "OPCA",
+      "number": "63",
+      "mtgjsonId": "72f74b16-8db3-5e14-a12e-3e15e49039e4",
+      "scryfallId": "559007a6-c515-413a-8d3c-8ce1df0742ff",
+      "artUrl": "assets/plane-art/plane-pools-of-becoming.jpg"
+    },
+    {
+      "id": "plane-quicksilver-sea",
+      "name": "Quicksilver Sea",
+      "chaosText": "CHAOS - reveal the top card of your library. You may play it without paying its mana cost.",
+      "rulesText": "When you planeswalk to Quicksilver Sea and at the beginning of your upkeep, scry 4. (Look at the top four cards of your library, then put any number of them on the bottom and the rest on top in any order.)\nWhenever chaos ensues, reveal the top card of your library. You may play it without paying its mana cost.",
+      "typeLine": "Plane — Mirrodin",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Mirrodin"
+      ],
+      "setCode": "OPCA",
+      "number": "65",
+      "mtgjsonId": "5862b1a8-60f1-5d8d-8f57-ad29af52c68b",
+      "scryfallId": "072c1a59-dbdc-469c-9743-e083e52b0b6d",
+      "artUrl": "assets/plane-art/plane-quicksilver-sea.jpg"
+    },
+    {
+      "id": "plane-sokenzan",
+      "name": "Sokenzan",
+      "chaosText": "CHAOS - untap all creatures that attacked this turn. If it's a main phase, there is an additional combat phase after this phase, followed by an additional main phase.",
+      "rulesText": "All creatures get +1/+1 and have haste.\nWhenever chaos ensues, untap all creatures that attacked this turn. If it's a main phase, there is an additional combat phase after this phase, followed by an additional main phase.",
+      "typeLine": "Plane — Kamigawa",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kamigawa"
+      ],
+      "setCode": "OPCA",
+      "number": "72",
+      "mtgjsonId": "d17510da-1750-5365-94fe-7d61141c8e87",
+      "scryfallId": "fd5cb6c4-2ad7-47db-848b-8f6f157f3529",
+      "artUrl": "assets/plane-art/plane-sokenzan.jpg"
+    }
   ]
 }

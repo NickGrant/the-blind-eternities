@@ -97,7 +97,12 @@ export class ModalHostComponent {
   readonly modalBody = computed(() => {
     const modal = this.activeModal();
     if (!modal) return "";
-    return modal.body ?? "No additional details.";
+    if (modal.body) return modal.body;
+    if (modal.type === "PLANE") {
+      const rules = this.deckService.getPlaneRulesText(modal.planeId);
+      if (rules) return rules;
+    }
+    return "No additional details.";
   });
 
   constructor(
@@ -119,4 +124,3 @@ export class ModalHostComponent {
     });
   }
 }
-

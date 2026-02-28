@@ -4,6 +4,7 @@ import { MapScene } from "./scenes/map.scene";
 import { DEV_MODE } from "../app/core/dev-mode";
 import { SessionStore } from "../app/core/session.store";
 import { SessionOrchestrator } from "../app/core/session-orchestrator.service";
+import { DeckService } from "../app/core/deck.service";
 
 @Injectable({ providedIn: "root" })
 export class PhaserBootstrapService {
@@ -13,7 +14,8 @@ export class PhaserBootstrapService {
   constructor(
     @Inject(DEV_MODE) private readonly devMode: boolean,
     private readonly sessionStore: SessionStore,
-    private readonly orchestrator: SessionOrchestrator
+    private readonly orchestrator: SessionOrchestrator,
+    private readonly deckService: DeckService
   ) {
     this.scene = new MapScene({
       onSelectPlane: (toCoord) => {
@@ -23,6 +25,27 @@ export class PhaserBootstrapService {
           toCoord,
         });
       },
+      onConfirmMove: () => {
+        this.orchestrator.dispatch({
+          type: "domain/confirm_move",
+          atMs: Date.now(),
+        });
+      },
+      onInspectPlane: (planeId) => {
+        const state = this.sessionStore.state();
+        this.orchestrator.dispatch({
+          type: "domain/open_modal",
+          atMs: Date.now(),
+          modal: {
+            id: `inspect_${Date.now()}`,
+            modalType: "PLANE",
+            planeId,
+            resumeToState: state.fsm.state,
+          },
+        });
+      },
+      getPlaneName: (planeId) => this.deckService.getPlaneName(planeId),
+      getPlaneArtUrl: (planeId) => this.deckService.getPlaneArtUrl(planeId),
     });
 
     effect(() => {

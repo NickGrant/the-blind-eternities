@@ -45,4 +45,33 @@ describe("ModalHostComponent (class-only)", () => {
     expect(arg.type).toBe("domain/close_modal");
     expect(arg.modalId).toBe("m1");
   });
+
+  it("uses plane metadata for title/body when modal omits explicit copy", () => {
+    const initial = createNewSessionState({ atMs: 10 });
+    initial.modal.active = {
+      id: "m2",
+      type: "PLANE",
+      planeId: "plane-akoum",
+      resumeToState: "IDLE",
+    };
+    initial.modal.isOpen = true;
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: vi.fn(),
+    };
+
+    const cmp = new ModalHostComponent(
+      storeMock as SessionStore,
+      orchestratorMock as SessionOrchestrator,
+      new DeckService()
+    );
+
+    expect(cmp.modalTitle()).toBe("Akoum");
+    expect(cmp.modalBody()).toContain("Whenever chaos ensues");
+  });
 });

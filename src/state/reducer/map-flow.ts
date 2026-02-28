@@ -159,7 +159,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     ? ensurePlusBounded({
         tilesByCoord: state.map.tilesByCoord,
         partyCoord,
-        radius: state.config.decayDistance,
+        radius: 0,
         atMs,
       }).tilesByCoord
     : state.map.tilesByCoord;
@@ -174,18 +174,44 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     ? ensurePlusBounded({
         tilesByCoord: decayed.tilesByCoord,
         partyCoord,
-        radius: state.config.decayDistance,
+        radius: 0,
         atMs,
       }).tilesByCoord
     : decayed.tilesByCoord;
 
-  const withDistances = withDistancesFromParty(ensuredTwice, partyCoord);
+  const revealedDestination = { ...ensuredTwice };
+  const destinationTile = revealedDestination[partyCoord];
+  if (destinationTile) {
+    revealedDestination[partyCoord] = {
+      ...destinationTile,
+      isFaceUp: true,
+      revealedAtMs: atMs,
+    };
+  }
+
+  const placeholders = Object.entries(revealedDestination)
+    .filter(([, tile]) => tile.planeId.startsWith("plane@"))
+    .map(([coordKey]) => coordKey);
+  const dealt = drawPlanes(state.deck.drawPile, placeholders.length);
+  const withAssignedPlanes = { ...revealedDestination };
+  placeholders.forEach((coordKey, index) => {
+    const tile = withAssignedPlanes[coordKey];
+    const assigned = dealt.drawn[index];
+    if (!tile || !assigned) return;
+    withAssignedPlanes[coordKey] = {
+      ...tile,
+      planeId: assigned,
+    };
+  });
+
+  const withDistances = withDistancesFromParty(withAssignedPlanes, partyCoord);
   const currentPlaneId = withDistances[partyCoord]?.planeId;
 
   const mapped = {
     ...state,
     deck: {
       ...state.deck,
+      drawPile: [...dealt.drawPile],
       currentPlaneId,
     },
     map: {
@@ -213,4 +239,3 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     },
   });
 }
-

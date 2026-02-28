@@ -95,7 +95,6 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
             id: `chaos_${intent.atMs}`,
             type: "PLANE",
             planeId: state.deck.currentPlaneId,
-            title: "Current Plane",
             resumeToState: "IDLE",
           });
           const logged = withRollOutcomeLogged(withModal, { atMs: intent.atMs, outcome: "chaos" });
@@ -149,6 +148,15 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     case "MOVING": {
       if (intent.type === "domain/movement_complete") {
         const mapped = applyMapPostMove(state, intent.atMs);
+        if (mapped.deck.currentPlaneId) {
+          const withModal = enqueueModal(mapped, {
+            id: `landed_${intent.atMs}`,
+            type: "PLANE",
+            planeId: mapped.deck.currentPlaneId,
+            resumeToState: "IDLE",
+          });
+          return transition(withModal, "MODAL_OPEN", intent, { pendingMove: undefined });
+        }
         return transition(mapped, "IDLE", intent, { pendingMove: undefined });
       }
       return state;

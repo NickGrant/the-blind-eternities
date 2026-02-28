@@ -29,9 +29,10 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     );
   });
 
-  it("returns to IDLE when movement completes", () => {
+  it("opens landing modal when movement completes", () => {
     const moving = buildState("MOVING");
     moving.map.partyCoord = "0,0";
+    moving.deck.drawPile = ["plane-next-1", "plane-next-2", "plane-next-3"];
     moving.map.tilesByCoord = {
       "0,0": mkTile("0,0"),
       "1,0": mkTile("1,0"),
@@ -48,10 +49,61 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
       atMs: 20,
     });
 
-    expect(next.fsm.state).toBe("IDLE");
+    expect(next.fsm.state).toBe("MODAL_OPEN");
     expect(next.map.partyCoord).toBe("1,0");
     expect(next.fsm.context?.pendingMove).toBeUndefined();
     expect(next.ui.selections?.selectedCoord).toBeUndefined();
+    expect(next.map.tilesByCoord["1,0"].isFaceUp).toBe(true);
+    expect(next.modal.active?.planeId).toBe(next.map.tilesByCoord["1,0"].planeId);
+  });
+
+  it("expands only one-step adjacency around moved party tile", () => {
+    const moving = buildState("MOVING");
+    moving.map.partyCoord = "0,0";
+    moving.deck.drawPile = ["plane-a", "plane-b", "plane-c", "plane-d", "plane-e", "plane-f"];
+    moving.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "0,-1": mkTile("0,-1"),
+      "1,0": mkTile("1,0", false),
+      "0,1": mkTile("0,1"),
+      "-1,0": mkTile("-1,0"),
+    };
+    moving.fsm.context = {
+      pendingMove: { fromCoord: "0,0", toCoord: "1,0" },
+    };
+
+    const next = reduceSessionState(moving, {
+      type: "domain/movement_complete",
+      atMs: 30,
+    });
+
+    expect(next.map.tilesByCoord["2,0"]).toBeTruthy();
+    expect(next.map.tilesByCoord["1,-1"]).toBeTruthy();
+    expect(next.map.tilesByCoord["1,1"]).toBeTruthy();
+    expect(next.map.tilesByCoord["3,0"]).toBeFalsy();
+    expect(next.map.tilesByCoord["2,1"]).toBeFalsy();
+    expect(next.map.tilesByCoord["2,-1"]).toBeFalsy();
+  });
+
+  it("assigns real plane ids to newly created placeholder tiles from draw pile", () => {
+    const moving = buildState("MOVING");
+    moving.map.partyCoord = "0,0";
+    moving.deck.drawPile = ["plane-real-1", "plane-real-2", "plane-real-3"];
+    moving.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "1,0": mkTile("1,0", false),
+    };
+    moving.fsm.context = {
+      pendingMove: { fromCoord: "0,0", toCoord: "1,0" },
+    };
+
+    const next = reduceSessionState(moving, {
+      type: "domain/movement_complete",
+      atMs: 40,
+    });
+
+    const adjacentCreated = ["2,0", "1,-1", "1,1"].map((k) => next.map.tilesByCoord[k]?.planeId);
+    expect(adjacentCreated.every((id) => typeof id === "string" && !id?.startsWith("plane@"))).toBe(true);
   });
 });
 
@@ -77,13 +129,12 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
   };
 }
 
-function mkTile(coordKey: string) {
+function mkTile(coordKey: string, isFaceUp = true) {
   const [x, y] = coordKey.split(",").map((n) => Number.parseInt(n, 10));
   return {
     coord: { x, y },
     planeId: `p:${coordKey}`,
     revealedAtMs: 0,
-    isFaceUp: true,
+    isFaceUp,
   };
 }
-

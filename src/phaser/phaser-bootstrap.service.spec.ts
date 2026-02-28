@@ -6,6 +6,7 @@ import Phaser from "phaser";
 import { PhaserBootstrapService } from "./phaser-bootstrap.service";
 import type { SessionStore } from "../app/core/session.store";
 import type { SessionOrchestrator } from "../app/core/session-orchestrator.service";
+import type { DeckService } from "../app/core/deck.service";
 import { createNewSessionState } from "../state/session.factory";
 
 type MockPhaserGameClass = {
@@ -17,14 +18,19 @@ describe("PhaserBootstrapService", () => {
     (Phaser.Game as unknown as MockPhaserGameClass).instances = [];
   });
 
-  function createService(storeMock: Pick<SessionStore, "state">, orchestratorMock: Pick<SessionOrchestrator, "dispatch">) {
+  function createService(
+    storeMock: Pick<SessionStore, "state">,
+    orchestratorMock: Pick<SessionOrchestrator, "dispatch">,
+    deckMock: Pick<DeckService, "getPlaneName" | "getPlaneArtUrl">
+  ) {
     TestBed.configureTestingModule({});
     return TestBed.runInInjectionContext(
       () =>
         new PhaserBootstrapService(
           true,
           storeMock as SessionStore,
-          orchestratorMock as SessionOrchestrator
+          orchestratorMock as SessionOrchestrator,
+          deckMock as DeckService
         )
     );
   }
@@ -37,8 +43,12 @@ describe("PhaserBootstrapService", () => {
     const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
       dispatch: vi.fn(),
     };
+    const deckMock: Pick<DeckService, "getPlaneName" | "getPlaneArtUrl"> = {
+      getPlaneName: () => undefined,
+      getPlaneArtUrl: () => undefined,
+    };
 
-    const service = createService(storeMock, orchestratorMock);
+    const service = createService(storeMock, orchestratorMock, deckMock);
 
     const container = document.createElement("div");
     Object.defineProperty(container, "clientWidth", { value: 900 });
@@ -63,8 +73,12 @@ describe("PhaserBootstrapService", () => {
     const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
       dispatch: vi.fn(),
     };
+    const deckMock: Pick<DeckService, "getPlaneName" | "getPlaneArtUrl"> = {
+      getPlaneName: () => undefined,
+      getPlaneArtUrl: () => undefined,
+    };
 
-    const service = createService(storeMock, orchestratorMock);
+    const service = createService(storeMock, orchestratorMock, deckMock);
 
     const container = document.createElement("div");
     service.init(container);
