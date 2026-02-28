@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global layout reset so viewport math is consistent across browsers. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100dvh;
+}

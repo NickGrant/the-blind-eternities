@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild, computed, inject } fro
 import { ErrorBannerComponent } from "./ui/error-banner.component";
 import { DebugPanelComponent } from "./ui/debug-panel.component";
 import { ModalHostComponent } from "./ui/modal-host.component";
+import { ControlBarComponent } from "./ui/control-bar.component";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 import { SessionStore } from "./core/session.store";
@@ -20,7 +21,7 @@ export const Navigation = {
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [ErrorBannerComponent, DebugPanelComponent, ModalHostComponent],
+  imports: [ErrorBannerComponent, DebugPanelComponent, ModalHostComponent, ControlBarComponent],
   templateUrl: "./app.html",
   styleUrl: "./app.scss",
 })

@@ -1,4 +1,4 @@
-<main class="layout">
+ï»¿<main class="layout">
   <section class="top">
     @if (fatal()) {
       <app-error-banner [error]="fatal()"></app-error-banner>
@@ -6,7 +6,7 @@
     
     <header class="header">
       <h1>Blind Eternities Planechase</h1>
-      <div class="subtitle">Milestone 6 — Hardening, Logging, and Error Paths</div>
+      <div class="subtitle">Milestone 6 - Hardening, Logging, and Error Paths</div>
 
       @if(hasFatal()) {
         <button class="reload" (click)="onReload()">
@@ -14,6 +14,11 @@
         </button>
       }
     </header>
+
+    <section class="controls panel">
+      <h2>Game Controls</h2>
+      <app-control-bar></app-control-bar>
+    </section>
   </section>
 
   <section class="content">
@@ -27,7 +32,7 @@
             @for (entry of logEntries(); track entry.id) {
               <li [class]="'lvl-' + entry.level">
                 <div class="line">{{ entry.message }}</div>
-                <div class="meta">{{ entry.level }} • {{ entry.atMs }}</div>
+                <div class="meta">{{ entry.level }} | {{ entry.atMs }}</div>
               </li>
             }
           </ul>
@@ -47,4 +52,3 @@
 </main>
 
 <app-modal-host></app-modal-host>
-

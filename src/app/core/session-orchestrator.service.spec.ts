@@ -16,7 +16,7 @@ describe("SessionOrchestrator", () => {
     const _state = signal(initial);
     const storeMock: Pick<SessionStore, "state" | "setState"> = {
       state: _state.asReadonly(),
-      setState: (next) => _state.set(next as any),
+      setState: (next) => _state.set(next),
     };
 
     const deckMock: Pick<DeckService, "createInitialDeck"> = {
@@ -43,13 +43,15 @@ describe("SessionOrchestrator", () => {
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
 
     const next = _state();
-    expect(next.fsm.state).toBe("BOOTSTRAP_REVEAL");
+    expect(next.fsm.state).toBe("IDLE");
     expect(next.deck.drawPile).toEqual(["plane-6"]);
     expect(next.map.tilesByCoord["0,0"].planeId).toBe("plane-1");
     expect(next.map.tilesByCoord["0,-1"].planeId).toBe("plane-2");
     expect(next.map.tilesByCoord["1,0"].planeId).toBe("plane-3");
     expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-4");
     expect(next.map.tilesByCoord["-1,0"].planeId).toBe("plane-5");
+    expect(next.map.tilesByCoord["0,0"].isFaceUp).toBe(true);
+    expect(next.map.tilesByCoord["0,-1"].isFaceUp).toBe(true);
   });
 
   it("auto-resolves roll_die using DieService", () => {
@@ -58,9 +60,13 @@ describe("SessionOrchestrator", () => {
     initial.deck.currentPlaneId = "plane-test";
 
     const _state = signal(initial);
+    let setCount = 0;
     const storeMock: Pick<SessionStore, "state" | "setState"> = {
       state: _state.asReadonly(),
-      setState: (next) => _state.set(next as any),
+      setState: (next) => {
+        setCount += 1;
+        _state.set(next);
+      },
     };
 
     const deckMock: Pick<DeckService, "createInitialDeck"> = {
@@ -88,6 +94,7 @@ describe("SessionOrchestrator", () => {
     expect(next.modal.active?.type).toBe("PLANE");
     expect(next.modal.active?.planeId).toBe("plane-test");
     expect(next.rng.rollCount).toBe(1);
+    expect(setCount).toBe(1);
   });
 
   it("moves to ERROR and stores fatal banner when deck init fails", () => {
@@ -97,7 +104,7 @@ describe("SessionOrchestrator", () => {
     const _state = signal(initial);
     const storeMock: Pick<SessionStore, "state" | "setState"> = {
       state: _state.asReadonly(),
-      setState: (next) => _state.set(next as any),
+      setState: (next) => _state.set(next),
     };
 
     const deckMock: Pick<DeckService, "createInitialDeck"> = {

@@ -8,6 +8,14 @@ class MockScene {
 }
 
 class MockGame {
+  static instances: MockGame[] = [];
+  readonly config: unknown;
+
+  constructor(config?: unknown) {
+    this.config = config;
+    MockGame.instances.push(this);
+  }
+
   destroy(_removeCanvas?: boolean) {}
 }
 

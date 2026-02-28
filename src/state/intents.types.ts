@@ -87,10 +87,12 @@ export type DomainIntent =
 
 export const isPhaserIntent = (value: unknown): value is PhaserIntent => {
   if (!value || typeof value !== "object") return false;
-  return "type" in value && typeof (value as any).type === "string";
+  const candidate = value as Record<string, unknown>;
+  return typeof candidate["type"] === "string";
 };
 
 export const isDomainIntent = (value: unknown): value is DomainIntent => {
   if (!value || typeof value !== "object") return false;
-  return "type" in value && typeof (value as any).type === "string";
+  const candidate = value as Record<string, unknown>;
+  return typeof candidate["type"] === "string";
 };

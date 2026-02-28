@@ -7,6 +7,10 @@ import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 
 describe("AppComponent (class-only, injection-context)", () => {
+  type AppWithHost = AppComponent & {
+    phaserHost: { nativeElement: HTMLDivElement };
+  };
+
   function createComponent(phaserInit: () => void = () => void 0) {
     const phaser = { init: vi.fn(phaserInit) };
     const fatal = new FatalErrorStore();
@@ -21,7 +25,7 @@ describe("AppComponent (class-only, injection-context)", () => {
     const cmp = TestBed.runInInjectionContext(() => new AppComponent());
 
     // We are not compiling templates; provide the ViewChild manually.
-    (cmp as any).phaserHost = { nativeElement: document.createElement("div") };
+    (cmp as AppWithHost).phaserHost = { nativeElement: document.createElement("div") };
 
     return { cmp, phaser, fatal };
   }

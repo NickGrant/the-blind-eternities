@@ -33,6 +33,26 @@ describe("reduceSessionState (Milestone 6 hardening/logging)", () => {
     expect(next.log.entries.at(-1)?.level).toBe("error");
     expect(next.log.entries.at(-1)?.message).toContain("Fatal error");
   });
+
+  it("keeps log size bounded to avoid unbounded growth", () => {
+    let state = buildState("IDLE");
+
+    for (let i = 0; i < 250; i += 1) {
+      state = reduceSessionState(state, {
+        type: "domain/fatal_error",
+        atMs: i,
+        code: `ERR_${i}`,
+      });
+      // bounce back so each next fatal_error is still processed from non-terminal state.
+      state = reduceSessionState(state, {
+        type: "domain/restart_session",
+        atMs: i + 1000,
+      });
+      state = { ...state, fsm: { ...state.fsm, state: "IDLE" } };
+    }
+
+    expect(state.log.entries.length).toBeLessThanOrEqual(200);
+  });
 });
 
 function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
@@ -52,4 +72,3 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
     ui: { selections: {} },
   };
 }
-

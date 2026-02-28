@@ -23,19 +23,25 @@ export class SessionOrchestrator {
     @Inject(DEV_MODE) private readonly devMode: boolean,
   ) {}
 
+  private prepareIntent(current: ReturnType<SessionStore["state"]>, intent: DomainIntent): DomainIntent {
+    if (intent.type !== "domain/start_session") return intent;
+
+    return {
+      ...intent,
+      initialDeck: this.deckService.createInitialDeck({
+        atMs: intent.atMs,
+        seed: current.rng.seed,
+      }),
+    };
+  }
+
   dispatch(intent: DomainIntent): void {
     const current = this.store.state();
     let preparedIntent: DomainIntent = intent;
 
     if (intent.type === "domain/start_session") {
       try {
-        preparedIntent = {
-          ...intent,
-          initialDeck: this.deckService.createInitialDeck({
-            atMs: intent.atMs,
-            seed: current.rng.seed,
-          }),
-        };
+        preparedIntent = this.prepareIntent(current, intent);
       } catch (err) {
         const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
         this.fatalErrorStore.set({
@@ -68,27 +74,37 @@ export class SessionOrchestrator {
       );
     }
 
-    if (next !== current) {
-      this.store.setState(next);
+    let finalState = next;
+    let finalStateIntentTime = preparedIntent.atMs;
+
+    if (preparedIntent.type === "domain/start_session" && next.fsm.state === "BOOTSTRAP_REVEAL") {
+      const bootstrapIntent: DomainIntent = {
+        type: "domain/bootstrap_reveal_complete",
+        atMs: preparedIntent.atMs + 1,
+      };
+      finalState = reduceSessionState(next, bootstrapIntent);
+      finalStateIntentTime = bootstrapIntent.atMs;
     }
 
-    if (preparedIntent.type === "domain/roll_die" && next.fsm.state === "ROLLING") {
+    if (preparedIntent.type === "domain/roll_die" && finalState.fsm.state === "ROLLING") {
       const outcome = this.dieService.roll({
-        atMs: preparedIntent.atMs,
-        seed: next.rng.seed,
-        rollCount: next.rng.rollCount,
+        atMs: finalStateIntentTime,
+        seed: finalState.rng.seed,
+        rollCount: finalState.rng.rollCount,
       });
 
       const resolvedIntent: DomainIntent = {
         type: "domain/roll_resolved",
-        atMs: preparedIntent.atMs,
+        atMs: finalStateIntentTime,
         outcome,
       };
 
-      const resolved = reduceSessionState(next, resolvedIntent);
-      if (resolved !== next) {
-        this.store.setState(resolved);
-      }
+      const resolved = reduceSessionState(finalState, resolvedIntent);
+      finalState = resolved;
+    }
+
+    if (finalState !== current) {
+      this.store.setState(finalState);
     }
   }
 }

@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+﻿import Phaser from "phaser";
 import type { CoordKey, SessionState } from "../../state/session.types";
 import { coordToWorld, isSelectableTile, type ViewportConfig } from "./map-rendering";
 
@@ -9,10 +9,15 @@ type SceneDeps = {
 export class MapScene extends Phaser.Scene {
   private readonly deps: SceneDeps;
   private lastState: SessionState | null = null;
+  private lastPartyCoord: CoordKey | null = null;
+  private cameraOffset = { x: 0, y: 0 };
+  private dragPointerId: number | null = null;
+  private dragLast = { x: 0, y: 0 };
+  private dragDistance = 0;
   private readonly renderObjects: Phaser.GameObjects.GameObject[] = [];
   private readonly viewport: ViewportConfig = {
-    originX: 360,
-    originY: 230,
+    originX: 0,
+    originY: 0,
     tileWidth: 130,
     tileHeight: 78,
     gapX: 22,
@@ -26,12 +31,21 @@ export class MapScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(0x111111);
+    this.setupCameraControls();
     this.renderFromState();
+    this.centerCameraOnParty();
   }
 
   setSessionState(state: SessionState): void {
+    if (this.lastState === state) return;
+    const partyChanged = this.lastPartyCoord !== (state.map.partyCoord ?? null);
+    if (partyChanged) {
+      this.cameraOffset = { x: 0, y: 0 };
+    }
+    this.lastPartyCoord = state.map.partyCoord ?? null;
     this.lastState = state;
     this.renderFromState();
+    this.centerCameraOnParty();
   }
 
   private renderFromState(): void {
@@ -95,6 +109,7 @@ export class MapScene extends Phaser.Scene {
       if (selectable) {
         rect.setInteractive({ useHandCursor: true });
         rect.on("pointerup", () => {
+          if (this.dragDistance > 6) return;
           this.deps.onSelectPlane(coordKey);
         });
       }
@@ -103,15 +118,57 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
+  private setupCameraControls(): void {
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      this.dragPointerId = pointer.id;
+      this.dragLast = { x: pointer.x, y: pointer.y };
+      this.dragDistance = 0;
+    });
+
+    this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+      if (!pointer.isDown) return;
+      if (this.dragPointerId !== pointer.id) return;
+
+      const dx = pointer.x - this.dragLast.x;
+      const dy = pointer.y - this.dragLast.y;
+      if (dx === 0 && dy === 0) return;
+
+      this.dragDistance += Math.abs(dx) + Math.abs(dy);
+      this.dragLast = { x: pointer.x, y: pointer.y };
+      this.cameraOffset.x -= dx;
+      this.cameraOffset.y -= dy;
+      this.centerCameraOnParty();
+    });
+
+    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      if (this.dragPointerId !== pointer.id) return;
+      this.dragPointerId = null;
+      this.dragLast = { x: 0, y: 0 };
+      this.dragDistance = 0;
+    });
+  }
+
+  private centerCameraOnParty(): void {
+    const state = this.lastState;
+    const partyCoord = state?.map.partyCoord;
+    if (!state || !partyCoord) return;
+
+    const partyTile = state.map.tilesByCoord[partyCoord];
+    if (!partyTile) return;
+
+    const world = coordToWorld(partyTile.coord, this.viewport);
+    this.cameras.main.centerOn(world.x + this.cameraOffset.x, world.y + this.cameraOffset.y);
+  }
+
   private shortLabel(planeId: string): string {
     if (!planeId) return "(empty)";
     const rest = planeId.includes("-") ? planeId.split("-").slice(1).join("-") : planeId;
-    return rest.length > 16 ? `${rest.slice(0, 16)}…` : rest;
+    return rest.length > 16 ? `${rest.slice(0, 16)}...` : rest;
   }
 
   private addStaticLegend(): void {
     this.renderObjects.push(
-      this.add.text(12, 12, "Blind Eternities — Milestone 5", {
+      this.add.text(12, 12, "Blind Eternities - Milestone 5", {
         fontFamily: "Arial, sans-serif",
         fontSize: "15px",
         color: "#ffffff",
@@ -133,4 +190,3 @@ export class MapScene extends Phaser.Scene {
     }
   }
 }
-
