@@ -187,7 +187,7 @@ And not shown until the current modal closes
 
 ## Status
 
-Ready to start
+Complete
 
 ## Goal
 A full Planechase turn can be completed.
@@ -222,6 +222,10 @@ Then the session returns to IDLE
 ---
 
 # Milestone 5 — Phaser Integration & Visual Feedback
+
+## Status
+
+Ready to start
 
 ## Goal
 Existing logic is rendered visibly and interactively.

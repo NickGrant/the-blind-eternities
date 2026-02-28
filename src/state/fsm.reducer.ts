@@ -311,6 +311,16 @@ function applyMapPostMove(state: SessionState, atMs: number): SessionState {
   };
 }
 
+function withRollCountIncremented(state: SessionState): SessionState {
+  return {
+    ...state,
+    rng: {
+      ...state.rng,
+      rollCount: state.rng.rollCount + 1,
+    },
+  };
+}
+
 export function reduceSessionState(state: SessionState, intent: DomainIntent): SessionState {
   if (intent.type === "domain/open_modal") {
     const resumeTo = state.fsm.state === "MODAL_OPEN"
@@ -353,15 +363,17 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     case "ROLLING": {
       if (intent.type === "domain/roll_resolved") {
         if (intent.outcome === "blank") {
-          return transition(state, "IDLE", intent);
+          const rolled = withRollCountIncremented(state);
+          return transition(rolled, "IDLE", intent);
         }
         if (intent.outcome === "planeswalk") {
-          const next = transition(state, "AWAIT_MOVE", intent);
+          const rolled = withRollCountIncremented(state);
+          const next = transition(rolled, "AWAIT_MOVE", intent);
           return setEligibleMoves(next);
         }
         if (intent.outcome === "chaos") {
           const withModal = enqueueModal(
-            state,
+            withRollCountIncremented(state),
             {
               id: `chaos_${intent.atMs}`,
               type: "PLANE",

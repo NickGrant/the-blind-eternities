@@ -92,7 +92,7 @@ This document answers:
 
 - Phase: **Development Started**
 - Code implementation is under way
-- Next milestone: **Dice, Movement, and Turn Loop (Milestone 4)**
+- Next milestone: **Phaser Integration and Visual Feedback (Milestone 5)**
 
 ---
 
@@ -102,5 +102,6 @@ If you are new to the project, start with:
 3. **Build Pipeline**
 
 in that order.
+
 
 

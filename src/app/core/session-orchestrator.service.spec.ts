@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { SessionOrchestrator } from "./session-orchestrator.service";
 import type { SessionStore } from "./session.store";
 import type { DeckService } from "./deck.service";
+import type { DieService } from "./die.service";
 import { createNewSessionState } from "../../state/session.factory";
 
 describe("SessionOrchestrator", () => {
@@ -23,10 +24,14 @@ describe("SessionOrchestrator", () => {
         discardPile: [],
       }),
     };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
 
     const orchestrator = new SessionOrchestrator(
       storeMock as SessionStore,
       deckMock as DeckService,
+      dieMock as DieService,
       false
     );
 
@@ -41,5 +46,38 @@ describe("SessionOrchestrator", () => {
     expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-4");
     expect(next.map.tilesByCoord["-1,0"].planeId).toBe("plane-5");
   });
-});
 
+  it("auto-resolves roll_die using DieService", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "IDLE";
+    initial.deck.currentPlaneId = "plane-test";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next as any),
+    };
+
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "chaos",
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      false
+    );
+
+    orchestrator.dispatch({ type: "domain/roll_die", atMs: 100 });
+
+    const next = _state();
+    expect(next.fsm.state).toBe("MODAL_OPEN");
+    expect(next.modal.active?.type).toBe("PLANE");
+    expect(next.modal.active?.planeId).toBe("plane-test");
+    expect(next.rng.rollCount).toBe(1);
+  });
+});
