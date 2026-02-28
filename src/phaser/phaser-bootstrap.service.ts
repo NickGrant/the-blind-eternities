@@ -1,13 +1,35 @@
-import { Inject, Injectable } from "@angular/core";
+import { effect, Inject, Injectable } from "@angular/core";
 import Phaser from "phaser";
-import { InertScene } from "./scenes/inert.scene";
+import { MapScene } from "./scenes/map.scene";
 import { DEV_MODE } from "../app/core/dev-mode";
+import { SessionStore } from "../app/core/session.store";
+import { SessionOrchestrator } from "../app/core/session-orchestrator.service";
 
 @Injectable({ providedIn: "root" })
 export class PhaserBootstrapService {
   private game: Phaser.Game | null = null;
+  private readonly scene: MapScene;
 
-  constructor(@Inject(DEV_MODE) private readonly devMode: boolean) {}
+  constructor(
+    @Inject(DEV_MODE) private readonly devMode: boolean,
+    private readonly sessionStore: SessionStore,
+    private readonly orchestrator: SessionOrchestrator
+  ) {
+    this.scene = new MapScene({
+      onSelectPlane: (toCoord) => {
+        this.orchestrator.dispatch({
+          type: "domain/select_plane",
+          atMs: Date.now(),
+          toCoord,
+        });
+      },
+    });
+
+    effect(() => {
+      const state = this.sessionStore.state();
+      this.scene.setSessionState(state);
+    });
+  }
 
   init(container: HTMLElement): void {
     if (this.game) return;
@@ -18,10 +40,10 @@ export class PhaserBootstrapService {
       width: container.clientWidth || 800,
       height: container.clientHeight || 450,
       backgroundColor: "#111111",
-      scene: [InertScene],
+      scene: [this.scene],
       fps: {
         // Keep deterministic correctness concerns out of Phaser;
-        // this is purely rendering for now.
+        // this is purely rendering + input intents.
         target: 60,
         forceSetTimeOut: !this.devMode,
       },

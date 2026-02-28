@@ -5,6 +5,7 @@ import { DebugPanelComponent } from "./ui/debug-panel.component";
 import { ModalHostComponent } from "./ui/modal-host.component";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
+import { SessionStore } from "./core/session.store";
 
 /**
  * Indirection to keep reload testable under Vitest/JSDOM.
@@ -28,9 +29,11 @@ export class AppComponent implements AfterViewInit {
 
   private readonly fatalErrorStore = inject(FatalErrorStore);
   private readonly phaser = inject(PhaserBootstrapService);
+  private readonly sessionStore = inject(SessionStore);
 
   readonly fatal = this.fatalErrorStore.fatal;
   readonly hasFatal = computed(() => this.fatal() !== null);
+  readonly logEntries = computed(() => [...this.sessionStore.state().log.entries].reverse().slice(0, 25));
 
   ngAfterViewInit(): void {
     try {

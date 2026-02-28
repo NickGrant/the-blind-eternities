@@ -12,6 +12,15 @@ describe("DieService", () => {
     expect(a).toBe(b);
   });
 
+  it("uses seed+rollCount determinism independent of timestamp when seed exists", () => {
+    const die = new DieService();
+
+    const a = die.roll({ atMs: 1000, seed: "seed-a", rollCount: 4 });
+    const b = die.roll({ atMs: 2000, seed: "seed-a", rollCount: 4 });
+
+    expect(a).toBe(b);
+  });
+
   it("returns only valid outcomes", () => {
     const die = new DieService();
     const seen = new Set<string>();
@@ -25,4 +34,3 @@ describe("DieService", () => {
     expect(seen.size).toBeGreaterThanOrEqual(2);
   });
 });
-

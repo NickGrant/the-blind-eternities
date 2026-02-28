@@ -5,6 +5,7 @@ import { SessionOrchestrator } from "./session-orchestrator.service";
 import type { SessionStore } from "./session.store";
 import type { DeckService } from "./deck.service";
 import type { DieService } from "./die.service";
+import type { FatalErrorStore } from "./fatal-error.store";
 import { createNewSessionState } from "../../state/session.factory";
 
 describe("SessionOrchestrator", () => {
@@ -27,11 +28,15 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
 
     const orchestrator = new SessionOrchestrator(
       storeMock as SessionStore,
       deckMock as DeckService,
       dieMock as DieService,
+      fatalMock as FatalErrorStore,
       false
     );
 
@@ -64,11 +69,15 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "chaos",
     };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
 
     const orchestrator = new SessionOrchestrator(
       storeMock as SessionStore,
       deckMock as DeckService,
       dieMock as DieService,
+      fatalMock as FatalErrorStore,
       false
     );
 
@@ -79,5 +88,47 @@ describe("SessionOrchestrator", () => {
     expect(next.modal.active?.type).toBe("PLANE");
     expect(next.modal.active?.planeId).toBe("plane-test");
     expect(next.rng.rollCount).toBe(1);
+  });
+
+  it("moves to ERROR and stores fatal banner when deck init fails", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "SETUP";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next as any),
+    };
+
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => {
+        throw new Error("cards missing");
+      },
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+
+    let fatalCode = "";
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: (error) => {
+        fatalCode = error.code;
+      },
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      false
+    );
+
+    orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
+
+    const next = _state();
+    expect(fatalCode).toBe("CARD_DATA_INIT_FAILED");
+    expect(next.fsm.state).toBe("ERROR");
+    expect(next.fsm.context?.error?.code).toBe("CARD_DATA_INIT_FAILED");
   });
 });

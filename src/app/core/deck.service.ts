@@ -39,6 +39,10 @@ export class DeckService {
   }
 
   createInitialDeck(args: { atMs: number; seed?: string }): { drawPile: string[]; discardPile: string[] } {
+    if (this.planes.length === 0) {
+      throw new Error("No plane cards available in cards catalog.");
+    }
+
     return createShuffledDeck({
       planeIds: this.planes.map((p) => p.id),
       atMs: args.atMs,

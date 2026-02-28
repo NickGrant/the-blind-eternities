@@ -13,7 +13,9 @@ function hashString(value: string): number {
 @Injectable({ providedIn: "root" })
 export class DieService {
   roll(args: { atMs: number; seed?: string; rollCount: number }): DieOutcome {
-    const key = `${args.seed ?? ""}|${args.rollCount}|${args.atMs}`;
+    const key = args.seed
+      ? `${args.seed}|${args.rollCount}`
+      : `${args.atMs}|${args.rollCount}`;
     const face = hashString(key) % 6;
 
     // Planechase-style 6-face mapping: 4 blank, 1 chaos, 1 planeswalk.
@@ -22,4 +24,3 @@ export class DieService {
     return "blank";
   }
 }
-

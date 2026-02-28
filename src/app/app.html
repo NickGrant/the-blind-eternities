@@ -6,7 +6,7 @@
     
     <header class="header">
       <h1>Blind Eternities Planechase</h1>
-      <div class="subtitle">Milestone 3 â€” Deck, Reveal, and Modal Sequencing</div>
+      <div class="subtitle">Milestone 6 — Hardening, Logging, and Error Paths</div>
 
       @if(hasFatal()) {
         <button class="reload" (click)="onReload()">
@@ -20,7 +20,18 @@
     <div class="left">
       <div class="panel">
         <h2>Event Log</h2>
-        <div class="empty">No events yet (Milestone 4 turn loop in progress).</div>
+        @if (logEntries().length === 0) {
+          <div class="empty">No events yet. Start a session to generate play logs.</div>
+        } @else {
+          <ul class="eventLog">
+            @for (entry of logEntries(); track entry.id) {
+              <li [class]="'lvl-' + entry.level">
+                <div class="line">{{ entry.message }}</div>
+                <div class="meta">{{ entry.level }} • {{ entry.atMs }}</div>
+              </li>
+            }
+          </ul>
+        }
       </div>
 
       <div class="panel">

@@ -91,8 +91,8 @@ This document answers:
 ## 🚦 Project Status
 
 - Phase: **Development Started**
-- Code implementation is under way
-- Next milestone: **Phaser Integration and Visual Feedback (Milestone 5)**
+- Milestones 0-6 implementation is complete
+- Next milestone: **UAT + polish (all planned milestones complete)**
 
 ---
 
@@ -102,6 +102,8 @@ If you are new to the project, start with:
 3. **Build Pipeline**
 
 in that order.
+
+
 
 
 

@@ -13,6 +13,27 @@ import { drawPlanes } from "./deck/deck-model";
 type FsmState = SessionState["fsm"]["state"];
 type BootstrapSlot = SessionState["config"]["bootstrapRevealOrder"][number];
 
+function appendLog(
+  state: SessionState,
+  entry: Pick<SessionState["log"]["entries"][number], "atMs" | "level" | "message" | "meta">
+): SessionState {
+  const nextEntry = {
+    id: `log_${entry.atMs}_${state.log.entries.length}`,
+    atMs: entry.atMs,
+    level: entry.level,
+    message: entry.message,
+    meta: entry.meta,
+  };
+
+  return {
+    ...state,
+    log: {
+      ...state.log,
+      entries: [...state.log.entries, nextEntry],
+    },
+  };
+}
+
 function withLastIntent(state: SessionState, intent: DomainIntent): SessionState {
   return {
     ...state,
@@ -223,7 +244,7 @@ function applyBootstrapReveal(state: SessionState, atMs: number): SessionState {
 
   const withDistances = withDistancesFromParty(revealedTiles, centerKey);
 
-  return {
+  const revealed = {
     ...state,
     deck: {
       ...state.deck,
@@ -236,6 +257,13 @@ function applyBootstrapReveal(state: SessionState, atMs: number): SessionState {
       highlights: { eligibleMoveCoords: [] },
     },
   };
+
+  return appendLog(revealed, {
+    atMs,
+    level: "info",
+    message: "Bootstrap reveal complete (C/N/E/S/W).",
+    meta: { currentPlaneId: withDistances[centerKey]?.planeId ?? null },
+  });
 }
 
 function setEligibleMoves(state: SessionState): SessionState {
@@ -274,22 +302,22 @@ function applyMapPostMove(state: SessionState, atMs: number): SessionState {
     tilesByCoord: ensuredOnce,
     partyCoord,
     decayDistance: state.config.decayDistance,
-  }).tilesByCoord;
+  });
 
   // Ensure-plus again to restore plus-invariant after removals.
   const ensuredTwice = state.config.ensurePlusEnabled
     ? ensurePlusBounded({
-        tilesByCoord: decayed,
+        tilesByCoord: decayed.tilesByCoord,
         partyCoord,
         radius: state.config.decayDistance,
         atMs,
       }).tilesByCoord
-    : decayed;
+    : decayed.tilesByCoord;
 
   const withDistances = withDistancesFromParty(ensuredTwice, partyCoord);
   const currentPlaneId = withDistances[partyCoord]?.planeId;
 
-  return {
+  const mapped = {
     ...state,
     deck: {
       ...state.deck,
@@ -309,6 +337,16 @@ function applyMapPostMove(state: SessionState, atMs: number): SessionState {
       },
     },
   };
+
+  return appendLog(mapped, {
+    atMs,
+    level: "info",
+    message: "Movement completed.",
+    meta: {
+      toCoord: partyCoord,
+      decayRemoved: decayed.removed.length,
+    },
+  });
 }
 
 function withRollCountIncremented(state: SessionState): SessionState {
@@ -322,6 +360,20 @@ function withRollCountIncremented(state: SessionState): SessionState {
 }
 
 export function reduceSessionState(state: SessionState, intent: DomainIntent): SessionState {
+  if (intent.type === "domain/fatal_error") {
+    const errored = appendLog(state, {
+      atMs: intent.atMs,
+      level: "error",
+      message: `Fatal error: ${intent.code}`,
+      meta: { detail: intent.detail ?? null },
+    });
+
+    return transition(errored, "ERROR", intent, {
+      error: { code: intent.code, detail: intent.detail },
+      pendingMove: undefined,
+    });
+  }
+
   if (intent.type === "domain/open_modal") {
     const resumeTo = state.fsm.state === "MODAL_OPEN"
       ? ((state.modal.active?.resumeToState as FsmState | undefined) ?? "IDLE")
@@ -364,11 +416,23 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
       if (intent.type === "domain/roll_resolved") {
         if (intent.outcome === "blank") {
           const rolled = withRollCountIncremented(state);
-          return transition(rolled, "IDLE", intent);
+          const logged = appendLog(rolled, {
+            atMs: intent.atMs,
+            level: "info",
+            message: "Die roll resolved: blank.",
+            meta: { rollCount: rolled.rng.rollCount },
+          });
+          return transition(logged, "IDLE", intent);
         }
         if (intent.outcome === "planeswalk") {
           const rolled = withRollCountIncremented(state);
-          const next = transition(rolled, "AWAIT_MOVE", intent);
+          const logged = appendLog(rolled, {
+            atMs: intent.atMs,
+            level: "info",
+            message: "Die roll resolved: planeswalk.",
+            meta: { rollCount: rolled.rng.rollCount },
+          });
+          const next = transition(logged, "AWAIT_MOVE", intent);
           return setEligibleMoves(next);
         }
         if (intent.outcome === "chaos") {
@@ -382,7 +446,13 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
               resumeToState: "IDLE",
             }
           );
-          return transition(withModal, "MODAL_OPEN", intent);
+          const logged = appendLog(withModal, {
+            atMs: intent.atMs,
+            level: "info",
+            message: "Die roll resolved: chaos.",
+            meta: { currentPlaneId: state.deck.currentPlaneId ?? null },
+          });
+          return transition(logged, "MODAL_OPEN", intent);
         }
       }
       return state;

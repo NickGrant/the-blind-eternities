@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@angular/core";
 import { DEV_MODE } from "./dev-mode";
 import { DeckService } from "./deck.service";
 import { DieService } from "./die.service";
+import { FatalErrorStore } from "./fatal-error.store";
 import type { DomainIntent } from "../../state/intents.types";
 import { reduceSessionState } from "../../state/fsm.reducer";
 import { SessionStore } from "./session.store";
@@ -18,21 +19,44 @@ export class SessionOrchestrator {
     private readonly store: SessionStore,
     private readonly deckService: DeckService,
     private readonly dieService: DieService,
+    private readonly fatalErrorStore: FatalErrorStore,
     @Inject(DEV_MODE) private readonly devMode: boolean,
   ) {}
 
   dispatch(intent: DomainIntent): void {
     const current = this.store.state();
-    const preparedIntent =
-      intent.type === "domain/start_session"
-        ? {
-            ...intent,
-            initialDeck: this.deckService.createInitialDeck({
-              atMs: intent.atMs,
-              seed: current.rng.seed,
-            }),
-          }
-        : intent;
+    let preparedIntent: DomainIntent = intent;
+
+    if (intent.type === "domain/start_session") {
+      try {
+        preparedIntent = {
+          ...intent,
+          initialDeck: this.deckService.createInitialDeck({
+            atMs: intent.atMs,
+            seed: current.rng.seed,
+          }),
+        };
+      } catch (err) {
+        const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+        this.fatalErrorStore.set({
+          code: "CARD_DATA_INIT_FAILED",
+          message: "Unable to initialize card data. Session cannot continue.",
+          detail,
+        });
+
+        const fatalIntent: DomainIntent = {
+          type: "domain/fatal_error",
+          atMs: intent.atMs,
+          code: "CARD_DATA_INIT_FAILED",
+          detail,
+        };
+        const fatalState = reduceSessionState(current, fatalIntent);
+        if (fatalState !== current) {
+          this.store.setState(fatalState);
+        }
+        return;
+      }
+    }
 
     const next = reduceSessionState(current, preparedIntent);
     const handled = next !== current;

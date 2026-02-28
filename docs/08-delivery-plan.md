@@ -225,7 +225,7 @@ Then the session returns to IDLE
 
 ## Status
 
-Ready to start
+Complete
 
 ## Goal
 Existing logic is rendered visibly and interactively.
@@ -251,6 +251,10 @@ Then a movement intent is emitted to Angular
 ---
 
 # Milestone 6 — Hardening, Logging, and Error Paths
+
+## Status
+
+Complete
 
 ## Goal
 The system survives failure and supports live play.
@@ -298,3 +302,4 @@ Any deviation from this plan requires:
 1. Updating the relevant documentation
 2. Explicit acknowledgement of scope change
 3. Re-validation against DoR and DoD
+
