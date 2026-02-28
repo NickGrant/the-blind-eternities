@@ -296,6 +296,23 @@ Then outcomes are reproducible
 
 ---
 
+## Post-Milestone Execution Model
+
+With Milestones 0-6 complete, active execution is now issue-driven.
+
+Current process:
+
+1. Capture bugs, polish work, and documentation gaps in `ISSUES.md`
+2. Prioritize `reopened` and `unstarted` release-impacting items
+3. Implement fixes in scoped batches
+4. Re-verify with unit tests and production build
+5. Update issue status and append `Resolution:` notes
+
+This delivery plan remains the historical implementation baseline, while `ISSUES.md`
+is the operational backlog for UAT and polish.
+
+---
+
 ## Change Policy
 
 Any deviation from this plan requires:

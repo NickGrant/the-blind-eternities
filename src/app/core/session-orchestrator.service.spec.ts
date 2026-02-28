@@ -192,4 +192,70 @@ describe("SessionOrchestrator", () => {
     expect(next.fsm.context?.pendingMove).toBeUndefined();
     expect(next.modal.active?.planeId).toBe(next.map.tilesByCoord["1,0"].planeId);
   });
+
+  it("debugRollForced resolves deterministic debug outcomes from IDLE", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "IDLE";
+    initial.deck.currentPlaneId = "plane-akoum";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      true
+    );
+
+    orchestrator.debugRollForced("chaos");
+    expect(_state().fsm.state).toBe("MODAL_OPEN");
+  });
+
+  it("debugRevealAllCards flips all face-down tiles", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.map.tilesByCoord = {
+      "0,0": { coord: { x: 0, y: 0 }, planeId: "plane-a", revealedAtMs: 0, isFaceUp: true },
+      "1,0": { coord: { x: 1, y: 0 }, planeId: "plane-b", revealedAtMs: 0, isFaceUp: false },
+    };
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      true
+    );
+
+    orchestrator.debugRevealAllCards();
+    expect(_state().map.tilesByCoord["1,0"].isFaceUp).toBe(true);
+  });
 });

@@ -34,10 +34,10 @@ import { DeckService } from "../core/deck.service";
         position: fixed;
         inset: 0;
         z-index: 1200;
-        background: rgba(3, 5, 9, 0.58);
+        pointer-events: none;
         display: grid;
-        place-items: center;
-        padding: 24px;
+        place-items: start end;
+        padding: 84px 24px 24px;
       }
       .modal {
         width: min(560px, 100%);
@@ -49,6 +49,7 @@ import { DeckService } from "../core/deck.service";
         padding: 16px;
         display: grid;
         gap: 12px;
+        pointer-events: auto;
       }
       header {
         display: flex;

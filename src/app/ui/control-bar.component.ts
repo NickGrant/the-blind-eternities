@@ -39,6 +39,7 @@ import { SessionStore } from "../core/session.store";
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;
+        min-height: 42px;
       }
       .status {
         font-size: 12px;

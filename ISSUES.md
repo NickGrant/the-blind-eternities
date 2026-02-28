@@ -59,6 +59,26 @@ status: in-progress
 description: When the plane modal is opened, the full text for the plane card should be in the modal body
 Resolution: Modal body now prefers full `rulesText` from plane metadata (with `chaosText` fallback), and data sync now populates modal rules from MTGJSON card text. 15 of 16 planes now have full modal text, with `plane-ivy-lane` still missing from MTGJSON plane files.
 
+---
+
+title: Modal causes shift
+status: complete
+description: When the modal opens, the buttons in the game gontrols bar are hidden, this is causin content shift and it is distracting.
+Resolution: Reworked modal presentation to a non-blocking anchored panel (top-right) with non-intercepting backdrop, so control bar buttons remain visible and the modal no longer causes distracting layout/visibility shifts.
+reason-reopened: New modal position is good, but the issue is because the .status element in .controlBar isn't as tall as button elements in that row so when there are no buttons the bar shrinks in vertical height. The solution is to set a minimum height on that bar so it doesn't change height between having no buttons and changing one button
+Resolution: Added a fixed `min-height` to `.controlBar` so the controls row keeps constant height whether buttons are present or not, eliminating vertical jitter when modal state changes.
+
+---
+
+title: No art showing
+status: complete
+description: even with the art cached, I am not seeing the art appear on the cards
+Resolution: Normalized cached `artUrl` values to root-relative paths in `DeckService` and added Phaser loader fallbacks for both `/assets/...` and `assets/...` URL variants; this resolves asset path mismatches that prevented card art textures from loading.
+reason-reopened: console full of 404 errors for image assets /assets/plane-art/{image}.jpg
+Resolution: Changed art URL resolution to prefer relative `assets/...` paths first and added subpath-aware fallback candidates before root paths, so cached art loads correctly when the app is served from a nested path.
+reason-reopened: Still no art, does that directory need to be moved to /public/ I do not see it in the dist files either. Are we possibly misconfigured in our compiler configuration? hitting the URL directly doesn't work. If it matters I am running the application locally through `npm run start`
+Resolution: Updated Angular build assets configuration to publish `src/assets/**` to `/assets` (in addition to `public/**`), which restores runtime serving for cached plane art files and fixes the `/assets/plane-art/*.jpg` 404s.
+
 ### Functional
 
 title: Initial navigation creates wrong shape
@@ -121,3 +141,88 @@ title: json missing data
 status: complete
 description: It feels like cards.json is missing some data, please reparse the information from mtgjson to populate that file with complete information. 
 Resolution: Added `cards:sync:mtgjson` script to reparse plane metadata from MTGJSON (`OPCA`, `OPC2`, `OHOP`, `HOP`, `PHOP`) and populate fields like `rulesText`, `typeLine`, `types`, `subtypes`, set/number, and IDs; 15/16 planes now resolve directly from MTGJSON with existing fallback retained for `plane-ivy-lane`.
+
+---
+
+title: debug bar not useful
+status: complete
+description: The debug bar in it's current state is not very useful. Most of the buttons are never enabled or ever useful. Let's remove most of the functionality that is there and replace it with the following:
+- roll dice (random) - Roll a dice at random, like the controller button does
+- roll dice (chaos) - Trigger a chaos roll
+- roll dice (planechase) - Trigger a planechase roll
+- show hidden cards - reveal all face down cards
+Resolution: Replaced the debug panel controls with only the requested actions and added orchestrator debug helpers for forced chaos/planeswalk outcomes and revealing all face-down tiles.
+
+---
+
+title: Debug panel missing session start and restart controls
+status: unstarted
+description: The debug panel needs explicit Session Start and Session Restart actions for facilitator testing flows.
+
+---
+
+title: Initial reveal should only flip center tile
+status: unstarted
+description: On initial session start, only the center tile should be face-up. Adjacent bootstrap tiles should remain face-down until revealed by gameplay.
+
+### Documentation
+
+title: Replace boilerplate root README
+status: complete
+description: Root README is still Angular boilerplate and does not document project-specific setup, architecture summary, development workflow, or supported scripts.
+Resolution: Replaced root README with project-specific onboarding content, core commands, architecture summary, workflow file references, and current project status.
+
+---
+
+title: Add contributor runbook
+status: complete
+description: Create a single contributor guide covering role usage (ROLES.md), issue workflow (ISSUES.md), verification expectations (unit tests/build), and commit/update conventions.
+Resolution: Added `docs/10-contributor-runbook.md` with role lifecycle guidance, issue workflow, standard verification sequence, and scope/quality expectations.
+
+---
+
+title: Document card/art data pipeline
+status: complete
+description: Add end-to-end documentation for card metadata and art ingestion/sync scripts, including run order, throttling expectations, and known data gaps.
+Resolution: Added `docs/11-card-art-data-pipeline.md` documenting sources, scripts, execution order, guardrails, and known metadata/art coverage gap.
+
+---
+
+title: Add assets and serving troubleshooting doc
+status: complete
+description: Document Angular asset configuration, expected dist output paths, and common 404 troubleshooting steps for cached plane art.
+Resolution: Added `docs/12-assets-serving-troubleshooting.md` with required Angular asset config, verification path checks, and 404 troubleshooting steps.
+
+---
+
+title: Sync delivery-plan with post-milestone workflow
+status: complete
+description: Update docs/08-delivery-plan.md to reflect that milestone implementation is complete and ongoing work is now UAT/polish and issue-driven.
+Resolution: Updated `docs/08-delivery-plan.md` with a post-milestone execution section that defines issue-driven UAT/polish workflow and references `ISSUES.md` as operational backlog.
+
+---
+
+title: Add UX behavior spec addendum
+status: complete
+description: Document current agreed runtime UX behaviors (landing modal, plane inspect double-click and recenter, debug panel controls, modal placement behavior).
+Resolution: Added `docs/13-ux-behavior-spec.md` to consolidate current runtime interaction and modal behavior expectations.
+
+---
+
+title: Add UAT and release readiness checklist
+status: complete
+description: Add a checklist for facilitator testing, browser coverage, asset validation, and regression gates required before release candidate sign-off.
+Resolution: Added `docs/14-uat-release-checklist.md` with functional, visual, data, quality-gate, and release-documentation checkpoints.
+
+---
+
+title: Fix docs encoding issues
+status: complete
+description: Normalize documentation encoding and replace garbled characters in docs/README.md to ensure long-term readability and maintainability.
+Resolution: Rewrote `docs/README.md` with normalized ASCII-safe content and updated index entries, removing prior garbled encoding artifacts.
+
+---
+
+title: Define phenomenon card support specification
+status: unstarted
+description: Create a documentation spec for phenomenon support that defines play pattern, backend/state flow, and UX flow before implementation starts.

@@ -167,30 +167,81 @@ export class MapScene extends Phaser.Scene {
   }
 
   private resolveArtTexture(planeId: string): string | undefined {
-    const url = this.deps.getPlaneArtUrl?.(planeId)?.trim();
-    if (!url) return undefined;
+    const raw = this.deps.getPlaneArtUrl?.(planeId)?.trim();
+    if (!raw) return undefined;
 
-    const known = this.artTextureByUrl.get(url);
-    if (known && this.textures.exists(known)) return known;
-    if (this.pendingArtLoads.has(url)) return undefined;
-
-    const textureKey = `plane-art-${this.artTextureByUrl.size + 1}`;
-    this.artTextureByUrl.set(url, textureKey);
-    this.pendingArtLoads.add(url);
-
-    this.load.image(textureKey, url);
-    this.load.once(`filecomplete-image-${textureKey}`, () => {
-      this.pendingArtLoads.delete(url);
-      this.renderFromState();
-    });
-    this.load.once("loaderror", () => {
-      this.pendingArtLoads.delete(url);
-    });
-    if (!this.load.isLoading()) {
-      this.load.start();
+    const candidates = this.expandArtCandidates(raw);
+    for (const candidate of candidates) {
+      const knownKey = this.artTextureByUrl.get(candidate);
+      if (knownKey && this.textures.exists(knownKey)) return knownKey;
+    }
+    for (const candidate of candidates) {
+      if (this.pendingArtLoads.has(candidate)) return undefined;
     }
 
+    const textureKey = `plane-art-${this.artTextureByUrl.size + 1}`;
+    this.tryLoadArtCandidate(textureKey, candidates, 0);
+
     return undefined;
+  }
+
+  private tryLoadArtCandidate(textureKey: string, candidates: string[], index: number): void {
+    if (index >= candidates.length) return;
+
+    const candidate = candidates[index];
+    this.artTextureByUrl.set(candidate, textureKey);
+    this.pendingArtLoads.add(candidate);
+
+    const cleanup = () => {
+      this.load.off(`filecomplete-image-${textureKey}`, onComplete);
+      this.load.off("loaderror", onError);
+    };
+
+    const onComplete = () => {
+      cleanup();
+      this.pendingArtLoads.delete(candidate);
+      this.renderFromState();
+    };
+
+    const onError = (file: { key?: string }) => {
+      if (file?.key !== textureKey) return;
+      cleanup();
+      this.pendingArtLoads.delete(candidate);
+      this.tryLoadArtCandidate(textureKey, candidates, index + 1);
+    };
+
+    this.load.on(`filecomplete-image-${textureKey}`, onComplete);
+    this.load.on("loaderror", onError);
+    this.load.image(textureKey, candidate);
+    if (!this.load.isLoading()) this.load.start();
+  }
+
+  private expandArtCandidates(url: string): string[] {
+    const trimmed = url.trim();
+    if (trimmed.length === 0) return [];
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return [trimmed];
+    const out: string[] = [];
+    const push = (value: string) => {
+      if (!value || out.includes(value)) return;
+      out.push(value);
+    };
+
+    const relative = trimmed.startsWith("/") ? trimmed.slice(1) : trimmed;
+    const absoluteFromBase = new URL(relative, document.baseURI).toString();
+    push(absoluteFromBase);
+    push(relative);
+    push(trimmed);
+
+    const firstSegment = window.location.pathname.split("/").filter(Boolean)[0];
+    if (firstSegment && relative.startsWith("assets/")) {
+      push(`/${firstSegment}/${relative}`);
+    }
+
+    if (relative.startsWith("assets/")) {
+      push(`/${relative}`);
+    }
+
+    return out;
   }
 
   private setupCameraControls(): void {

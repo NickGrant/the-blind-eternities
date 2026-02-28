@@ -62,7 +62,8 @@ export class DeckService {
   }
 
   getPlaneArtUrl(id: string | undefined): string | undefined {
-    return this.getPlane(id)?.artUrl;
+    const art = this.getPlane(id)?.artUrl;
+    return art?.trim() || undefined;
   }
 
   createInitialDeck(args: { atMs: number; seed?: string }): { drawPile: string[]; discardPile: string[] } {

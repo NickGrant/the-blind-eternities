@@ -1,109 +1,56 @@
-# Blind Eternities Planechase — Documentation
+# Blind Eternities Planechase Documentation
 
-This directory contains the **authoritative system documentation** for the Blind Eternities Planechase application.
+This folder contains authoritative project documentation for architecture, delivery, operations, testing, and release readiness.
 
-These documents define **scope, architecture, runtime behavior, and constraints** for the project.  
-They are intended to be read **before** making implementation changes.
+## Documentation Index
 
----
+1. `01-system-architecture.md`  
+   System boundaries, ownership, state model, and service responsibilities.
 
-## 📚 Documentation Index
+2. `02-runtime-flow-fsm.md`  
+   Runtime state machine and allowed transitions.
 
-### 1. System Architecture & State Model  
-**`01-system-architecture.md`**
+3. `03-build-time-pipeline.md`  
+   Build-time data and asset flow expectations.
 
-Describes:
-- Overall frontend-only architecture
-- Angular vs Phaser responsibilities
-- Core services and orchestration
-- Canonical state shape and ownership rules
-- Modal queue design
-- Phaser ↔ Angular interaction contract
+4. `04-risks-assumptions.md`  
+   Explicit risk register, assumptions, and deferred decisions.
 
-This document answers:  
-> *“What exists, who owns it, and how do systems talk to each other?”*
+5. `05-operational-considerations.md`  
+   Non-functional expectations and operational guardrails.
 
----
+6. `06-definition-of-ready.md`  
+   Entry criteria for starting work items.
 
-### 2. Runtime Flow & Finite State Machine  
-**`02-runtime-flow-fsm.md`**
+7. `07-definition-of-done.md`  
+   Completion criteria for implementation and validation.
 
-Defines:
-- Session finite state machine (FSM)
-- Allowed user actions per state
-- Reveal sequencing rules
-- Die roll outcomes and transitions
-- Decay behavior and movement flow
+8. `08-delivery-plan.md`  
+   Milestone plan and post-milestone execution policy.
 
-This document answers:  
-> *“What happens, in what order, and what is allowed when?”*
+9. `09-testing-standards.md`  
+   Testing scope and quality standards.
 
----
+10. `10-contributor-runbook.md`  
+    Repository workflow rules for contributors and coding agents.
 
-### 3. Build-Time Data & Asset Pipeline  
-**`03-build-time-pipeline.md`**
+11. `11-card-art-data-pipeline.md`  
+    Operational runbook for card metadata and art ingestion/sync.
 
-Covers:
-- Scryfall ingestion strategy
-- Build-time data fetching only (no runtime API calls)
-- Image handling approach
-- Generated asset expectations
+12. `12-assets-serving-troubleshooting.md`  
+    Troubleshooting for asset serving and `/assets` 404s.
 
-This document answers:  
-> *“Where does card data come from, and how does it enter the app?”*
+13. `13-ux-behavior-spec.md`  
+    Consolidated runtime UX behavior specification.
 
----
+14. `14-uat-release-checklist.md`  
+    UAT and release-readiness checklist.
 
-### 4. Risks, Assumptions & Open Decisions  
-**`04-risks-assumptions.md`**
+15. `15-phenomenon-support-spec.md`  
+    Draft specification for Phenomenon play pattern, backend flow, and UX flow.
 
-Lists:
-- Explicit assumptions made by the system
-- Known risks and mitigations
-- Features intentionally deferred
-- Non-blocking future considerations
+## Usage Rules
 
-This document answers:  
-> *“What are we consciously choosing not to solve yet?”*
-
----
-
-## 🧭 How to Use These Docs
-
-- These files are **source-of-truth**, not commentary.
-- Implementation should follow these documents unless explicitly revised.
-- If implementation deviates, **update the docs first**, then the code.
-- New features should include:
-  - an update to the relevant doc(s), or
-  - a new numbered document if scope warrants it.
-
----
-
-## 🏷️ Versioning & Changes
-
-- Documentation changes should be committed alongside code changes.
-- Major scope changes should be recorded in:
-  - `04-risks-assumptions.md`, or
-  - a new architecture addendum document.
-
----
-
-## 🚦 Project Status
-
-- Phase: **Development Started**
-- Milestones 0-6 implementation is complete
-- Next milestone: **UAT + polish (all planned milestones complete)**
-
----
-
-If you are new to the project, start with:
-1. **System Architecture**
-2. **Runtime Flow & FSM**
-3. **Build Pipeline**
-
-in that order.
-
-
-
-
-
+- Update documentation when behavior or scope changes.
+- Prefer doc-first updates for architecture-impacting changes.
+- Use `ISSUES.md` for active work tracking and status changes.

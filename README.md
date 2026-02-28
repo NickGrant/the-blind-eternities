@@ -1,59 +1,45 @@
-# BlindEternities
+# Blind Eternities Planechase
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+Blind Eternities Planechase is an Angular + Phaser application for facilitator-led Planechase sessions.
 
-## Development server
-
-To start a local development server, run:
+## Quick Start
 
 ```bash
-ng serve
+npm install
+npm run start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+App URL: `http://localhost:4200/`
 
-## Code scaffolding
+## Core Commands
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- `npm run start`: Start development server
+- `npm run build`: Create production build
+- `npm run test:unit`: Run unit test suite (Vitest)
+- `npm run art:cache:fetch`: Fetch a small, throttled batch of plane art
+- `npm run cards:sync:mtgjson`: Sync plane metadata from MTGJSON
 
-```bash
-ng generate component component-name
-```
+## Documentation
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Documentation index: [docs/README.md](docs/README.md)
+- Delivery plan and milestone status: [docs/08-delivery-plan.md](docs/08-delivery-plan.md)
+- Contributor workflow: [docs/10-contributor-runbook.md](docs/10-contributor-runbook.md)
 
-```bash
-ng generate --help
-```
+## Project Workflow Files
 
-## Building
+- Issue tracking and status: [ISSUES.md](ISSUES.md)
+- Role-based behavior guidance: [ROLES.md](ROLES.md)
+- Agent operating instructions: [AGENTS.md](AGENTS.md)
 
-To build the project run:
+## Architecture Summary
 
-```bash
-ng build
-```
+- Angular owns state, game logic, and FSM transitions.
+- Phaser handles rendering and input intent emission.
+- SessionOrchestrator is the single state transition gateway.
+- Card metadata and art are build-time/local assets (no runtime third-party API calls).
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Current Status
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Milestones 0 through 6: complete
+- Current phase: UAT, bug-fix, and polish
+- Active backlog source: `ISSUES.md`
