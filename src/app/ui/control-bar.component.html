@@ -58,8 +58,17 @@
   }
 
   @if (fsmState() !== "SETUP") {
-    <button type="button" class="control-bar__button control-bar__button--secondary" (click)="quitSession()">
-      Quit Session
-    </button>
+    @if (isQuitConfirming()) {
+      <button type="button" class="control-bar__button control-bar__button--danger" (click)="quitSession()">
+        Confirm Quit
+      </button>
+      <button type="button" class="control-bar__button control-bar__button--secondary" (click)="cancelQuitSession()">
+        Keep Playing
+      </button>
+    } @else {
+      <button type="button" class="control-bar__button control-bar__button--secondary" (click)="quitSession()">
+        Quit Session
+      </button>
+    }
   }
 </div>

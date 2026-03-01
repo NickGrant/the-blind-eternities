@@ -17,6 +17,8 @@ export function toModalDescriptor(
 }
 
 export function enqueueModal(state: SessionState, modal: ModalDescriptor): SessionState {
+  if (isDuplicateModal(state, modal)) return state;
+
   if (state.modal.isOpen && state.modal.active) {
     return {
       ...state,
@@ -35,6 +37,18 @@ export function enqueueModal(state: SessionState, modal: ModalDescriptor): Sessi
       isOpen: true,
     },
   };
+}
+
+function isDuplicateModal(state: SessionState, candidate: ModalDescriptor): boolean {
+  const active = state.modal.active;
+  if (active && matchesModalIdentity(active, candidate)) return true;
+  return state.modal.queue.some((queued) => matchesModalIdentity(queued, candidate));
+}
+
+function matchesModalIdentity(left: ModalDescriptor, right: ModalDescriptor): boolean {
+  if (left.id === right.id) return true;
+  if (!left.planeId || !right.planeId) return false;
+  return left.type === right.type && left.planeId === right.planeId;
 }
 
 export function closeModal(

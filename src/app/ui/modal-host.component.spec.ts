@@ -107,4 +107,48 @@ describe("ModalHostComponent (class-only)", () => {
     expect(dispatchMock.mock.calls[0][0].type).toBe("domain/close_modal");
     expect(dispatchMock.mock.calls[0][0].modalId).toBe("m3");
   });
+
+  it("updates modal offset while dragging header handle", () => {
+    const initial = createNewSessionState({ atMs: 10 });
+    initial.modal.active = {
+      id: "m4",
+      type: "PLANE",
+      planeId: "plane-akoum",
+      resumeToState: "IDLE",
+    };
+    initial.modal.isOpen = true;
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: vi.fn(),
+    };
+
+    const cmp = new ModalHostComponent(
+      storeMock as SessionStore,
+      orchestratorMock as SessionOrchestrator,
+      new DeckService()
+    );
+
+    cmp.onDragHandleDown({
+      button: 0,
+      pointerId: 11,
+      clientX: 100,
+      clientY: 100,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent);
+
+    cmp.onPointerMove({
+      pointerId: 11,
+      clientX: 130,
+      clientY: 120,
+    } as PointerEvent);
+    cmp.onPointerUp({ pointerId: 11 } as PointerEvent);
+
+    expect(cmp.modalOffset()).toEqual({ x: 30, y: 20 });
+    expect(cmp.modalTransform()).toBe("translate(30px, 20px)");
+  });
 });

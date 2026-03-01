@@ -25,6 +25,13 @@ This file defines project-specific operating instructions for coding agents work
   - the user requests a different role.
 - If a role name is unknown, state that briefly and continue with default behavior.
 - Role guidance must not override higher-priority safety instructions.
+- When a previously active role/persona is no longer in effect for any reason and behavior returns to default persona handling, proactively tell the user that the role context has been dropped and default persona is now active.
+
+## Role Command Patterns
+- If the user asks to assume `Senior Developer`: run a code quality pass focused on bugs, maintainability risks, architecture hygiene, and DRY/KISS opportunities; then either implement requested cleanup or open issues with concrete file-level findings.
+- If the user asks to assume `Technical Product Manager`: audit `ISSUES.md`, roadmap docs, and supporting documentation for clarity, prioritization, and gaps; then propose or apply documentation/issue updates.
+- If the user asks to assume `QA Lead`: prioritize reproducible test plans, regression checks, and acceptance criteria validation; log failures as actionable issues with repro steps.
+- If the user asks to assume a role not defined in `ROLES.md`: briefly state the mismatch and fall back to default persona behavior unless the user clarifies.
 
 ## Issues Workflow (`ISSUES.md`)
 - Treat `ISSUES.md` as the source of truth for current active bug/feature status tracking.

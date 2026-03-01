@@ -22,6 +22,7 @@ export class ControlBarComponent {
   readonly selectedSetCodes = computed(() => [...this.selectedSets()].sort());
   readonly selectedPlayableCount = computed(() => this.deckService.countPlayablePlanesForSets(this.selectedSetCodes()));
   readonly canStartSession = computed(() => this.selectedPlayableCount() >= this.minimumSessionPlanes);
+  readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
 
   constructor(
@@ -33,8 +34,9 @@ export class ControlBarComponent {
     this.minimumSessionPlanes = this.deckService.getMinimumSessionPlanes();
     const sets = this.deckService.listPlaneSetOptions();
     this.planeSets = signal(sets).asReadonly();
-    const hasOpca = sets.some((s) => s.code === "OPCA");
-    const initial = hasOpca ? ["OPCA"] : sets.slice(0, 1).map((s) => s.code);
+    const preferredDefault = this.deckService.getPreferredDefaultSetCode();
+    const hasPreferredDefault = preferredDefault ? sets.some((s) => s.code === preferredDefault) : false;
+    const initial = hasPreferredDefault && preferredDefault ? [preferredDefault] : sets.slice(0, 1).map((s) => s.code);
     this.selectedSets.set(new Set(initial));
   }
 
@@ -66,6 +68,7 @@ export class ControlBarComponent {
    */
   startSession(): void {
     if (!this.canStartSession()) return;
+    this.isQuitConfirming.set(false);
     this.orchestrator.dispatch({
       type: DOMAIN_INTENT.START_SESSION,
       atMs: Date.now(),
@@ -78,13 +81,19 @@ export class ControlBarComponent {
    * @returns void
    */
   quitSession(): void {
-    if (!window.confirm("Quit current session and return to set selection?")) {
+    if (!this.isQuitConfirming()) {
+      this.isQuitConfirming.set(true);
       return;
     }
+    this.isQuitConfirming.set(false);
     this.orchestrator.dispatch({
       type: DOMAIN_INTENT.RESTART_SESSION,
       atMs: Date.now(),
     });
+  }
+
+  cancelQuitSession(): void {
+    this.isQuitConfirming.set(false);
   }
 
   /**
@@ -99,6 +108,7 @@ export class ControlBarComponent {
       | typeof DOMAIN_INTENT.CANCEL_MOVE
       | typeof DOMAIN_INTENT.RESTART_SESSION
   ): void {
+    this.isQuitConfirming.set(false);
     this.orchestrator.dispatch({ type, atMs: Date.now() });
   }
 }

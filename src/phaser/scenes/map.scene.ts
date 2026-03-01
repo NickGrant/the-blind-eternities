@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import type { CoordKey, SessionState } from "../../state/session.types";
 import {
+  canInspectTiles,
   coordToWorld,
   isConfirmSelectionTile,
   isInteractiveTile,
@@ -24,7 +25,6 @@ export class MapScene extends Phaser.Scene {
   private dragPointerId: number | null = null;
   private dragLast = { x: 0, y: 0 };
   private dragDistance = 0;
-  private lastTap = { atMs: 0, coordKey: "" };
   private focusedCoordKey: CoordKey | null = null;
   private readonly tilesByCoord = new Map<
     CoordKey,
@@ -167,7 +167,12 @@ export class MapScene extends Phaser.Scene {
           this.deps.onSelectPlane(coordKey);
           return;
         }
-        if (latestTile.isFaceUp && this.shouldInspect(coordKey, latest.fsm.state)) {
+        if (latestTile.isFaceUp && canInspectTiles(latest)) {
+          if (this.focusedCoordKey !== coordKey) {
+            this.focusedCoordKey = coordKey;
+            this.centerCamera();
+            return;
+          }
           this.focusedCoordKey = coordKey;
           this.centerCamera();
           this.deps.onInspectPlane?.(latestTile.planeId);
@@ -603,11 +608,4 @@ export class MapScene extends Phaser.Scene {
     return Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y);
   }
 
-  private shouldInspect(coordKey: CoordKey, fsmState: SessionState["fsm"]["state"]): boolean {
-    if (fsmState === "AWAIT_MOVE" || fsmState === "CONFIRM_MOVE" || fsmState === "MOVING") return false;
-    const now = Date.now();
-    const isDoubleTap = this.lastTap.coordKey === coordKey && now - this.lastTap.atMs <= 350;
-    this.lastTap = { coordKey, atMs: now };
-    return isDoubleTap;
-  }
 }

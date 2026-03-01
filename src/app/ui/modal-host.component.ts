@@ -1,4 +1,4 @@
-﻿import { AfterViewChecked, Component, ElementRef, HostListener, ViewChild, computed } from "@angular/core";
+import { AfterViewChecked, Component, ElementRef, HostListener, ViewChild, computed, signal } from "@angular/core";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
 import { DeckService } from "../core/deck.service";
@@ -13,10 +13,17 @@ import { DOMAIN_INTENT } from "../../state/intents.types";
 export class ModalHostComponent implements AfterViewChecked {
   @ViewChild("modalPanel") private modalPanel?: ElementRef<HTMLElement>;
   private focusedModalId?: string;
+  private dragPointerId: number | null = null;
+  private dragLast = { x: 0, y: 0 };
 
   readonly state;
   readonly activeModal = computed(() => this.state().modal.active);
   readonly queueCount = computed(() => this.state().modal.queue.length);
+  readonly modalOffset = signal({ x: 0, y: 0 });
+  readonly modalTransform = computed(() => {
+    const offset = this.modalOffset();
+    return `translate(${offset.x}px, ${offset.y}px)`;
+  });
   readonly modalTitle = computed(() => {
     const modal = this.activeModal();
     if (!modal) return "";
@@ -63,6 +70,30 @@ export class ModalHostComponent implements AfterViewChecked {
       atMs: Date.now(),
       modalId: active.id,
     });
+  }
+
+  onDragHandleDown(event: PointerEvent): void {
+    if (!this.activeModal()) return;
+    if (event.button !== 0) return;
+    this.dragPointerId = event.pointerId;
+    this.dragLast = { x: event.clientX, y: event.clientY };
+    event.preventDefault();
+  }
+
+  @HostListener("document:pointermove", ["$event"])
+  onPointerMove(event: PointerEvent): void {
+    if (this.dragPointerId !== event.pointerId) return;
+    const dx = event.clientX - this.dragLast.x;
+    const dy = event.clientY - this.dragLast.y;
+    if (dx === 0 && dy === 0) return;
+    this.dragLast = { x: event.clientX, y: event.clientY };
+    this.modalOffset.update((offset) => ({ x: offset.x + dx, y: offset.y + dy }));
+  }
+
+  @HostListener("document:pointerup", ["$event"])
+  onPointerUp(event: PointerEvent): void {
+    if (this.dragPointerId !== event.pointerId) return;
+    this.dragPointerId = null;
   }
 
   @HostListener("document:keydown", ["$event"])
@@ -125,4 +156,3 @@ export class ModalHostComponent implements AfterViewChecked {
     ).filter((el) => !el.hasAttribute("disabled"));
   }
 }
-

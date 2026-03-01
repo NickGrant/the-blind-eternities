@@ -6,32 +6,19 @@ import type { SessionStore } from "../core/session.store";
 import type { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { createNewSessionState } from "../../state/session.factory";
 import type { DomainIntent } from "../../state/intents.types";
-import type { DeckService } from "../core/deck.service";
+import type { DeckService, PlaneSetOption } from "../core/deck.service";
+
+type DeckMock = Pick<
+  DeckService,
+  "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes" | "getPreferredDefaultSetCode"
+>;
 
 describe("ControlBarComponent (class-only)", () => {
   it("dispatches roll_die when requested", () => {
-    const initial = createNewSessionState({ atMs: 1 });
-    initial.fsm.state = "IDLE";
-
-    const _state = signal(initial);
-    const storeMock: Pick<SessionStore, "state"> = {
-      state: _state.asReadonly(),
-    };
-    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
-    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
-      dispatch: dispatchMock,
-    };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
-      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
-      countPlayablePlanesForSets: () => 10,
-      getMinimumSessionPlanes: () => 5,
-    };
-
-    const cmp = new ControlBarComponent(
-      orchestratorMock as SessionOrchestrator,
-      storeMock as SessionStore,
-      deckMock as DeckService
-    );
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "IDLE",
+      deckMock: buildDeckMock(),
+    });
 
     cmp.dispatch("domain/roll_die");
 
@@ -40,28 +27,10 @@ describe("ControlBarComponent (class-only)", () => {
   });
 
   it("dispatches start_session with selected set filters", () => {
-    const initial = createNewSessionState({ atMs: 1 });
-    initial.fsm.state = "SETUP";
-
-    const _state = signal(initial);
-    const storeMock: Pick<SessionStore, "state"> = {
-      state: _state.asReadonly(),
-    };
-    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
-    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
-      dispatch: dispatchMock,
-    };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
-      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
-      countPlayablePlanesForSets: () => 10,
-      getMinimumSessionPlanes: () => 5,
-    };
-
-    const cmp = new ControlBarComponent(
-      orchestratorMock as SessionOrchestrator,
-      storeMock as SessionStore,
-      deckMock as DeckService
-    );
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
 
     cmp.startSession();
 
@@ -74,28 +43,10 @@ describe("ControlBarComponent (class-only)", () => {
   });
 
   it("uses DeckService minimum threshold to gate session start", () => {
-    const initial = createNewSessionState({ atMs: 1 });
-    initial.fsm.state = "SETUP";
-
-    const _state = signal(initial);
-    const storeMock: Pick<SessionStore, "state"> = {
-      state: _state.asReadonly(),
-    };
-    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
-    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
-      dispatch: dispatchMock,
-    };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
-      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 2, isPlanechaseDefault: true }],
-      countPlayablePlanesForSets: () => 2,
-      getMinimumSessionPlanes: () => 2,
-    };
-
-    const cmp = new ControlBarComponent(
-      orchestratorMock as SessionOrchestrator,
-      storeMock as SessionStore,
-      deckMock as DeckService
-    );
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock({ minPlanes: 2, playableCount: 2, setCount: 2 }),
+    });
 
     expect(cmp.canStartSession()).toBe(true);
     cmp.startSession();
@@ -103,123 +54,100 @@ describe("ControlBarComponent (class-only)", () => {
   });
 
   it("does not start session when selected sets provide fewer than 5 planes", () => {
-    const initial = createNewSessionState({ atMs: 1 });
-    initial.fsm.state = "SETUP";
-
-    const _state = signal(initial);
-    const storeMock: Pick<SessionStore, "state"> = {
-      state: _state.asReadonly(),
-    };
-    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
-    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
-      dispatch: dispatchMock,
-    };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
-      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 4, isPlanechaseDefault: true }],
-      countPlayablePlanesForSets: () => 4,
-      getMinimumSessionPlanes: () => 5,
-    };
-
-    const cmp = new ControlBarComponent(
-      orchestratorMock as SessionOrchestrator,
-      storeMock as SessionStore,
-      deckMock as DeckService
-    );
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock({ minPlanes: 5, playableCount: 4, setCount: 4 }),
+    });
 
     cmp.startSession();
 
     expect(dispatchMock).not.toHaveBeenCalled();
   });
 
-  it("dispatches restart_session when quitting an active session", () => {
-    const initial = createNewSessionState({ atMs: 1 });
-    initial.fsm.state = "IDLE";
+  it("dispatches restart_session on second quit click after in-app confirmation", () => {
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "IDLE",
+      deckMock: buildDeckMock(),
+    });
 
-    const _state = signal(initial);
-    const storeMock: Pick<SessionStore, "state"> = {
-      state: _state.asReadonly(),
-    };
-    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
-    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
-      dispatch: dispatchMock,
-    };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
-      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
-      countPlayablePlanesForSets: () => 10,
-      getMinimumSessionPlanes: () => 5,
-    };
+    cmp.quitSession();
+    expect(dispatchMock).not.toHaveBeenCalled();
+    expect(cmp.isQuitConfirming()).toBe(true);
 
-    const cmp = new ControlBarComponent(
-      orchestratorMock as SessionOrchestrator,
-      storeMock as SessionStore,
-      deckMock as DeckService
-    );
-
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
     cmp.quitSession();
 
     expect(dispatchMock).toHaveBeenCalledTimes(1);
     expect(dispatchMock.mock.calls[0][0].type).toBe("domain/restart_session");
-    confirmSpy.mockRestore();
   });
 
-  it("does not quit session when confirmation is canceled", () => {
-    const initial = createNewSessionState({ atMs: 1 });
-    initial.fsm.state = "IDLE";
+  it("cancels in-app quit confirmation without dispatching", () => {
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "IDLE",
+      deckMock: buildDeckMock(),
+    });
 
-    const _state = signal(initial);
-    const storeMock: Pick<SessionStore, "state"> = {
-      state: _state.asReadonly(),
-    };
-    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
-    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
-      dispatch: dispatchMock,
-    };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
-      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
-      countPlayablePlanesForSets: () => 10,
-      getMinimumSessionPlanes: () => 5,
-    };
-
-    const cmp = new ControlBarComponent(
-      orchestratorMock as SessionOrchestrator,
-      storeMock as SessionStore,
-      deckMock as DeckService
-    );
-
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
     cmp.quitSession();
+    expect(cmp.isQuitConfirming()).toBe(true);
 
+    cmp.cancelQuitSession();
+    expect(cmp.isQuitConfirming()).toBe(false);
     expect(dispatchMock).not.toHaveBeenCalled();
-    confirmSpy.mockRestore();
   });
 
-  it("defaults selected set to OPCA when available", () => {
-    const initial = createNewSessionState({ atMs: 1 });
-    initial.fsm.state = "SETUP";
-
-    const _state = signal(initial);
-    const storeMock: Pick<SessionStore, "state"> = {
-      state: _state.asReadonly(),
-    };
-    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
-      dispatch: vi.fn(),
-    };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
-      listPlaneSetOptions: () => [
-        { code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true },
-        { code: "WHO", label: "Doctor Who Commander", count: 10, isPlanechaseDefault: false },
-      ],
-      countPlayablePlanesForSets: () => 10,
-      getMinimumSessionPlanes: () => 5,
-    };
-
-    const cmp = new ControlBarComponent(
-      orchestratorMock as SessionOrchestrator,
-      storeMock as SessionStore,
-      deckMock as DeckService
-    );
+  it("defaults selected set from shared preferred default code when available", () => {
+    const { cmp } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock({
+        options: [
+          { code: "WHO", label: "Doctor Who Commander", count: 10, isPlanechaseDefault: false },
+          { code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true },
+        ],
+        preferredDefault: "OPCA",
+      }),
+    });
 
     expect(cmp.selectedSetCodes()).toEqual(["OPCA"]);
   });
 });
+
+function buildComponent(args: { fsmState: ReturnType<typeof createNewSessionState>["fsm"]["state"]; deckMock: DeckMock }) {
+  const initial = createNewSessionState({ atMs: 1 });
+  initial.fsm.state = args.fsmState;
+
+  const _state = signal(initial);
+  const storeMock: Pick<SessionStore, "state"> = {
+    state: _state.asReadonly(),
+  };
+  const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
+  const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+    dispatch: dispatchMock,
+  };
+
+  const cmp = new ControlBarComponent(
+    orchestratorMock as SessionOrchestrator,
+    storeMock as SessionStore,
+    args.deckMock as DeckService
+  );
+
+  return { cmp, dispatchMock };
+}
+
+function buildDeckMock(args?: {
+  options?: PlaneSetOption[];
+  playableCount?: number;
+  minPlanes?: number;
+  preferredDefault?: string;
+  setCount?: number;
+}): DeckMock {
+  const optionCount = args?.setCount ?? args?.playableCount ?? 10;
+  const options =
+    args?.options ??
+    ([{ code: "OPCA", label: "Planechase Anthology", count: optionCount, isPlanechaseDefault: true }] satisfies PlaneSetOption[]);
+
+  return {
+    listPlaneSetOptions: () => options,
+    countPlayablePlanesForSets: () => args?.playableCount ?? 10,
+    getMinimumSessionPlanes: () => args?.minPlanes ?? 5,
+    getPreferredDefaultSetCode: () => args?.preferredDefault ?? "OPCA",
+  };
+}

@@ -81,6 +81,13 @@ export class DeckService {
   }
 
   /**
+   * Returns preferred default set code from shared plane-set config.
+   */
+  getPreferredDefaultSetCode(): string | undefined {
+    return DEFAULT_SELECTABLE_PLANE_SET_CODES[0];
+  }
+
+  /**
    * Counts playable planes that match at least one selected set code.
    */
   countPlayablePlanesForSets(includedSetCodes: readonly string[]): number {

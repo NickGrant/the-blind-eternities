@@ -128,6 +128,47 @@ describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
     expect(next.modal.active?.planeId).toBe("plane-test");
     expect(next.modal.queue).toEqual([]);
   });
+
+  it("does not enqueue duplicate modal identities for the same plane target", () => {
+    const sIdle = buildState("IDLE");
+
+    const firstOpen = reduceSessionState(sIdle, {
+      type: "domain/open_modal",
+      atMs: 1,
+      modal: {
+        id: "m-plane-akoum-1",
+        modalType: "PLANE",
+        planeId: "plane-akoum",
+        title: "Akoum",
+      },
+    });
+
+    const duplicateByPlane = reduceSessionState(firstOpen, {
+      type: "domain/open_modal",
+      atMs: 2,
+      modal: {
+        id: "m-plane-akoum-2",
+        modalType: "PLANE",
+        planeId: "plane-akoum",
+        title: "Akoum duplicate",
+      },
+    });
+
+    const duplicateById = reduceSessionState(duplicateByPlane, {
+      type: "domain/open_modal",
+      atMs: 3,
+      modal: {
+        id: "m-plane-akoum-1",
+        modalType: "PLANE",
+        planeId: "plane-kessig",
+      },
+    });
+
+    expect(duplicateByPlane.modal.active?.id).toBe("m-plane-akoum-1");
+    expect(duplicateByPlane.modal.queue).toEqual([]);
+    expect(duplicateById.modal.active?.id).toBe("m-plane-akoum-1");
+    expect(duplicateById.modal.queue).toEqual([]);
+  });
 });
 
 function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {

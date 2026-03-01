@@ -9,6 +9,7 @@ import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 import { SessionStore } from "./core/session.store";
 import { DIE_OUTCOME } from "../state/intents.types";
 import { DevModeStore } from "./core/dev-mode";
+import { APP_THEMES, type AppThemeId, ThemeService } from "./core/theme.service";
 
 /**
  * Indirection to keep reload testable under Vitest/JSDOM.
@@ -34,11 +35,22 @@ export class AppComponent implements AfterViewInit {
   private readonly phaser = inject(PhaserBootstrapService);
   private readonly sessionStore = inject(SessionStore);
   private readonly devModeStore = inject(DevModeStore);
+  private readonly themeService = inject(ThemeService);
 
   readonly fatal = this.fatalErrorStore.fatal;
   readonly hasFatal = computed(() => this.fatal() !== null);
   readonly devModeEnabled = this.devModeStore.enabled;
-  readonly logEntries = computed(() => [...this.sessionStore.state().log.entries].reverse().slice(0, 25));
+  readonly themeOptions = this.themeService.options;
+  readonly selectedTheme = this.themeService.currentTheme;
+  readonly logEntries = computed(() => {
+    if (!this.devModeEnabled()) return [];
+    const entries = this.sessionStore.state().log.entries;
+    const out: typeof entries = [];
+    for (let i = entries.length - 1; i >= 0 && out.length < 25; i -= 1) {
+      out.push(entries[i]);
+    }
+    return out;
+  });
   readonly rollToast = signal<{ id: number; message: string } | null>(null);
   private readonly lastProcessedLogId = signal<string | null>(null);
   private nextToastId = 0;
@@ -77,6 +89,11 @@ export class AppComponent implements AfterViewInit {
 
   ngOnDestroy(): void {
     if (this.toastTimer) clearTimeout(this.toastTimer);
+  }
+
+  onThemeChange(theme: string): void {
+    if (!APP_THEMES.includes(theme as AppThemeId)) return;
+    this.themeService.setTheme(theme as AppThemeId);
   }
 
   private showRollToast(outcome: "blank" | "chaos" | "planeswalk"): void {

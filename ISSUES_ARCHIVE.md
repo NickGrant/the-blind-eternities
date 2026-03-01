@@ -501,3 +501,93 @@ title: Hide debug/event panels when dev mode is off and expand canvas area
 status: complete
 description: Dev mode should control visibility of Event Log and Debug sections. When dev mode is disabled, hide both panels and let the Phaser canvas expand to fill available space without introducing page scrollbars.
 Resolution: App layout now conditionally hides Event Log and Debug sections when dev mode is disabled and switches to single-column content so the canvas fills available area without layout spill.
+
+
+---
+
+title: Add legal notice for third-party card metadata and cached art assets
+status: complete
+description: Create a legal documentation file stating project does not claim ownership of `cards.json` source data or cached plane art images and provide proper attribution/source disclaimer language.
+Resolution: Added `THIRD_PARTY_NOTICE.md` with clear ownership/disclaimer language for `cards.json` metadata and cached plane art, and linked it from docs index for visibility.
+
+---
+
+title: Prevent duplicate modal open/queue entries for same target
+status: complete
+description: A modal that is already active or already queued (for example same plane like `kessig`) should not be opened or queued again. Deduplicate modal enqueue/open behavior by modal identity.
+Resolution: Modal enqueue now rejects duplicates by modal ID and by plane-target identity (`type` + `planeId`) across active and queued entries, preventing repeated plane modal stacking.
+
+---
+
+title: Modal should be draggable and remember position
+status: complete
+description: Active modal panel should support click-and-drag repositioning and persist its last position across modal opens within the session.
+Resolution: Modal panel header now supports pointer drag movement, and the modal offset persists while the app session remains active so reopened modals keep the user-adjusted position.
+
+---
+
+title: Increase modal close button size and click target
+status: complete
+description: Modal close button should be visually larger with a larger interactive hit area for better usability.
+Resolution: Updated modal close action styling to enforce a larger minimum hit area and stronger visual affordance for easier interaction.
+
+---
+
+title: Add AGENTS role-command guidance for task execution patterns
+status: complete
+description: Update `AGENTS.md` with explicit command-style guidance for assuming specific roles and running their expected tasks (for example: Senior Developer for code review/optimization and best-practice refactors, Technical Product Manager for issue/doc review and updates, etc.).
+Resolution: Expanded `AGENTS.md` with explicit role command patterns describing expected execution behavior for Senior Developer, Technical Product Manager, and QA Lead workflows.
+
+---
+
+title: Move default set selection to shared set-config source
+status: complete
+description: Setup default selection currently hardcodes `OPCA` in UI logic. Default set behavior should be sourced from shared plane-set configuration to avoid future config drift.
+Resolution: Removed hardcoded `OPCA` default selection and now source preferred default set from shared plane-set configuration via DeckService.
+
+---
+
+title: Add AGENTS rule to notify when role/persona changes
+status: complete
+description: Update AGENTS.md with an explicit rule that whenever a previously requested role/persona is no longer active and the default persona is assumed, the agent must proactively notify the user of that transition.
+Resolution: Added AGENTS rule requiring proactive user notification whenever active role/persona context is dropped and default persona handling resumes.
+
+
+
+---
+
+title: Starting tile double-click does not open modal; verify tile instantiation consistency
+status: complete
+description: Double-clicking the starting tile does not open its modal. Investigate whether the starting tile is created/instantiated differently from other tiles and normalize behavior so inspection interactions are consistent.
+Resolution: Replaced timing-based double-click detection with deterministic two-click inspect behavior (first click focuses/centers tile, second click opens modal), which normalizes starting-tile and non-starting-tile interactions.
+
+---
+
+title: Replace browser confirm quit flow with app-native confirm interaction
+status: complete
+description: `window.confirm` in control flow is blocking and hard to style/test. Replace with app-native confirmation behavior (modal/intent-based) to keep UX and architecture consistent.
+Resolution: Removed blocking `window.confirm` usage and implemented an in-app two-step quit confirmation (`Quit Session` -> `Confirm Quit` / `Keep Playing`) with updated tests.
+
+---
+
+title: Avoid event-log projection work when dev panels are hidden
+status: complete
+description: App currently computes reversed/sliced event-log view on state updates even when Event Log is hidden. Gate or defer this work when dev-mode panels are not visible.
+Resolution: `AppComponent` now skips event-log projection when dev mode is off and uses a bounded reverse iteration when visible to avoid full-array copy/reverse work.
+
+
+
+---
+
+title: Establish a consistent and appealing visual style system
+status: complete
+description: Application UI needs a cohesive visual language across layout, typography, surfaces, spacing, and interactive elements.
+Resolution: Introduced a cohesive token-driven visual system (panel surfaces, shadows, typography, backgrounds, and control styling) and updated app shell styling to use a consistent presentation across gameplay UI.
+
+---
+
+title: Add switchable MTG-themed visual themes with persisted preference
+status: complete
+description: Implement user-selectable visual themes that control UI background images/colors, border colors, text colors, and related styling tokens. Support four themes: Phyrexian, Neon Dynasty, Lithomancy, and Halo Fountain; remember user selection across sessions.
+Resolution: Added a persisted theme system with four selectable MTG-inspired themes (Phyrexian, Neon Dynasty, Lithomancy, Halo Fountain), a header theme picker, and CSS variable overrides applied via root theme attribute.
+

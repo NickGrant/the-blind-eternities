@@ -6,6 +6,18 @@
 
     <header class="app-shell__header">
       <h1 class="app-shell__title">Blind Eternities Planechase</h1>
+      <label class="app-shell__theme-picker">
+        Theme
+        <select
+          class="app-shell__theme-select"
+          [value]="selectedTheme()"
+          (change)="onThemeChange(($any($event.target)).value)"
+        >
+          @for (theme of themeOptions; track theme.id) {
+            <option [value]="theme.id">{{ theme.label }}</option>
+          }
+        </select>
+      </label>
 
       @if(hasFatal()) {
         <button class="app-shell__reload" (click)="onReload()">

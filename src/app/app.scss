@@ -1,7 +1,7 @@
-﻿.app-shell {
+.app-shell {
   height: 100dvh;
   padding: calc(var(--be-space-3) + 4px);
-  font-family: var(--bs-body-font-family, Arial, sans-serif);
+  font-family: var(--be-font-family-ui);
   display: grid;
   grid-template-rows: auto 1fr;
   gap: var(--be-space-3);
@@ -20,12 +20,32 @@
 
   &__title {
     margin: 0;
-    font-size: 20px;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     color: var(--be-color-text);
   }
 
-  &__reload {
+  &__theme-picker {
     margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--be-space-1);
+    font-size: var(--be-font-size-xs);
+    font-weight: 700;
+    color: var(--be-color-text-muted);
+  }
+
+  &__theme-select {
+    padding: 6px 8px;
+    border-radius: var(--be-radius-md);
+    border: 1px solid var(--be-color-border);
+    background: var(--be-color-surface-subtle);
+    color: var(--be-color-text);
+    font: inherit;
+  }
+
+  &__reload {
     padding: var(--be-space-2) var(--be-space-2);
     border-radius: var(--be-radius-md);
     border: 1px solid var(--be-color-border);
@@ -64,10 +84,15 @@
     border-radius: var(--be-radius-lg);
     padding: var(--be-space-3);
     margin-bottom: var(--be-space-3);
+    background: var(--be-color-surface);
+    box-shadow: var(--be-shadow-panel);
+    backdrop-filter: blur(4px);
 
     h2 {
       margin: 0 0 var(--be-space-2) 0;
       font-size: var(--be-font-size-sm);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
       color: var(--be-color-text-strong);
     }
   }
@@ -123,7 +148,8 @@
     border-radius: var(--be-radius-lg);
     overflow: hidden;
     border: 1px solid var(--be-color-border-subtle);
-    background: #111;
+    background: var(--be-color-canvas-bg);
+    box-shadow: var(--be-shadow-panel);
   }
 
   &__roll-toast {
@@ -179,6 +205,12 @@
 
     &__right {
       min-height: 50dvh;
+    }
+
+    &__theme-picker {
+      width: 100%;
+      justify-content: flex-start;
+      margin-left: 0;
     }
 
     &__roll-toast {

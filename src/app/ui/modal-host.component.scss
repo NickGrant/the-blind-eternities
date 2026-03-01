@@ -32,6 +32,8 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--be-space-2);
+    cursor: move;
+    user-select: none;
   }
 
   &__title {
@@ -64,6 +66,13 @@
     background: var(--be-color-overlay-soft);
     color: inherit;
     cursor: pointer;
+
+    &--close {
+      min-height: 44px;
+      min-width: 120px;
+      font-size: var(--be-font-size-md);
+      font-weight: 700;
+    }
   }
 }
 

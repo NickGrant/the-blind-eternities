@@ -49,5 +49,11 @@
     &--secondary {
       background: var(--be-color-surface-subtle);
     }
+
+    &--danger {
+      background: #7f1d1d;
+      border-color: #b91c1c;
+      color: #fee2e2;
+    }
   }
 }

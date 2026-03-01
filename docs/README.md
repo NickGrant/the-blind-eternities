@@ -22,6 +22,7 @@ This folder contains project documentation for architecture, delivery, operation
 9. `11-card-art-data-pipeline.md`
 10. `12-assets-serving-troubleshooting.md`
 11. `15-phenomenon-support-spec.md`
+12. `../THIRD_PARTY_NOTICE.md`
 
 ## Archive
 

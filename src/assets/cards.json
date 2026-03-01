@@ -1468,7 +1468,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-stronghold-furnace.jpg"
     },
     {
       "id": "plane-takenuma",
@@ -1489,7 +1490,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-takenuma.jpg"
     },
     {
       "id": "plane-talon-gates",
@@ -1510,7 +1512,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-talon-gates.jpg"
     },
     {
       "id": "plane-tazeem",
@@ -1530,7 +1533,8 @@
       "scryfallId": "18c94ada-d864-4e94-9d95-e796ab0d0cff",
       "setCodes": [
         "OPCA"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-tazeem.jpg"
     },
     {
       "id": "plane-tember-city",
@@ -1550,7 +1554,8 @@
       "scryfallId": "ec65904f-c0dd-45ab-a85a-af4a6a631e11",
       "setCodes": [
         "OPCA"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-tember-city.jpg"
     },
     {
       "id": "plane-trail-of-the-mage-rings",
@@ -1571,7 +1576,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-trail-of-the-mage-rings.jpg"
     },
     {
       "id": "plane-truga-jungle",
@@ -1592,7 +1598,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-truga-jungle.jpg"
     },
     {
       "id": "plane-turri-island",
@@ -1613,7 +1620,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-turri-island.jpg"
     },
     {
       "id": "plane-undercity-reaches",
@@ -1634,7 +1642,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-undercity-reaches.jpg"
     },
     {
       "id": "plane-velis-vel",
@@ -1655,7 +1664,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-velis-vel.jpg"
     },
     {
       "id": "plane-windriddle-palaces",
@@ -1676,7 +1686,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-windriddle-palaces.jpg"
     },
     {
       "id": "plane-the-zephyr-maze",
@@ -1697,7 +1708,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-the-zephyr-maze.jpg"
     },
     {
       "id": "plane-amy-s-home",
@@ -1717,7 +1729,8 @@
       ],
       "number": "566",
       "mtgjsonId": "a14698b3-9a83-51ec-8e37-9127fc209716",
-      "scryfallId": "ac0615cc-860a-4fed-9e9c-4377ba8ed22a"
+      "scryfallId": "ac0615cc-860a-4fed-9e9c-4377ba8ed22a",
+      "artUrl": "assets/plane-art/plane-amy-s-home.jpg"
     },
     {
       "id": "plane-antarctic-research-base",
@@ -1737,7 +1750,8 @@
       ],
       "number": "567",
       "mtgjsonId": "82e9fcb7-2e78-5cf3-aff0-c4aed5dc8e28",
-      "scryfallId": "3cc61f60-2f9d-4f67-8390-62873b4b8ddb"
+      "scryfallId": "3cc61f60-2f9d-4f67-8390-62873b4b8ddb",
+      "artUrl": "assets/plane-art/plane-antarctic-research-base.jpg"
     },
     {
       "id": "plane-aplan-mortarium",
@@ -1757,7 +1771,8 @@
       ],
       "number": "568",
       "mtgjsonId": "a4030564-a0b0-5672-b741-b08a58fdec83",
-      "scryfallId": "855978a6-c81c-4e5e-a34f-41a54fef0c10"
+      "scryfallId": "855978a6-c81c-4e5e-a34f-41a54fef0c10",
+      "artUrl": "assets/plane-art/plane-aplan-mortarium.jpg"
     },
     {
       "id": "plane-bad-wolf-bay",
@@ -1776,7 +1791,8 @@
       ],
       "number": "569",
       "mtgjsonId": "09a19712-f09f-50a9-be4e-1c19e4a113da",
-      "scryfallId": "a068875e-9294-403d-a6db-15092b6c42d3"
+      "scryfallId": "a068875e-9294-403d-a6db-15092b6c42d3",
+      "artUrl": "assets/plane-art/plane-bad-wolf-bay.jpg"
     },
     {
       "id": "plane-besieged-viking-village",
@@ -1796,7 +1812,8 @@
       ],
       "number": "570",
       "mtgjsonId": "6bbcf9e2-3e41-5879-9608-7498f895873f",
-      "scryfallId": "8bb62bd5-79e5-4af0-aafd-c1bd53765c67"
+      "scryfallId": "8bb62bd5-79e5-4af0-aafd-c1bd53765c67",
+      "artUrl": "assets/plane-art/plane-besieged-viking-village.jpg"
     },
     {
       "id": "plane-bowie-base-one",
@@ -1816,7 +1833,8 @@
       ],
       "number": "571",
       "mtgjsonId": "635eb13f-9918-56df-8f2e-afc012ee1f44",
-      "scryfallId": "22e3ec5a-4bd5-452f-873a-3801253754dd"
+      "scryfallId": "22e3ec5a-4bd5-452f-873a-3801253754dd",
+      "artUrl": "assets/plane-art/plane-bowie-base-one.jpg"
     },
     {
       "id": "plane-the-cave-of-skulls",
@@ -1836,7 +1854,8 @@
       ],
       "number": "573",
       "mtgjsonId": "e62e352e-aaf8-50a3-9174-6be4483a2b5f",
-      "scryfallId": "74560139-0870-4184-887b-72d67c57b6ed"
+      "scryfallId": "74560139-0870-4184-887b-72d67c57b6ed",
+      "artUrl": "assets/plane-art/plane-the-cave-of-skulls.jpg"
     },
     {
       "id": "plane-the-cheetah-planet",
@@ -1856,7 +1875,8 @@
       ],
       "number": "574",
       "mtgjsonId": "b7d109e1-cd35-5004-ab04-2bbd909b2b92",
-      "scryfallId": "4b6bd680-18c6-46d9-b747-825fb0fee6dd"
+      "scryfallId": "4b6bd680-18c6-46d9-b747-825fb0fee6dd",
+      "artUrl": "assets/plane-art/plane-the-cheetah-planet.jpg"
     },
     {
       "id": "plane-city-of-the-daleks",
@@ -1876,7 +1896,8 @@
       ],
       "number": "575",
       "mtgjsonId": "78630b32-b5c9-581b-9918-10c854642c89",
-      "scryfallId": "4f82f5b7-b4b9-489a-bbd7-98faaa566515"
+      "scryfallId": "4f82f5b7-b4b9-489a-bbd7-98faaa566515",
+      "artUrl": "assets/plane-art/plane-city-of-the-daleks.jpg"
     },
     {
       "id": "plane-coal-hill-school",
@@ -1896,7 +1917,8 @@
       ],
       "number": "576",
       "mtgjsonId": "bafa58fe-881e-5f87-bc9a-0924d8edc785",
-      "scryfallId": "82e09673-c7f0-4377-abbd-b1ea4922d4b3"
+      "scryfallId": "82e09673-c7f0-4377-abbd-b1ea4922d4b3",
+      "artUrl": "assets/plane-art/plane-coal-hill-school.jpg"
     },
     {
       "id": "plane-dalek-intensive-care",
@@ -1916,7 +1938,8 @@
       ],
       "number": "577",
       "mtgjsonId": "a739436b-6338-5d81-8bdc-3884a67d46c0",
-      "scryfallId": "13dd9d2c-f1d3-4dbf-8101-e4fab9f42e40"
+      "scryfallId": "13dd9d2c-f1d3-4dbf-8101-e4fab9f42e40",
+      "artUrl": "assets/plane-art/plane-dalek-intensive-care.jpg"
     },
     {
       "id": "plane-the-dining-car",
@@ -1936,7 +1959,8 @@
       ],
       "number": "578",
       "mtgjsonId": "6a4b9a52-0d62-5d43-83bf-8103321dd0d7",
-      "scryfallId": "bf6193ea-4906-4097-8e30-431220f9e35c"
+      "scryfallId": "bf6193ea-4906-4097-8e30-431220f9e35c",
+      "artUrl": "assets/plane-art/plane-the-dining-car.jpg"
     },
     {
       "id": "plane-the-doctor-s-childhood-barn",
@@ -1956,7 +1980,8 @@
       ],
       "number": "579",
       "mtgjsonId": "22418a5b-2b8f-5e3e-8ff3-70a963211917",
-      "scryfallId": "f4c583ab-ad15-436b-9151-8b4d212cbeda"
+      "scryfallId": "f4c583ab-ad15-436b-9151-8b4d212cbeda",
+      "artUrl": "assets/plane-art/plane-the-doctor-s-childhood-barn.jpg"
     },
     {
       "id": "plane-the-doctor-s-tomb",
@@ -1976,7 +2001,8 @@
       ],
       "number": "580",
       "mtgjsonId": "98454da5-96a9-59dc-9c7d-829781d33130",
-      "scryfallId": "2456bb33-6380-4b4d-bf23-7b071fc22be2"
+      "scryfallId": "2456bb33-6380-4b4d-bf23-7b071fc22be2",
+      "artUrl": "assets/plane-art/plane-the-doctor-s-tomb.jpg"
     },
     {
       "id": "plane-the-drum-mining-facility",
@@ -1996,7 +2022,8 @@
       ],
       "number": "581",
       "mtgjsonId": "7df1c7d2-8342-5be5-ba5f-9687544d85d3",
-      "scryfallId": "9fdb7dca-017a-49a7-b8de-4a8ccf7ac679"
+      "scryfallId": "9fdb7dca-017a-49a7-b8de-4a8ccf7ac679",
+      "artUrl": "assets/plane-art/plane-the-drum-mining-facility.jpg"
     },
     {
       "id": "plane-gardens-of-tranquil-repose",
@@ -2016,7 +2043,8 @@
       ],
       "number": "583",
       "mtgjsonId": "d51dbcf4-ba7c-5d5e-be6e-68964c1f4d4a",
-      "scryfallId": "eb753c00-303d-49f3-ad98-b7772cc4a274"
+      "scryfallId": "eb753c00-303d-49f3-ad98-b7772cc4a274",
+      "artUrl": "assets/plane-art/plane-gardens-of-tranquil-repose.jpg"
     },
     {
       "id": "plane-hotel-of-fears",
@@ -2036,7 +2064,8 @@
       ],
       "number": "584",
       "mtgjsonId": "f84f5164-6029-57cc-a7db-78c3de3e9a15",
-      "scryfallId": "8b164271-6438-4135-b7a9-8573c3921052"
+      "scryfallId": "8b164271-6438-4135-b7a9-8573c3921052",
+      "artUrl": "assets/plane-art/plane-hotel-of-fears.jpg"
     },
     {
       "id": "plane-kerblam-warehouse",
@@ -2056,7 +2085,8 @@
       ],
       "number": "586",
       "mtgjsonId": "464da0d0-dfdf-5efd-a504-7e224c248b4e",
-      "scryfallId": "4c46b6c1-0c84-4bd3-b317-9b8191ad937e"
+      "scryfallId": "4c46b6c1-0c84-4bd3-b317-9b8191ad937e",
+      "artUrl": "assets/plane-art/plane-kerblam-warehouse.jpg"
     },
     {
       "id": "plane-lake-silencio",
@@ -2076,7 +2106,8 @@
       ],
       "number": "587",
       "mtgjsonId": "813a5a51-d2bb-52c7-8af0-3c39994a090d",
-      "scryfallId": "45091d2b-d872-4beb-af87-7675aaf0c2c8"
+      "scryfallId": "45091d2b-d872-4beb-af87-7675aaf0c2c8",
+      "artUrl": "assets/plane-art/plane-lake-silencio.jpg"
     },
     {
       "id": "plane-the-lux-foundation-library",
@@ -2096,7 +2127,8 @@
       ],
       "number": "588",
       "mtgjsonId": "3cb4628c-99d6-5758-a937-1ebbadbf099a",
-      "scryfallId": "c3cd9db0-b417-42e8-b3be-00fdc9330014"
+      "scryfallId": "c3cd9db0-b417-42e8-b3be-00fdc9330014",
+      "artUrl": "assets/plane-art/plane-the-lux-foundation-library.jpg"
     },
     {
       "id": "plane-the-matrix-of-time",
@@ -2116,7 +2148,8 @@
       ],
       "number": "589",
       "mtgjsonId": "24e5c16d-4607-5cb3-bdfc-908d6c2a3a7a",
-      "scryfallId": "c343b9dd-edce-46ee-bdd6-f240cf061d59"
+      "scryfallId": "c343b9dd-edce-46ee-bdd6-f240cf061d59",
+      "artUrl": "assets/plane-art/plane-the-matrix-of-time.jpg"
     },
     {
       "id": "plane-mondassian-colony-ship",
@@ -2136,7 +2169,8 @@
       ],
       "number": "590",
       "mtgjsonId": "97833a41-cc53-514a-94d7-d67156193e1f",
-      "scryfallId": "ba6728e1-12f0-40a7-90f9-520f3572b190"
+      "scryfallId": "ba6728e1-12f0-40a7-90f9-520f3572b190",
+      "artUrl": "assets/plane-art/plane-mondassian-colony-ship.jpg"
     },
     {
       "id": "plane-the-moonbase",
@@ -2156,7 +2190,8 @@
       ],
       "number": "591",
       "mtgjsonId": "70f88220-9341-5bf2-915e-a3aa7f18b8f1",
-      "scryfallId": "b715df92-e504-4844-9d74-6f4965fd32ee"
+      "scryfallId": "b715df92-e504-4844-9d74-6f4965fd32ee",
+      "artUrl": "assets/plane-art/plane-the-moonbase.jpg"
     },
     {
       "id": "plane-new-new-york",

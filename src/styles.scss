@@ -13,6 +13,9 @@ body {
 
 body {
   min-height: 100dvh;
+  background: var(--be-page-bg);
+  color: var(--be-color-text);
+  transition: background 180ms ease-out, color 180ms ease-out;
 }
 
 :root {
@@ -28,33 +31,93 @@ body {
 
   --be-font-size-xs: 12px;
   --be-font-size-sm: 13px;
+  --be-font-size-md: 14px;
   --be-font-size-lg: 17px;
   --be-font-size-xl: 22px;
+  --be-font-family-ui: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
   --be-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
 
-  --be-color-bg: var(--bs-body-bg, #0f172a);
-  --be-color-surface: var(--bs-body-bg, #ffffff);
-  --be-color-surface-subtle: color-mix(in srgb, var(--bs-body-bg, #ffffff) 92%, #d5dfeb 8%);
-  --be-color-text: var(--bs-body-color, #111827);
-  --be-color-text-strong: color-mix(in srgb, var(--bs-body-color, #111827) 88%, #00122c 12%);
-  --be-color-text-muted: color-mix(in srgb, var(--bs-body-color, #111827) 62%, #5f6c84 38%);
+  --be-color-bg: #10161b;
+  --be-color-surface: rgba(23, 31, 37, 0.82);
+  --be-color-surface-subtle: rgba(40, 52, 63, 0.62);
+  --be-color-canvas-bg: #111111;
+  --be-color-text: #e7edf4;
+  --be-color-text-strong: #f8fbff;
+  --be-color-text-muted: #a8b8ca;
   --be-color-text-inverse: #f5f7fb;
 
-  --be-color-border: color-mix(in srgb, var(--bs-border-color, #ced4da) 88%, #8ea1b8 12%);
-  --be-color-border-subtle: color-mix(in srgb, var(--bs-border-color, #ced4da) 75%, #dce2ea 25%);
+  --be-color-border: rgba(164, 187, 212, 0.36);
+  --be-color-border-subtle: rgba(138, 158, 182, 0.28);
   --be-color-border-contrast: rgba(255, 255, 255, 0.2);
   --be-color-border-contrast-strong: rgba(255, 255, 255, 0.3);
 
   --be-color-overlay-soft: rgba(255, 255, 255, 0.08);
   --be-color-overlay-muted: rgba(0, 0, 0, 0.18);
 
-  --be-color-danger-bg: var(--bs-danger-bg-subtle, #ffebee);
-  --be-color-danger-border: color-mix(in srgb, var(--bs-danger-border-subtle, #f3b8c1) 75%, #ff7878 25%);
-  --be-color-danger-border-strong: color-mix(in srgb, var(--bs-danger, #dc3545) 72%, #7f0e19 28%);
-  --be-color-danger-surface: color-mix(in srgb, var(--bs-danger, #dc3545) 18%, transparent);
+  --be-color-danger-bg: color-mix(in srgb, #e11d48 20%, transparent);
+  --be-color-danger-border: color-mix(in srgb, #ef4444 66%, #fca5a5 34%);
+  --be-color-danger-border-strong: #b91c1c;
+  --be-color-danger-surface: color-mix(in srgb, #e11d48 14%, transparent);
 
   --be-gradient-modal: linear-gradient(180deg, #111c2d 0%, #0a1320 100%);
   --be-gradient-attention: linear-gradient(90deg, #ffd166 0%, #ff7b54 50%, #ff4d6d 100%);
   --be-shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.55);
+  --be-shadow-panel: 0 14px 32px rgba(0, 0, 0, 0.28);
+  --be-page-bg: radial-gradient(circle at 20% 20%, #25323f 0%, #10161b 45%, #080b0e 100%);
+}
+
+:root[data-be-theme="phyrexian"] {
+  --be-color-bg: #0f1214;
+  --be-color-surface: rgba(27, 32, 35, 0.84);
+  --be-color-surface-subtle: rgba(44, 50, 56, 0.7);
+  --be-color-text: #dde5e8;
+  --be-color-text-strong: #f7fcfd;
+  --be-color-text-muted: #9aaab2;
+  --be-color-border: rgba(178, 208, 196, 0.34);
+  --be-color-border-subtle: rgba(152, 180, 168, 0.24);
+  --be-gradient-modal: linear-gradient(180deg, #151d1f 0%, #0c1113 100%);
+  --be-page-bg: radial-gradient(circle at 25% 18%, #293338 0%, #111518 47%, #07090a 100%);
+}
+
+:root[data-be-theme="neon-dynasty"] {
+  --be-color-bg: #131428;
+  --be-color-surface: rgba(26, 30, 58, 0.82);
+  --be-color-surface-subtle: rgba(48, 56, 92, 0.66);
+  --be-color-text: #e8ebff;
+  --be-color-text-strong: #ffffff;
+  --be-color-text-muted: #b6befa;
+  --be-color-border: rgba(116, 177, 255, 0.42);
+  --be-color-border-subtle: rgba(130, 113, 255, 0.3);
+  --be-gradient-modal: linear-gradient(180deg, #1a1f4b 0%, #111634 100%);
+  --be-gradient-attention: linear-gradient(90deg, #67e8f9 0%, #818cf8 50%, #f472b6 100%);
+  --be-page-bg: radial-gradient(circle at 15% 12%, #2f2d6f 0%, #1a1a3f 42%, #0a0b1a 100%);
+}
+
+:root[data-be-theme="lithomancy"] {
+  --be-color-bg: #1f1a16;
+  --be-color-surface: rgba(54, 43, 34, 0.84);
+  --be-color-surface-subtle: rgba(84, 64, 45, 0.68);
+  --be-color-text: #f6eee3;
+  --be-color-text-strong: #fff9f2;
+  --be-color-text-muted: #d7c3a8;
+  --be-color-border: rgba(205, 168, 118, 0.38);
+  --be-color-border-subtle: rgba(188, 147, 96, 0.28);
+  --be-gradient-modal: linear-gradient(180deg, #4f3724 0%, #2f2118 100%);
+  --be-gradient-attention: linear-gradient(90deg, #fbbf24 0%, #f97316 55%, #ef4444 100%);
+  --be-page-bg: radial-gradient(circle at 50% 8%, #70523a 0%, #3e2c21 40%, #1f1713 100%);
+}
+
+:root[data-be-theme="halo-fountain"] {
+  --be-color-bg: #092834;
+  --be-color-surface: rgba(16, 62, 79, 0.84);
+  --be-color-surface-subtle: rgba(24, 92, 110, 0.68);
+  --be-color-text: #e7fcff;
+  --be-color-text-strong: #ffffff;
+  --be-color-text-muted: #b8ecf3;
+  --be-color-border: rgba(145, 235, 232, 0.4);
+  --be-color-border-subtle: rgba(126, 214, 214, 0.3);
+  --be-gradient-modal: linear-gradient(180deg, #11596e 0%, #0a3441 100%);
+  --be-gradient-attention: linear-gradient(90deg, #99f6e4 0%, #67e8f9 50%, #a5b4fc 100%);
+  --be-page-bg: radial-gradient(circle at 60% 0%, #2f7f8e 0%, #154759 45%, #092834 100%);
 }
