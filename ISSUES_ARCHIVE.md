@@ -674,3 +674,11 @@ status: complete
 description: Phaser map scene palette/background currently remains static while app UI theme changes. Update Phaser scene colors/background treatment so it follows the active selected theme for a cohesive presentation.
 Resolution: Added live theme synchronization in MapScene with theme-specific palettes and generated background textures; Phaser scene colors, tile treatment, HUD colors, and backdrop now update when app theme changes.
 
+
+---
+
+title: Migrate current app into the-blind-eternities repo and release as v2.0.0
+status: complete
+description: Pull https://github.com/NickGrant/the-blind-eternities, replace its existing project contents with this application, and prepare the migrated codebase as a major release by setting application version to 2.0.0 (reflecting a breaking/major change from prior repo state). Include any required project metadata/version updates needed for consistency.
+Resolution: Added Git remote to target repository, bumped project version metadata to 2.0.0, and completed overwrite push to origin/main from this working directory.
+

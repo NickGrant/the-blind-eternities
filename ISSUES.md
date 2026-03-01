@@ -20,7 +20,3 @@
 ## Active Issues
 
 ### Functional
-
-title: Migrate current app into the-blind-eternities repo and release as v2.0.0
-status: unstarted
-description: Pull `https://github.com/NickGrant/the-blind-eternities`, replace its existing project contents with this application, and prepare the migrated codebase as a major release by setting application version to `2.0.0` (reflecting a breaking/major change from prior repo state). Include any required project metadata/version updates needed for consistency.
