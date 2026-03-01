@@ -124,7 +124,17 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     case "BOOTSTRAP_REVEAL": {
       if (intent.type === DOMAIN_INTENT.BOOTSTRAP_REVEAL_COMPLETE) {
         const revealed = applyBootstrapReveal(state, intent.atMs);
-        return transition(revealed, "IDLE", intent);
+        if (!revealed.deck.currentPlaneId) {
+          return transition(revealed, "IDLE", intent);
+        }
+
+        const withModal = enqueueModal(revealed, {
+          id: `bootstrap_${intent.atMs}`,
+          type: "PLANE",
+          planeId: revealed.deck.currentPlaneId,
+          resumeToState: "IDLE",
+        });
+        return transition(withModal, "MODAL_OPEN", intent);
       }
       return state;
     }

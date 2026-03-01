@@ -8,6 +8,7 @@ import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 import { SessionStore } from "./core/session.store";
 import { DIE_OUTCOME } from "../state/intents.types";
+import { DevModeStore } from "./core/dev-mode";
 
 /**
  * Indirection to keep reload testable under Vitest/JSDOM.
@@ -32,9 +33,11 @@ export class AppComponent implements AfterViewInit {
   private readonly fatalErrorStore = inject(FatalErrorStore);
   private readonly phaser = inject(PhaserBootstrapService);
   private readonly sessionStore = inject(SessionStore);
+  private readonly devModeStore = inject(DevModeStore);
 
   readonly fatal = this.fatalErrorStore.fatal;
   readonly hasFatal = computed(() => this.fatal() !== null);
+  readonly devModeEnabled = this.devModeStore.enabled;
   readonly logEntries = computed(() => [...this.sessionStore.state().log.entries].reverse().slice(0, 25));
   readonly rollToast = signal<{ id: number; message: string } | null>(null);
   private readonly lastProcessedLogId = signal<string | null>(null);

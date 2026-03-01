@@ -33,8 +33,8 @@ export class ControlBarComponent {
     this.minimumSessionPlanes = this.deckService.getMinimumSessionPlanes();
     const sets = this.deckService.listPlaneSetOptions();
     this.planeSets = signal(sets).asReadonly();
-    const defaults = sets.filter((s) => s.isPlanechaseDefault).map((s) => s.code);
-    const initial = defaults.length > 0 ? defaults : sets.map((s) => s.code);
+    const hasOpca = sets.some((s) => s.code === "OPCA");
+    const initial = hasOpca ? ["OPCA"] : sets.slice(0, 1).map((s) => s.code);
     this.selectedSets.set(new Set(initial));
   }
 
@@ -78,6 +78,9 @@ export class ControlBarComponent {
    * @returns void
    */
   quitSession(): void {
+    if (!window.confirm("Quit current session and return to set selection?")) {
+      return;
+    }
     this.orchestrator.dispatch({
       type: DOMAIN_INTENT.RESTART_SESSION,
       atMs: Date.now(),

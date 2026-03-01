@@ -3,7 +3,7 @@ import { reduceSessionState } from "./fsm.reducer";
 import type { SessionState } from "./session.types";
 
 describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
-  it("initializes a shuffled deck on start_session and reveals center on bootstrap_reveal_complete", () => {
+  it("initializes a shuffled deck and opens modal for center plane on bootstrap reveal complete", () => {
     const setup = buildState("SETUP");
 
     const boot = reduceSessionState(setup, {
@@ -34,7 +34,7 @@ describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
       atMs: 500,
     });
 
-    expect(revealed.fsm.state).toBe("IDLE");
+    expect(revealed.fsm.state).toBe("MODAL_OPEN");
     expect(revealed.map.tilesByCoord["0,0"].isFaceUp).toBe(true);
     expect(revealed.map.tilesByCoord["0,-1"].isFaceUp).toBe(false);
     expect(revealed.map.tilesByCoord["1,0"].isFaceUp).toBe(false);
@@ -48,6 +48,9 @@ describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
     expect(revealed.map.tilesByCoord["-1,0"].revealedAtMs).toBe(100);
 
     expect(revealed.deck.currentPlaneId).toBe(revealed.map.tilesByCoord["0,0"].planeId);
+    expect(revealed.modal.active?.type).toBe("PLANE");
+    expect(revealed.modal.active?.planeId).toBe(revealed.deck.currentPlaneId);
+    expect(revealed.modal.active?.resumeToState).toBe("IDLE");
   });
 
   it("queues additional modals and enforces single active modal", () => {

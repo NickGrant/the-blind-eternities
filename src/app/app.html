@@ -20,29 +20,31 @@
     </section>
   </section>
 
-  <section class="app-shell__content">
-    <div class="app-shell__left">
-      <div class="app-shell__panel">
-        <h2>Event Log</h2>
-        @if (logEntries().length === 0) {
-          <div class="app-shell__empty">No events yet. Start a session to generate play logs.</div>
-        } @else {
-          <ul class="app-shell__event-log">
-            @for (entry of logEntries(); track entry.id) {
-              <li [class]="'lvl-' + entry.level">
-                <div class="app-shell__event-line">{{ entry.message }}</div>
-                <div class="app-shell__event-meta">{{ entry.level }} | {{ entry.atMs }}</div>
-              </li>
-            }
-          </ul>
-        }
-      </div>
+  <section class="app-shell__content" [class.app-shell__content--dev]="devModeEnabled()">
+    @if (devModeEnabled()) {
+      <div class="app-shell__left">
+        <div class="app-shell__panel">
+          <h2>Event Log</h2>
+          @if (logEntries().length === 0) {
+            <div class="app-shell__empty">No events yet. Start a session to generate play logs.</div>
+          } @else {
+            <ul class="app-shell__event-log">
+              @for (entry of logEntries(); track entry.id) {
+                <li [class]="'lvl-' + entry.level">
+                  <div class="app-shell__event-line">{{ entry.message }}</div>
+                  <div class="app-shell__event-meta">{{ entry.level }} | {{ entry.atMs }}</div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
 
-      <div class="app-shell__panel">
-        <h2>Debug</h2>
-        <app-debug-panel></app-debug-panel>
+        <div class="app-shell__panel">
+          <h2>Debug</h2>
+          <app-debug-panel></app-debug-panel>
+        </div>
       </div>
-    </div>
+    }
 
     <div class="app-shell__right">
       <div class="app-shell__canvas-host" #phaserHost></div>

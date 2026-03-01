@@ -466,3 +466,38 @@ title: Ensure component styling uses properly nested SCSS structure
 status: complete
 description: Refactor stylesheet structure to use consistent, properly nested SCSS patterns for clarity and maintainability.
 Resolution: Reworked component and app styles into nested SCSS block structures, keeping selectors scoped and readable under each component root block.
+
+---
+
+title: Default selected set should be OPCA
+status: complete
+description: In setup, the default selected set should be `OPCA` (not all sets) unless explicitly changed by the user.
+Resolution: Updated control-bar initialization to select only OPCA by default when available, with a first-set fallback when OPCA is absent.
+
+---
+
+title: Enforce single-copy rule per plane card in deck construction
+status: complete
+description: Session deck generation should prevent duplicate card IDs so each specific plane appears at most once in draw/discard lifecycle.
+Resolution: Added deduplication in deck creation by normalizing `planeIds` to unique IDs before deterministic shuffle, and added regression coverage in deck-model tests.
+
+---
+
+title: Open plane info modal on initial reveal
+status: complete
+description: When the first plane is revealed at session start, automatically open the plane info modal so players immediately understand the active plane's effects.
+Resolution: Bootstrap reveal now enqueues and opens a plane modal for the revealed center plane, resuming to IDLE on close; reducer and orchestrator tests were updated accordingly.
+
+---
+
+title: Prevent accidental Quit Session clicks when controls reflow
+status: complete
+description: During chaos/modal transitions, Roll Die buttons disappear and Quit Session shifts under the pointer, making accidental quits too easy. Stabilize control layout and/or add confirmation/guard so quit cannot be triggered unintentionally.
+Resolution: Added a confirmation guard to Quit Session so restart dispatch only occurs after explicit user confirmation, preventing accidental session termination from control reflow clicks.
+
+---
+
+title: Hide debug/event panels when dev mode is off and expand canvas area
+status: complete
+description: Dev mode should control visibility of Event Log and Debug sections. When dev mode is disabled, hide both panels and let the Phaser canvas expand to fill available space without introducing page scrollbars.
+Resolution: App layout now conditionally hides Event Log and Debug sections when dev mode is disabled and switches to single-column content so the canvas fills available area without layout spill.

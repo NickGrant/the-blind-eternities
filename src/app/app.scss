@@ -40,9 +40,13 @@
 
   &__content {
     display: grid;
-    grid-template-columns: 360px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: calc(var(--be-space-3) + 4px);
     min-height: 0;
+
+    &--dev {
+      grid-template-columns: 360px minmax(0, 1fr);
+    }
   }
 
   &__left {

@@ -17,4 +17,15 @@ describe("deck-model", () => {
     expect(result.drawn).toEqual(["a", "b", "c"]);
     expect(result.drawPile).toEqual(["d"]);
   });
+
+  it("deduplicates plane IDs when building a deck", () => {
+    const deck = createShuffledDeck({
+      planeIds: ["a", "b", "a", "c", "b"],
+      atMs: 100,
+      seed: "abc",
+    });
+
+    expect(deck.drawPile.length).toBe(3);
+    expect(new Set(deck.drawPile).size).toBe(deck.drawPile.length);
+  });
 });

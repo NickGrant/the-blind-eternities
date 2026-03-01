@@ -34,9 +34,10 @@ export const createShuffledDeck = (args: {
   atMs: number;
   seed?: string;
 }) => {
+  const uniquePlaneIds = [...new Set(args.planeIds)];
   const source = `${args.seed ?? ""}|${args.atMs}`;
   return {
-    drawPile: shuffleDeterministic(args.planeIds, source),
+    drawPile: shuffleDeterministic(uniquePlaneIds, source),
     discardPile: [] as string[],
   };
 };

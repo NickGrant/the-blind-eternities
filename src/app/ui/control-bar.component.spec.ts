@@ -155,9 +155,71 @@ describe("ControlBarComponent (class-only)", () => {
       deckMock as DeckService
     );
 
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
     cmp.quitSession();
 
     expect(dispatchMock).toHaveBeenCalledTimes(1);
     expect(dispatchMock.mock.calls[0][0].type).toBe("domain/restart_session");
+    confirmSpy.mockRestore();
+  });
+
+  it("does not quit session when confirmation is canceled", () => {
+    const initial = createNewSessionState({ atMs: 1 });
+    initial.fsm.state = "IDLE";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state"> = {
+      state: _state.asReadonly(),
+    };
+    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: dispatchMock,
+    };
+    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
+      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
+      countPlayablePlanesForSets: () => 10,
+      getMinimumSessionPlanes: () => 5,
+    };
+
+    const cmp = new ControlBarComponent(
+      orchestratorMock as SessionOrchestrator,
+      storeMock as SessionStore,
+      deckMock as DeckService
+    );
+
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    cmp.quitSession();
+
+    expect(dispatchMock).not.toHaveBeenCalled();
+    confirmSpy.mockRestore();
+  });
+
+  it("defaults selected set to OPCA when available", () => {
+    const initial = createNewSessionState({ atMs: 1 });
+    initial.fsm.state = "SETUP";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state"> = {
+      state: _state.asReadonly(),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: vi.fn(),
+    };
+    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
+      listPlaneSetOptions: () => [
+        { code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true },
+        { code: "WHO", label: "Doctor Who Commander", count: 10, isPlanechaseDefault: false },
+      ],
+      countPlayablePlanesForSets: () => 10,
+      getMinimumSessionPlanes: () => 5,
+    };
+
+    const cmp = new ControlBarComponent(
+      orchestratorMock as SessionOrchestrator,
+      storeMock as SessionStore,
+      deckMock as DeckService
+    );
+
+    expect(cmp.selectedSetCodes()).toEqual(["OPCA"]);
   });
 });

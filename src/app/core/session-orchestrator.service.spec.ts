@@ -50,7 +50,7 @@ describe("SessionOrchestrator", () => {
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
 
     const next = _state();
-    expect(next.fsm.state).toBe("IDLE");
+    expect(next.fsm.state).toBe("MODAL_OPEN");
     expect(next.deck.drawPile).toEqual(["plane-6"]);
     expect(next.map.tilesByCoord["0,0"].planeId).toBe("plane-1");
     expect(next.map.tilesByCoord["0,-1"].planeId).toBe("plane-2");
@@ -426,7 +426,7 @@ describe("SessionOrchestrator", () => {
     );
 
     orchestrator.debugStartSession();
-    expect(_state().fsm.state).toBe("IDLE");
+    expect(_state().fsm.state).toBe("MODAL_OPEN");
   });
 
   it("debugRestartSession resets and auto-starts a new session", () => {
@@ -464,7 +464,7 @@ describe("SessionOrchestrator", () => {
     );
 
     orchestrator.debugRestartSession();
-    expect(_state().fsm.state).toBe("IDLE");
+    expect(_state().fsm.state).toBe("MODAL_OPEN");
     expect(_state().map.partyCoord).toBe("0,0");
   });
 });

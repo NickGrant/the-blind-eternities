@@ -810,7 +810,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-the-hippodrome.jpg"
     },
     {
       "id": "plane-horizon-boughs",
@@ -830,7 +831,8 @@
       "scryfallId": "61471ab4-749a-40e4-b06b-153edec80daa",
       "setCodes": [
         "OPCA"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-horizon-boughs.jpg"
     },
     {
       "id": "plane-isle-of-vesuva",
@@ -851,7 +853,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-isle-of-vesuva.jpg"
     },
     {
       "id": "plane-izzet-steam-maze",
@@ -872,7 +875,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-izzet-steam-maze.jpg"
     },
     {
       "id": "plane-jund",
@@ -893,7 +897,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-jund.jpg"
     },
     {
       "id": "plane-kharasha-foothills",
@@ -914,7 +919,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-kharasha-foothills.jpg"
     },
     {
       "id": "plane-kilnspire-district",
@@ -935,7 +941,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-kilnspire-district.jpg"
     },
     {
       "id": "plane-krosa",
@@ -956,7 +963,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-krosa.jpg"
     },
     {
       "id": "plane-lair-of-the-ashen-idol",
@@ -977,7 +985,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-lair-of-the-ashen-idol.jpg"
     },
     {
       "id": "plane-llanowar",
@@ -998,7 +1007,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-llanowar.jpg"
     },
     {
       "id": "plane-the-maelstrom",
@@ -1019,7 +1029,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-the-maelstrom.jpg"
     },
     {
       "id": "plane-mirrored-depths",
@@ -1039,7 +1050,8 @@
       "scryfallId": "d7a2b02e-3ff2-4c71-9022-b08472f53664",
       "setCodes": [
         "OPCA"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-mirrored-depths.jpg"
     },
     {
       "id": "plane-mount-keralia",
@@ -1060,7 +1072,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-mount-keralia.jpg"
     },
     {
       "id": "plane-murasa",
@@ -1081,7 +1094,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-murasa.jpg"
     },
     {
       "id": "plane-naya",
@@ -1102,7 +1116,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-naya.jpg"
     },
     {
       "id": "plane-nephalia",
@@ -1123,7 +1138,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-nephalia.jpg"
     },
     {
       "id": "plane-norn-s-dominion",
@@ -1144,7 +1160,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-norn-s-dominion.jpg"
     },
     {
       "id": "plane-onakke-catacomb",
@@ -1165,7 +1182,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-onakke-catacomb.jpg"
     },
     {
       "id": "plane-orzhova",
@@ -1186,7 +1204,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-orzhova.jpg"
     },
     {
       "id": "plane-otaria",
@@ -1207,7 +1226,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-otaria.jpg"
     },
     {
       "id": "plane-panopticon",
@@ -1228,7 +1248,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-panopticon.jpg"
     },
     {
       "id": "plane-prahv",
@@ -1249,7 +1270,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-prahv.jpg"
     },
     {
       "id": "plane-raven-s-run",
@@ -1270,7 +1292,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-raven-s-run.jpg"
     },
     {
       "id": "plane-sanctum-of-serra",
@@ -1291,7 +1314,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-sanctum-of-serra.jpg"
     },
     {
       "id": "plane-sea-of-sand",
@@ -1312,7 +1336,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-sea-of-sand.jpg"
     },
     {
       "id": "plane-selesnya-loft-gardens",
@@ -1333,7 +1358,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-selesnya-loft-gardens.jpg"
     },
     {
       "id": "plane-shiv",
@@ -1354,7 +1380,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-shiv.jpg"
     },
     {
       "id": "plane-skybreen",
@@ -1375,7 +1402,8 @@
       "setCodes": [
         "OPCA",
         "OHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-skybreen.jpg"
     },
     {
       "id": "plane-stairs-to-infinity",
@@ -1396,7 +1424,8 @@
       "setCodes": [
         "OPCA",
         "PHOP"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-stairs-to-infinity.jpg"
     },
     {
       "id": "plane-stensia",
@@ -1417,7 +1446,8 @@
       "setCodes": [
         "OPCA",
         "OPC2"
-      ]
+      ],
+      "artUrl": "assets/plane-art/plane-stensia.jpg"
     },
     {
       "id": "plane-stronghold-furnace",
