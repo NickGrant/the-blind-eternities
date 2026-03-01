@@ -30,7 +30,7 @@ describe("reduceSessionState (Milestone 2 map invariants)", () => {
           "2,0": mkTile("2,0"),
           "1,0": mkTile("1,0"),
         },
-        highlights: { eligibleMoveCoords: [] },
+        highlights: { eligibleMoveCoords: ["1,0"], hellrideMoveCoords: [] },
       },
     };
 
@@ -101,10 +101,12 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
       bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      rulesProfile: "BLIND_CLASSIC_PLUS",
+      enableHellride: false,
     },
     rng: { rollCount: 0 },
     deck: { drawPile: [], discardPile: [] },
-    map: { tilesByCoord: {}, partyCoord: undefined, highlights: { eligibleMoveCoords: [] } },
+    map: { tilesByCoord: {}, partyCoord: undefined, highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] } },
     modal: { queue: [], isOpen: false },
     log: { entries: [] },
     ui: { selections: {} },

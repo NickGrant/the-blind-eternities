@@ -6,24 +6,25 @@ This folder contains project documentation for architecture, delivery, operation
 
 1. `08-delivery-plan.md`
 2. `13-ux-behavior-spec.md`
-3. `14-uat-release-checklist.md`
-4. `10-contributor-runbook.md`
-5. `../LLM_CONTEXT.md`
+3. `02-runtime-flow-fsm.md`
+4. `15-phenomenon-support-spec.md`
+5. `16-blind-eternities-article-alignment.md`
+6. `14-uat-release-checklist.md`
+7. `10-contributor-runbook.md`
+8. `../LLM_CONTEXT.md`
 
 ## Reference Docs (Load On Demand)
 
 1. `01-system-architecture.md`
-2. `02-runtime-flow-fsm.md`
-3. `03-build-time-pipeline.md`
-4. `04-risks-assumptions.md`
-5. `05-operational-considerations.md`
-6. `06-definition-of-ready.md`
-7. `07-definition-of-done.md`
-8. `09-testing-standards.md`
-9. `11-card-art-data-pipeline.md`
-10. `12-assets-serving-troubleshooting.md`
-11. `15-phenomenon-support-spec.md`
-12. `../THIRD_PARTY_NOTICE.md`
+2. `03-build-time-pipeline.md`
+3. `04-risks-assumptions.md`
+4. `05-operational-considerations.md`
+5. `06-definition-of-ready.md`
+6. `07-definition-of-done.md`
+7. `09-testing-standards.md`
+8. `11-card-art-data-pipeline.md`
+9. `12-assets-serving-troubleshooting.md`
+10. `../THIRD_PARTY_NOTICE.md`
 
 ## Archive
 

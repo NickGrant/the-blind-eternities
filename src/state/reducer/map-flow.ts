@@ -13,6 +13,7 @@ import { appendLog } from "./logging";
 
 type BootstrapSlot = SessionState["config"]["bootstrapRevealOrder"][number];
 type RulesProfile = NonNullable<SessionState["config"]["rulesProfile"]>;
+type Coord = { x: number; y: number };
 
 function getRevealProfileCode(state: SessionState): RulesProfile {
   if (state.config.rulesProfile) return state.config.rulesProfile;
@@ -37,6 +38,15 @@ function resolveRulesProfile(args: {
 function revealOrderForProfile(profile: RulesProfile): SessionState["config"]["bootstrapRevealOrder"] {
   if (profile === "BLIND_CLASSIC_PLUS") return ["C", "N", "E", "S", "W"];
   return ["C"];
+}
+
+function neighborsDiagonal(coord: Coord): Coord[] {
+  return [
+    { x: coord.x - 1, y: coord.y - 1 },
+    { x: coord.x + 1, y: coord.y - 1 },
+    { x: coord.x + 1, y: coord.y + 1 },
+    { x: coord.x - 1, y: coord.y + 1 },
+  ];
 }
 
 export function bootstrapSlotToCoordKey(slot: BootstrapSlot): CoordKey {
@@ -116,6 +126,8 @@ export function initMapForSession(
       gameMode,
       rulesProfile,
       bootstrapRevealOrder,
+      enableHellride: intent.enableHellride ?? state.config.enableHellride ?? false,
+      enableAntiStall: intent.enableAntiStall ?? state.config.enableAntiStall ?? false,
     },
     deck: {
       ...state.deck,
@@ -127,7 +139,8 @@ export function initMapForSession(
       ...state.map,
       tilesByCoord: withDistances,
       partyCoord: centerKey,
-      highlights: { eligibleMoveCoords: [] },
+      previousPartyCoord: undefined,
+      highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] },
     },
   };
 
@@ -171,7 +184,7 @@ export function applyBootstrapReveal(state: SessionState, atMs: number): Session
       ...state.map,
       tilesByCoord: withDistances,
       partyCoord: centerKey,
-      highlights: { eligibleMoveCoords: [] },
+      highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] },
     },
   };
 
@@ -192,14 +205,38 @@ export function setEligibleMoves(state: SessionState): SessionState {
   const partyCoord = state.map.partyCoord;
   if (!partyCoord) return state;
   const party = parseCoordKey(partyCoord);
+  const antiStallBlockedCoord = state.config.enableAntiStall ? state.map.previousPartyCoord : undefined;
   const candidates = neighborsCardinal(party).map(toCoordKey);
-  const eligible = candidates.filter((k) => Boolean(state.map.tilesByCoord[k]));
+  const eligible = candidates.filter((k) => Boolean(state.map.tilesByCoord[k]) && k !== antiStallBlockedCoord);
+  const enableHellride = state.config.gameMode === "BLIND_ETERNITIES" && state.config.enableHellride === true;
+  const hellride: CoordKey[] = [];
+  let tilesByCoord = state.map.tilesByCoord;
+
+  if (enableHellride) {
+    const nextTilesByCoord = { ...tilesByCoord };
+    neighborsDiagonal(party).forEach((coord) => {
+      const coordKey = toCoordKey(coord);
+      const tile = tilesByCoord[coordKey];
+      if (coordKey === antiStallBlockedCoord) return;
+      if (tile?.isFaceUp) return;
+      hellride.push(coordKey);
+      if (tile) return;
+      nextTilesByCoord[coordKey] = createTile({
+        coordKey,
+        planeId: stubPlaneIdForCoord(coordKey),
+        atMs: state.fsm.context?.lastIntent?.atMs ?? state.meta.createdAtMs,
+        isFaceUp: false,
+      });
+    });
+    tilesByCoord = nextTilesByCoord;
+  }
 
   return {
     ...state,
     map: {
       ...state.map,
-      highlights: { eligibleMoveCoords: eligible },
+      tilesByCoord,
+      highlights: { eligibleMoveCoords: eligible, hellrideMoveCoords: hellride },
     },
   };
 }
@@ -209,6 +246,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
   if (!pending) return state;
 
   const partyCoord = pending.toCoord;
+  const wasHellrideMove = (state.map.highlights?.hellrideMoveCoords ?? []).includes(partyCoord);
 
   const ensuredOnce = state.config.ensurePlusEnabled
     ? ensurePlusBounded({
@@ -248,17 +286,26 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     .filter(([, tile]) => tile.planeId.startsWith("plane@"))
     .map(([coordKey]) => coordKey)
     .sort(compareCoordKeys);
-  const dealt = drawPlanesWithRecycle({
-    drawPile: state.deck.drawPile,
-    discardPile: state.deck.discardPile,
-    count: placeholders.length,
-    atMs,
-    seed: state.rng.seed,
+  let drawPile = [...state.deck.drawPile];
+  let discardPile = [...state.deck.discardPile];
+  const dealtDrawn: string[] = [];
+  let phenomenonReplaceCount = 0;
+  placeholders.forEach((_, idx) => {
+    const take = drawNextPlaneWithPhenomenonReplace({
+      drawPile,
+      discardPile,
+      atMs: atMs + idx,
+      seed: state.rng.seed,
+    });
+    drawPile = take.drawPile;
+    discardPile = take.discardPile;
+    phenomenonReplaceCount += take.phenomenonReplaceCount;
+    if (take.drawnPlaneId) dealtDrawn.push(take.drawnPlaneId);
   });
   const withAssignedPlanes = { ...revealedDestination };
   placeholders.forEach((coordKey, index) => {
     const tile = withAssignedPlanes[coordKey];
-    const assigned = dealt.drawn[index];
+    const assigned = dealtDrawn[index];
     if (!tile || !assigned) return;
     withAssignedPlanes[coordKey] = {
       ...tile,
@@ -276,15 +323,16 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     ...state,
     deck: {
       ...state.deck,
-      drawPile: [...dealt.drawPile],
-      discardPile: [...dealt.discardPile, ...discardedByDecay],
+      drawPile: [...drawPile],
+      discardPile: [...discardPile, ...discardedByDecay],
       currentPlaneId,
     },
     map: {
       ...state.map,
       tilesByCoord: withDistances,
       partyCoord,
-      highlights: { eligibleMoveCoords: [] },
+      previousPartyCoord: pending.fromCoord,
+      highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] },
     },
     ui: {
       ...state.ui,
@@ -326,7 +374,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     meta: {
       phase: "phenomenon_resolve",
       phaseIndex: 3,
-      phenomenonReplaceCount: 0,
+      phenomenonReplaceCount,
       gameMode: state.config.gameMode,
       rulesProfile: getRevealProfileCode(state),
     },
@@ -340,10 +388,11 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       decayRemoved: decayed.removed.length,
       gameMode: state.config.gameMode,
       rulesProfile: getRevealProfileCode(state),
-      hellrideUsed: false,
-      phenomenonReplaceCount: 0,
+      phenomenonReplaceCount,
       phase: "finalize",
       phaseIndex: 4,
+      antiStallEnabled: state.config.enableAntiStall === true,
+      hellrideUsed: wasHellrideMove,
     },
   });
 }
@@ -389,7 +438,8 @@ export function applyRegularPlaneswalk(state: SessionState, atMs: number): Sessi
       ...state.map,
       tilesByCoord,
       partyCoord: centerKey,
-      highlights: { eligibleMoveCoords: [] },
+      previousPartyCoord: undefined,
+      highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] },
     },
     ui: {
       ...state.ui,
@@ -448,4 +498,49 @@ function drawPlanesWithRecycle(args: {
   }
 
   return { drawn, drawPile, discardPile };
+}
+
+function isPhenomenonCardId(cardId: string): boolean {
+  return cardId.startsWith("phenomenon-");
+}
+
+function drawNextPlaneWithPhenomenonReplace(args: {
+  drawPile: readonly string[];
+  discardPile: readonly string[];
+  atMs: number;
+  seed?: string;
+}): {
+  drawnPlaneId?: string;
+  drawPile: string[];
+  discardPile: string[];
+  phenomenonReplaceCount: number;
+} {
+  let drawPile = [...args.drawPile];
+  let discardPile = [...args.discardPile];
+  let phenomenonReplaceCount = 0;
+  let attempts = 0;
+  const attemptLimit = drawPile.length + discardPile.length + 4;
+
+  while (attempts < attemptLimit) {
+    attempts += 1;
+    const take = drawPlanesWithRecycle({
+      drawPile,
+      discardPile,
+      count: 1,
+      atMs: args.atMs + attempts,
+      seed: args.seed,
+    });
+    drawPile = take.drawPile;
+    discardPile = take.discardPile;
+    const cardId = take.drawn[0];
+    if (!cardId) break;
+    if (isPhenomenonCardId(cardId)) {
+      discardPile = [...discardPile, cardId];
+      phenomenonReplaceCount += 1;
+      continue;
+    }
+    return { drawnPlaneId: cardId, drawPile, discardPile, phenomenonReplaceCount };
+  }
+
+  return { drawnPlaneId: undefined, drawPile, discardPile, phenomenonReplaceCount };
 }

@@ -22,6 +22,7 @@ This file defines project-specific operating instructions for coding agents work
   - `LLM_CONTEXT.md`
   - `ROLES.md`
 - Validate `ISSUES.md` contains only active statuses (`unstarted`, `in-progress`, `reopened`).
+- Validate active issue entries include `priority` with one of: `low`, `medium`, `high`.
 - If startup docs are missing/stale, continue with best effort and log the gap in the next user update.
 
 ## Instruction Precedence
@@ -49,8 +50,14 @@ This file defines project-specific operating instructions for coding agents work
 - Treat `ISSUES.md` as the source of truth for current active bug/feature status tracking.
 - If the user explicitly asks to add an issue, update `ISSUES.md` directly without additional confirmation prompts.
 - When the user asks to work issues:
-  - prioritize items with `status: unstarted` or `status: reopened`,
-  - then continue `status: in-progress` items.
+  - prioritize items with `status: reopened` first, then `status: in-progress`, then `status: unstarted`,
+  - within each status bucket, prioritize `priority: high` before `medium` before `low`.
+- Active issue entries should include:
+  - `title`
+  - `status`
+  - `priority` (`low` | `medium` | `high`)
+  - `description`
+- When adding issues, set `priority` explicitly; if priority is unknown, default to `medium`.
 - When beginning implementation of an issue, set `status: in-progress` first.
 - After resolving an issue:
   - set `status: complete`,

@@ -39,28 +39,45 @@
         </label>
       </div>
     </div>
-    <div class="control-bar__set-picker">
-      <div class="control-bar__set-picker-title">Rules Profile</div>
-      <div class="control-bar__set-options">
-        @for (profile of availableRulesProfiles(); track profile) {
-          <label class="control-bar__set-option">
-            <input
-              type="radio"
-              name="rules-profile"
-              [checked]="selectedRulesProfile() === profile"
-              (change)="setRulesProfile(profile)"
-            />
-            @if (profile === RULES_PROFILE.BLIND_FOG_OF_WAR) {
-              Blind Eternities - Fog of War (center-only reveal)
-            } @else if (profile === RULES_PROFILE.BLIND_CLASSIC_PLUS) {
-              Blind Eternities - Classic Plus (center + N/E/S/W reveal)
-            } @else {
-              Regular Planechase - Standard
-            }
-          </label>
-        }
+    @if (showRulesProfilePicker()) {
+      <div class="control-bar__set-picker">
+        <div class="control-bar__set-picker-title">Rules Profile</div>
+        <div class="control-bar__set-options">
+          @for (profile of availableRulesProfiles(); track profile) {
+            <label class="control-bar__set-option">
+              <input
+                type="radio"
+                name="rules-profile"
+                [checked]="selectedRulesProfile() === profile"
+                (change)="setRulesProfile(profile)"
+              />
+              @if (profile === RULES_PROFILE.BLIND_FOG_OF_WAR) {
+                Fog of War (start with center only)
+              } @else if (profile === RULES_PROFILE.BLIND_CLASSIC_PLUS) {
+                Classic Plus (start with center and four neighbors)
+              } @else {
+                Regular Planechase
+              }
+            </label>
+          }
+        </div>
       </div>
-    </div>
+    }
+    @if (selectedGameMode() === GAME_MODE.BLIND_ETERNITIES) {
+      <div class="control-bar__set-picker">
+        <div class="control-bar__set-picker-title">Optional Rules</div>
+        <div class="control-bar__set-options">
+          <label class="control-bar__set-option">
+            <input type="checkbox" [checked]="enableHellride()" (change)="setEnableHellride(($any($event.target)).checked)" />
+            Enable Hellride (diagonal move into unrevealed spaces)
+          </label>
+          <label class="control-bar__set-option">
+            <input type="checkbox" [checked]="enableAntiStall()" (change)="setEnableAntiStall(($any($event.target)).checked)" />
+            Prevent immediate backtracking
+          </label>
+        </div>
+      </div>
+    }
     <button type="button" class="control-bar__button" (click)="startSession()" [disabled]="!canStartSession()">
       Start Session
     </button>
@@ -84,6 +101,9 @@
       Cancel Move
     </button>
     <span class="control-bar__hint">Click a highlighted plane to select movement.</span>
+    @if (activeHellrideEnabled()) {
+      <span class="control-bar__hint">Teal highlights are Hellride diagonal options.</span>
+    }
   }
 
   @if (fsmState() === "CONFIRM_MOVE") {
@@ -128,25 +148,27 @@
       </p>
       @if (activeGameMode() === GAME_MODE.BLIND_ETERNITIES) {
         <p>
-          In Blind Eternities mode, planeswalking enters movement flow. Roll the die, select an eligible adjacent plane,
-          confirm movement, then resolve the destination plane.
+          1) Press <strong>Roll Die</strong>. 2) If you planeswalk, click a highlighted plane. 3) Confirm your move.
+          4) Read the new plane and continue.
         </p>
       } @else {
         <p>
-          In Regular Planechase mode, planeswalking replaces the current center plane directly with the next deck card.
-          The board stays centered on the active plane.
+          In Regular Planechase mode, planeswalk replaces the current center plane with the next card automatically.
+          The active plane stays centered on screen.
         </p>
       }
       <p>
-        Roll results: blank does nothing, chaos opens the current plane modal, and planeswalk triggers movement or plane
-        replacement based on mode.
+        Die results: <strong>blank</strong> = no change, <strong>chaos</strong> = current plane effect, <strong>planeswalk</strong> = move
+        (Blind Eternities) or replace plane (Regular).
       </p>
       <p>
-        Modals are draggable from non-button regions and can be closed with the close button or the <kbd>Esc</kbd> key.
+        Tip: drag modals from anywhere except buttons. Press <kbd>Esc</kbd> to close a modal quickly.
       </p>
       <p>
-        Variant notes: Hellride, strict phenomenon replacement, and additional reveal profiles are tracked as upcoming
-        rules options and are not fully enabled yet.
+        If Hellride is enabled, diagonal highlights show optional diagonal moves into unrevealed spaces.
+      </p>
+      <p>
+        If anti-stall is enabled, you cannot immediately move back to the plane you just left.
       </p>
     </div>
   </details>

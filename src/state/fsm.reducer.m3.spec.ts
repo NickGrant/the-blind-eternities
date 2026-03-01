@@ -15,7 +15,7 @@ describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
       },
     });
     expect(boot.fsm.state).toBe("BOOTSTRAP_REVEAL");
-    expect(boot.deck.drawPile).toEqual(["p2", "p3", "p4", "p5", "p6"]);
+    expect(boot.deck.drawPile).toEqual(["p6"]);
 
     const center = boot.map.tilesByCoord["0,0"];
     const north = boot.map.tilesByCoord["0,-1"];
@@ -36,16 +36,16 @@ describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
 
     expect(revealed.fsm.state).toBe("MODAL_OPEN");
     expect(revealed.map.tilesByCoord["0,0"].isFaceUp).toBe(true);
-    expect(revealed.map.tilesByCoord["0,-1"].isFaceUp).toBe(false);
-    expect(revealed.map.tilesByCoord["1,0"].isFaceUp).toBe(false);
-    expect(revealed.map.tilesByCoord["0,1"].isFaceUp).toBe(false);
-    expect(revealed.map.tilesByCoord["-1,0"].isFaceUp).toBe(false);
+    expect(revealed.map.tilesByCoord["0,-1"].isFaceUp).toBe(true);
+    expect(revealed.map.tilesByCoord["1,0"].isFaceUp).toBe(true);
+    expect(revealed.map.tilesByCoord["0,1"].isFaceUp).toBe(true);
+    expect(revealed.map.tilesByCoord["-1,0"].isFaceUp).toBe(true);
 
     expect(revealed.map.tilesByCoord["0,0"].revealedAtMs).toBe(500);
-    expect(revealed.map.tilesByCoord["0,-1"].revealedAtMs).toBe(100);
-    expect(revealed.map.tilesByCoord["1,0"].revealedAtMs).toBe(100);
-    expect(revealed.map.tilesByCoord["0,1"].revealedAtMs).toBe(100);
-    expect(revealed.map.tilesByCoord["-1,0"].revealedAtMs).toBe(100);
+    expect(revealed.map.tilesByCoord["0,-1"].revealedAtMs).toBe(501);
+    expect(revealed.map.tilesByCoord["1,0"].revealedAtMs).toBe(502);
+    expect(revealed.map.tilesByCoord["0,1"].revealedAtMs).toBe(503);
+    expect(revealed.map.tilesByCoord["-1,0"].revealedAtMs).toBe(504);
 
     expect(revealed.deck.currentPlaneId).toBe(revealed.map.tilesByCoord["0,0"].planeId);
     expect(revealed.modal.active?.type).toBe("PLANE");
@@ -180,10 +180,12 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
       bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      rulesProfile: "BLIND_CLASSIC_PLUS",
+      enableHellride: false,
     },
     rng: { seed: "unit-seed", rollCount: 0 },
     deck: { drawPile: [], discardPile: [] },
-    map: { tilesByCoord: {}, partyCoord: undefined, highlights: { eligibleMoveCoords: [] } },
+    map: { tilesByCoord: {}, partyCoord: undefined, highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] } },
     modal: { queue: [], isOpen: false },
     log: { entries: [] },
     ui: { selections: {} },

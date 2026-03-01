@@ -10,6 +10,7 @@ import { SessionStore } from "./core/session.store";
 import { DIE_OUTCOME } from "../state/intents.types";
 import { DevModeStore } from "./core/dev-mode";
 import { APP_THEMES, type AppThemeId, ThemeService } from "./core/theme.service";
+import { AnalyticsService } from "./core/analytics.service";
 
 /**
  * Indirection to keep reload testable under Vitest/JSDOM.
@@ -36,6 +37,7 @@ export class AppComponent implements AfterViewInit {
   private readonly sessionStore = inject(SessionStore);
   private readonly devModeStore = inject(DevModeStore);
   private readonly themeService = inject(ThemeService);
+  private readonly analytics = inject(AnalyticsService);
 
   readonly fatal = this.fatalErrorStore.fatal;
   readonly hasFatal = computed(() => this.fatal() !== null);
@@ -63,6 +65,7 @@ export class AppComponent implements AfterViewInit {
       if (!latest) return;
       if (latest.id === this.lastProcessedLogId()) return;
       this.lastProcessedLogId.set(latest.id);
+      this.analytics.trackEvent(toAnalyticsEventName(latest.message), normalizeEventMeta(latest.meta));
 
       const outcome = parseDieOutcome(latest.message);
       if (!outcome) return;
@@ -71,6 +74,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.analytics.init();
     try {
       this.phaser.init(this.phaserHost.nativeElement);
     } catch (err) {
@@ -117,4 +121,23 @@ function parseDieOutcome(message: string): "blank" | "chaos" | "planeswalk" | nu
   ).exec(message.trim());
   if (!match) return null;
   return match[1].toLowerCase() as "blank" | "chaos" | "planeswalk";
+}
+
+function toAnalyticsEventName(message: string): string {
+  const normalized = message
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  return normalized.length > 0 ? `be_${normalized}` : "be_event";
+}
+
+function normalizeEventMeta(
+  meta: Record<string, string | number | boolean | null> | undefined
+): Record<string, string | number | boolean | null> {
+  if (!meta) return {};
+  const out: Record<string, string | number | boolean | null> = {};
+  Object.entries(meta).forEach(([key, value]) => {
+    out[key] = value ?? null;
+  });
+  return out;
 }

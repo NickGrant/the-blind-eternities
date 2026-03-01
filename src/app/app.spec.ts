@@ -5,6 +5,7 @@ import { describe, it, expect, vi } from "vitest";
 import { AppComponent, Navigation } from "./app";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
+import { AnalyticsService } from "./core/analytics.service";
 
 describe("AppComponent (class-only, injection-context)", () => {
   type AppWithHost = AppComponent & {
@@ -13,11 +14,13 @@ describe("AppComponent (class-only, injection-context)", () => {
 
   function createComponent(phaserInit: () => void = () => void 0) {
     const phaser = { init: vi.fn(phaserInit) };
+    const analytics = { init: vi.fn() };
     const fatal = new FatalErrorStore();
 
     TestBed.configureTestingModule({
       providers: [
         { provide: PhaserBootstrapService, useValue: phaser },
+        { provide: AnalyticsService, useValue: analytics },
         { provide: FatalErrorStore, useValue: fatal },
       ],
     });
@@ -27,14 +30,15 @@ describe("AppComponent (class-only, injection-context)", () => {
     // We are not compiling templates; provide the ViewChild manually.
     (cmp as AppWithHost).phaserHost = { nativeElement: document.createElement("div") };
 
-    return { cmp, phaser, fatal };
+    return { cmp, phaser, analytics, fatal };
   }
 
   it("calls Phaser init on ngAfterViewInit", () => {
-    const { cmp, phaser, fatal } = createComponent();
+    const { cmp, phaser, analytics, fatal } = createComponent();
 
     cmp.ngAfterViewInit();
 
+    expect(analytics.init).toHaveBeenCalledTimes(1);
     expect(phaser.init).toHaveBeenCalledTimes(1);
     expect(fatal.fatal()).toBeNull();
   });

@@ -37,11 +37,18 @@ export class ControlBarComponent {
       ? [RULES_PROFILE.REGULAR_STANDARD]
       : [RULES_PROFILE.BLIND_FOG_OF_WAR, RULES_PROFILE.BLIND_CLASSIC_PLUS]
   );
+  readonly showRulesProfilePicker = computed(() => this.availableRulesProfiles().length > 1);
   readonly activeGameMode = computed(() =>
     this.fsmState() === "SETUP" ? this.selectedGameMode() : this.state().config.gameMode
   );
   readonly activeRulesProfile = computed(() =>
     this.fsmState() === "SETUP" ? this.selectedRulesProfile() : this.state().config.rulesProfile
+  );
+  readonly activeHellrideEnabled = computed(() =>
+    this.fsmState() === "SETUP" ? this.enableHellride() : this.state().config.enableHellride === true
+  );
+  readonly activeAntiStallEnabled = computed(() =>
+    this.fsmState() === "SETUP" ? this.enableAntiStall() : this.state().config.enableAntiStall === true
   );
   readonly revealProfile = computed(() => this.getRevealProfileLabel(this.activeRulesProfile()));
   readonly helpModeLabel = computed(() =>
@@ -51,6 +58,8 @@ export class ControlBarComponent {
   readonly rollButtonDisabled = computed(() => this.rollToastVisibleState() || this.fsmState() !== "IDLE");
   readonly selectedGameMode = signal<GameMode>(GAME_MODE.BLIND_ETERNITIES);
   readonly selectedRulesProfile = signal<RulesProfile>(RULES_PROFILE.BLIND_FOG_OF_WAR);
+  readonly enableHellride = signal(false);
+  readonly enableAntiStall = signal(false);
   readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
 
@@ -104,6 +113,8 @@ export class ControlBarComponent {
       includedSetCodes: this.selectedSetCodes(),
       gameMode: this.selectedGameMode(),
       rulesProfile: this.selectedRulesProfile(),
+      enableHellride: this.enableHellride(),
+      enableAntiStall: this.enableAntiStall(),
     });
   }
 
@@ -111,6 +122,8 @@ export class ControlBarComponent {
     this.selectedGameMode.set(mode);
     if (mode === GAME_MODE.REGULAR_PLANECHASE) {
       this.selectedRulesProfile.set(RULES_PROFILE.REGULAR_STANDARD);
+      this.enableHellride.set(false);
+      this.enableAntiStall.set(false);
       return;
     }
     if (this.selectedRulesProfile() === RULES_PROFILE.REGULAR_STANDARD) {
@@ -120,6 +133,14 @@ export class ControlBarComponent {
 
   setRulesProfile(profile: RulesProfile): void {
     this.selectedRulesProfile.set(profile);
+  }
+
+  setEnableHellride(value: boolean): void {
+    this.enableHellride.set(value);
+  }
+
+  setEnableAntiStall(value: boolean): void {
+    this.enableAntiStall.set(value);
   }
 
   /**

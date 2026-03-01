@@ -1,6 +1,5 @@
 import { DIE_OUTCOME, DOMAIN_INTENT, type DomainIntent } from "./intents.types";
 import type { SessionState } from "./session.types";
-import { isAdjacentCardinal, parseCoordKey } from "./map/coord";
 import { createNewSessionState } from "./session.factory";
 import { transition, withLastIntent, withRollCountIncremented } from "./reducer/fsm-core";
 import { appendLog } from "./reducer/logging";
@@ -206,11 +205,9 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
       if (intent.type === DOMAIN_INTENT.SELECT_PLANE) {
         const from = state.map.partyCoord;
         if (!from) return state;
-        if (!state.map.tilesByCoord[intent.toCoord]) return state;
-
-        const fromCoord = parseCoordKey(from);
-        const toCoord = parseCoordKey(intent.toCoord);
-        if (!isAdjacentCardinal(fromCoord, toCoord)) return state;
+        const eligible = state.map.highlights?.eligibleMoveCoords ?? [];
+        const hellride = state.map.highlights?.hellrideMoveCoords ?? [];
+        if (!eligible.includes(intent.toCoord) && !hellride.includes(intent.toCoord)) return state;
 
         const next = transition(state, "CONFIRM_MOVE", intent, {
           pendingMove: { fromCoord: from, toCoord: intent.toCoord },

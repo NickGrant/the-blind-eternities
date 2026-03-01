@@ -3,6 +3,7 @@ import type { CoordKey, SessionState } from "../../state/session.types";
 import {
   canInspectTiles,
   coordToWorld,
+  isHellrideSelectableTile,
   isConfirmSelectionTile,
   isInteractiveTile,
   isSelectableTile,
@@ -24,6 +25,7 @@ type ThemePalette = {
   idleStroke: number;
   partyStroke: number;
   selectionStroke: number;
+  hellrideStroke: number;
   faceDownFill: number;
   faceDownStroke: number;
   faceUpFallbackFill: number;
@@ -41,6 +43,7 @@ const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
     idleStroke: 0x7fa39a,
     partyStroke: 0xb6d6cf,
     selectionStroke: 0xe3ff7a,
+    hellrideStroke: 0x7de0ff,
     faceDownFill: 0x1a252a,
     faceDownStroke: 0x516660,
     faceUpFallbackFill: 0x202f34,
@@ -56,6 +59,7 @@ const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
     idleStroke: 0x8d7dff,
     partyStroke: 0x5bd2ff,
     selectionStroke: 0xff73d2,
+    hellrideStroke: 0x54f8ff,
     faceDownFill: 0x20264e,
     faceDownStroke: 0x6b6bd8,
     faceUpFallbackFill: 0x242f63,
@@ -71,6 +75,7 @@ const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
     idleStroke: 0xb78a57,
     partyStroke: 0x835d36,
     selectionStroke: 0xd5902f,
+    hellrideStroke: 0x6aa0d0,
     faceDownFill: 0xe4cfa2,
     faceDownStroke: 0xae8455,
     faceUpFallbackFill: 0xf0dfbf,
@@ -86,6 +91,7 @@ const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
     idleStroke: 0x70c5cc,
     partyStroke: 0xb7f2f3,
     selectionStroke: 0x95ffd4,
+    hellrideStroke: 0x84d8ff,
     faceDownFill: 0x123c4d,
     faceDownStroke: 0x58a8b0,
     faceUpFallbackFill: 0x185165,
@@ -200,9 +206,12 @@ export class MapScene extends Phaser.Scene {
       const isParty = coordKey === partyCoord;
       const isFaceUp = tile.isFaceUp;
       const selectable = isSelectableTile(state, coordKey);
+      const hellrideSelectable = isHellrideSelectableTile(state, coordKey);
       const confirmSelection = isConfirmSelectionTile(state, coordKey);
       const stroke = selectable || confirmSelection
         ? this.palette.selectionStroke
+        : hellrideSelectable
+          ? this.palette.hellrideStroke
         : isParty
           ? this.palette.partyStroke
           : this.palette.idleStroke;
@@ -216,6 +225,7 @@ export class MapScene extends Phaser.Scene {
         y: world.y,
         isFaceUp,
         selectable,
+        hellrideSelectable,
         confirmSelection,
         isParty,
       });
@@ -225,7 +235,7 @@ export class MapScene extends Phaser.Scene {
 
       const frame = this.add
         .rectangle(world.x, world.y, this.viewport.tileWidth, this.viewport.tileHeight, this.palette.tileFill, 0.96)
-        .setStrokeStyle(selectable ? 4 : 3, stroke, 1);
+        .setStrokeStyle(selectable || hellrideSelectable ? 4 : 3, stroke, 1);
 
       const art = this.renderCardFace({
         x: world.x,
@@ -249,11 +259,12 @@ export class MapScene extends Phaser.Scene {
 
         const canConfirm = isConfirmSelectionTile(latest, coordKey);
         const canSelect = isSelectableTile(latest, coordKey);
+        const canHellrideSelect = isHellrideSelectableTile(latest, coordKey);
         if (canConfirm) {
           this.deps.onConfirmMove?.();
           return;
         }
-        if (canSelect) {
+        if (canSelect || canHellrideSelect) {
           this.deps.onSelectPlane(coordKey);
           return;
         }
@@ -631,6 +642,7 @@ export class MapScene extends Phaser.Scene {
     y: number;
     isFaceUp: boolean;
     selectable: boolean;
+    hellrideSelectable: boolean;
     confirmSelection: boolean;
     isParty: boolean;
   }): string {
@@ -644,6 +656,7 @@ export class MapScene extends Phaser.Scene {
       args.y,
       args.isFaceUp ? "1" : "0",
       args.selectable ? "1" : "0",
+      args.hellrideSelectable ? "1" : "0",
       args.confirmSelection ? "1" : "0",
       args.isParty ? "1" : "0",
     ].join("|");

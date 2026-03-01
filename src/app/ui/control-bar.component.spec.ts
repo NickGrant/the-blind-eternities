@@ -58,6 +58,7 @@ describe("ControlBarComponent (class-only)", () => {
     if (intent.type === "domain/start_session") {
       expect(intent.gameMode).toBe("REGULAR_PLANECHASE");
       expect(intent.rulesProfile).toBe("REGULAR_STANDARD");
+      expect(intent.enableHellride).toBe(false);
     }
   });
 
@@ -75,6 +76,48 @@ describe("ControlBarComponent (class-only)", () => {
     if (intent.type === "domain/start_session") {
       expect(intent.rulesProfile).toBe("BLIND_CLASSIC_PLUS");
     }
+  });
+
+  it("includes hellride toggle in start_session payload when enabled", () => {
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.setEnableHellride(true);
+    cmp.startSession();
+
+    const intent = dispatchMock.mock.calls[0][0];
+    expect(intent.type).toBe("domain/start_session");
+    if (intent.type === "domain/start_session") {
+      expect(intent.enableHellride).toBe(true);
+    }
+  });
+
+  it("includes anti-stall toggle in start_session payload when enabled", () => {
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.setEnableAntiStall(true);
+    cmp.startSession();
+
+    const intent = dispatchMock.mock.calls[0][0];
+    expect(intent.type).toBe("domain/start_session");
+    if (intent.type === "domain/start_session") {
+      expect(intent.enableAntiStall).toBe(true);
+    }
+  });
+
+  it("hides rules profile selector when only one profile is available", () => {
+    const { cmp } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+    expect(cmp.showRulesProfilePicker()).toBe(true);
+    cmp.setGameMode("REGULAR_PLANECHASE");
+    expect(cmp.showRulesProfilePicker()).toBe(false);
   });
 
   it("uses DeckService minimum threshold to gate session start", () => {

@@ -11,6 +11,10 @@
   - `unstarted`
   - `in-progress`
   - `reopened`
+- Valid priorities for active items:
+  - `low`
+  - `medium`
+  - `high`
 - When an issue is resolved:
   - set `status: complete`
   - append `Resolution:` (1-2 sentences)
@@ -21,44 +25,23 @@
 
 ### Functional
 
-title: Add optional Hellride movement (diagonal into unrevealed void only)
+title: Replace "Rules Profile" setup with numeric "Fog of War" setting (1 or 2)
 status: unstarted
-description: Implement Hellride movement as an optional rules toggle/profile behavior: allow diagonal movement only when target diagonal space is currently unoccupied/unrevealed; block if a revealed plane already exists there.
+priority: high
+description: Remove the current "Rules Profile" configuration and replace it with a "Fog of War" setting that accepts only numeric values `1` or `2`. Behavior requirements: `1` means only the current square (current plane tile) is face up; on movement, only the destination square is turned face up. `2` means movement reveal follows the article-style directional reveal: after entering destination, reveal current square if needed, then reveal adjacent squares in NESW order until all empty adjacent cardinal squares are face up. Diagonal squares are excluded from this reveal behavior.
 
 ---
 
-title: Enforce strict phenomenon-on-reveal replacement in Blind Eternities fill flow
+title: Remove Hellride toggle from setup; Hellride must always be on in Blind Eternities mode
 status: unstarted
-description: During board fill after movement, if a phenomenon is drawn, resolve it immediately, prevent it from persisting on the map, and continue drawing until a valid plane occupies that slot.
+priority: high
+description: Remove user-facing enable/disable controls for Hellride. In Blind Eternities mode, Hellride behavior should always be active and enforced in state/rules flow. Regular Planechase behavior remains unaffected.
 
 ---
 
-title: Add movement UI affordances for Hellride candidates
+title: Replace phenomenon ID-prefix heuristic with explicit card-type metadata
 status: unstarted
-description: When Hellride is enabled, distinguish diagonal Hellride movement options visually from standard adjacent movement options so users can understand available path types.
-
----
-
-title: Evaluate optional anti-stall/backtrack rule toggle for Blind Eternities
-status: unstarted
-description: Assess and optionally add a configurable anti-stall movement constraint (for example soft anti-backtrack) while keeping article-aligned behavior as default profile baseline.
-
----
-
-title: Add Google Analytics tracking for GitHub Pages deployment
-status: unstarted
-description: Integrate Google Analytics (GA4) in production/GitHub Pages builds to track usage metrics (sessions, page views, key interactions) with environment-based configuration so local/dev builds remain unaffected.
-
----
-
-title: Hide Rules Profile picker when only one profile option is available
-status: unstarted
-description: The rules profile selector should not be displayed when there is only one valid profile choice for the selected game mode (for example Regular Planechase). Show the picker only when users can meaningfully choose between multiple profiles.
-
----
-
-title: Improve "How to Use" copy for player-friendly readability
-status: unstarted
-description: Current "How to Use" language is too technical and not easy to scan for typical players. Rewrite the section with simpler phrasing, clearer step-by-step guidance, and more concise wording oriented around player actions.
+priority: medium
+description: Phenomenon handling currently relies on card ID prefix checks (`phenomenon-`). Replace this with explicit card-type metadata in catalog/deck flow so phenomenon detection is data-driven and resilient to naming variance.
 
 ---

@@ -48,6 +48,8 @@ export type SessionState = {
     ensurePlusEnabled: boolean;
     gameMode: GameMode;
     rulesProfile?: RulesProfile;
+    enableHellride?: boolean;
+    enableAntiStall?: boolean;
   };
 
   rng: {
@@ -69,9 +71,11 @@ export type SessionState = {
   map: {
     tilesByCoord: Record<CoordKey, MapTile>;
     partyCoord?: CoordKey;
+    previousPartyCoord?: CoordKey;
 
     highlights?: {
       eligibleMoveCoords: CoordKey[];
+      hellrideMoveCoords?: CoordKey[];
     };
   };
 

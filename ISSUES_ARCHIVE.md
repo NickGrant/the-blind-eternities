@@ -789,3 +789,94 @@ title: Add variant rules profile system across modes
 status: complete
 description: Introduce a first-class rules profile model (for example Blind Eternities Article, Blind Eternities Fog-of-War, Regular Planechase) to keep behavior differences explicit, testable, and selectable at session start.
 Resolution: Introduced first-class rules profile values in intent/state flow, added setup-time profile selection UI, and connected profile-to-bootstrap mapping across Blind Eternities and Regular Planechase starts.
+
+---
+
+title: Add optional Hellride movement (diagonal into unrevealed void only)
+status: complete
+description: Implement Hellride movement as an optional rules toggle/profile behavior: allow diagonal movement only when target diagonal space is currently unoccupied/unrevealed; block if a revealed plane already exists there.
+Resolution: Added an optional setup toggle for Hellride and updated movement eligibility to include diagonal targets only when enabled and unrevealed; revealed diagonal tiles remain blocked.
+
+---
+
+title: Add movement UI affordances for Hellride candidates
+status: complete
+description: When Hellride is enabled, distinguish diagonal Hellride movement options visually from standard adjacent movement options so users can understand available path types.
+Resolution: Added dedicated Hellride candidate highlighting in Phaser using a distinct stroke color, exposed hellride highlight state separately from cardinal moves, and added contextual control-bar hint text during movement selection.
+
+---
+
+title: Hide Rules Profile picker when only one profile option is available
+status: complete
+description: The rules profile selector should not be displayed when there is only one valid profile choice for the selected game mode (for example Regular Planechase). Show the picker only when users can meaningfully choose between multiple profiles.
+Resolution: Added conditional rendering for the Rules Profile picker so it only appears when multiple profile choices exist, keeping setup UI focused and less noisy.
+
+---
+
+title: Improve "How to Use" copy for player-friendly readability
+status: complete
+description: Current "How to Use" language is too technical and not easy to scan for typical players. Rewrite the section with simpler phrasing, clearer step-by-step guidance, and more concise wording oriented around player actions.
+Resolution: Rewrote the in-app help text with simpler language, explicit step-by-step play guidance, and short action-focused descriptions for die results, movement flow, and modal interactions.
+
+---
+
+title: Enforce strict phenomenon-on-reveal replacement in Blind Eternities fill flow
+status: complete
+description: During board fill after movement, if a phenomenon is drawn, resolve it immediately, prevent it from persisting on the map, and continue drawing until a valid plane occupies that slot.
+Resolution: Added strict fill-time replacement logic that detects phenomenon card IDs, discards them without placing them on the map, and keeps drawing until a plane is assigned or deck sources are exhausted; logs now record phenomenon replacement counts per move resolution.
+
+---
+
+title: Evaluate optional anti-stall/backtrack rule toggle for Blind Eternities
+status: complete
+description: Assess and optionally add a configurable anti-stall movement constraint (for example soft anti-backtrack) while keeping article-aligned behavior as default profile baseline.
+Resolution: Implemented an optional setup toggle (`Prevent immediate backtracking`) that blocks moving directly back to the previously occupied plane when enabled, while keeping the default experience unchanged when disabled.
+
+---
+
+title: Add Google Analytics tracking for GitHub Pages deployment
+status: complete
+description: Integrate Google Analytics (GA4) in production/GitHub Pages builds to track usage metrics (sessions, page views, key interactions) with environment-based configuration so local/dev builds remain unaffected.
+Resolution: Added a root analytics service that conditionally initializes GA4 from environment config, injects the gtag script once, and keeps tracking disabled by default until a production `analyticsMeasurementId` is provided.
+
+---
+
+title: Double-clicking a Hellride square does not trigger movement selection/confirm behavior
+status: complete
+description: Hellride diagonal candidates highlight correctly, but double-click interaction on those squares does nothing. Hellride tiles should follow the same double-click flow as other movement targets (select/confirm as applicable).
+Resolution: Updated map-scene pointer handling to treat Hellride-selectable tiles as valid movement-selection targets, so Hellride squares now participate in the same click/double-click movement flow as standard selectable tiles.
+
+---
+
+title: Documentation consolidation blocker - resolve drift across core active docs
+status: complete
+description: Active docs are not yet consolidation-ready due behavior drift between `docs/13-ux-behavior-spec.md`, `docs/02-runtime-flow-fsm.md`, `docs/08-delivery-plan.md`, and current runtime. Execute a doc-sync pass so all active docs describe the same current behavior and active roadmap.
+Resolution: Consolidated and synchronized core active docs (UX spec, runtime FSM, delivery plan, docs index, and UAT checklist) so they now describe current runtime behavior and current roadmap without conflicting statements.
+
+---
+
+title: Align Phenomenon specification with Blind Eternities article semantics
+status: complete
+description: `docs/15-phenomenon-support-spec.md` currently describes a modal-forward phenomenon flow that conflicts with article semantics. Update spec and implementation plan to match article behavior: phenomenon triggers immediately when revealed during fill, does not remain on the board, and is replaced by a plane in the revealed slot.
+Resolution: Rewrote the phenomenon spec to article-aligned semantics: immediate in-flow resolution during fill, no persistent phenomenon tile placement, and replacement draw continuation until a plane fills the slot.
+
+---
+
+title: Add explicit documentation for enter-plane effect ordering before phenomenon resolution
+status: complete
+description: Document and test the ordering rule from the article: destination plane is entered first, then fill reveals occur, and any revealed phenomenon resolves after enter-plane effects. Add acceptance criteria and state-flow notes to runtime docs and phenomenon spec.
+Resolution: Added explicit ordering requirements to runtime and phenomenon docs, including movement-pipeline sequencing notes and release/UAT checklist expectations for enter-plane then phenomenon resolution ordering.
+
+---
+
+title: Add article-alignment acceptance matrix for Blind Eternities rules
+status: complete
+description: Create a concise checklist/spec matrix mapping runtime behavior to article rules (initial reveal pattern by fog-of-war value, cardinal fill behavior, Hellride eligibility, phenomenon replacement semantics, and optional anti-stall deviations). Include explicit notes for intentional deviations.
+Resolution: Added `docs/16-blind-eternities-article-alignment.md` as a maintainable alignment matrix with status columns, intentional deviations, and release-gate usage guidance.
+
+---
+
+title: Add priority levels to issue schema (low/medium/high)
+status: complete
+description: Extend active issue format to support a required priority field (`low`, `medium`, `high`) and keep priority preserved when moving entries between `ISSUES.md` and `ISSUES_ARCHIVE.md`. Update relevant guidance docs and issue-maintenance scripts accordingly.
+Resolution: Updated issue schema guidance in `ISSUES.md` and operating rules in `AGENTS.md` to include explicit `priority` values and priority-aware triage ordering.

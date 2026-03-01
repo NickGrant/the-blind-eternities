@@ -1,87 +1,47 @@
-﻿# Phenomenon Support Specification (Draft)
+# Phenomenon Support Specification
 
-This document defines the target behavior for adding Phenomenon card support.
-It is a planning/specification artifact and does not imply implementation is complete.
+This spec aligns Blind Eternities phenomenon behavior with the reference article:
+https://terriblemagic.blogspot.com/2016/05/the-blind-eternities-planechase-variant.html
 
-## 1. Play Pattern Definition
+## Product Rule Intent
 
-### 1.1 Trigger Context
+- Phenomena are transient interrupts during reveal/fill.
+- A phenomenon is never left on the map as a long-term plane tile.
+- Reveal/fill continues until the target slot contains a valid plane.
 
-- Phenomenon handling is relevant during planeswalking and reveal sequences.
-- When a revealed card is a Phenomenon, it resolves immediately and does not become the active long-term plane.
+## Required Ordering
 
-### 1.2 Facilitator-Facing Behavior
+When movement resolves in Blind Eternities:
 
-- Reveal indicates the card is a Phenomenon.
-- A dedicated Phenomenon resolution modal is shown with full card text.
-- After resolution, play continues to the next valid plane reveal step.
+1. Enter destination plane (land/enter behavior context).
+2. Fill/reveal needed nearby cardinal slots.
+3. If a revealed fill draw is a phenomenon:
+   - resolve it immediately in flow,
+   - remove/discard it from long-term map placement,
+   - draw replacement card(s) until a plane occupies the slot.
+4. Finalize movement resolution.
 
-### 1.3 Rules Intent (Product-Level)
+## UX Expectations
 
-- Phenomenon is treated as an interruptive, transient event.
-- Resolution must be explicit and user-visible.
-- The system must preserve flow clarity over hidden automation.
+- Phenomenon should be visible in logs as a distinct resolution event.
+- Gameplay should remain flow-driven; no persistent phenomenon tile on board.
+- Avoid extra blocking modal requirements unless explicitly added by future issue.
 
-## 2. Backend and State Flow (Proposed)
+## Data Model Requirements
 
-### 2.1 State Additions
+- Phenomenon detection must be type-driven (`cardType`/`kind`) rather than ID naming heuristics.
+- Deck/catalog records must distinguish at least:
+  - `PLANE`
+  - `PHENOMENON`
 
-- Extend deck metadata to distinguish `PLANE` vs `PHENOMENON` cards.
-- Track phenomenon lifecycle in session state (for example:
-  - pending phenomenon card id
-  - is resolving flag
-  - source reveal context).
+## Logging Requirements
 
-### 2.2 FSM Flow (Proposed)
+- Log metadata must include:
+  - `phenomenonReplaceCount`
+  - movement phase markers
+  - game mode / fog-of-war context
 
-- On reveal draw:
-  - if `PLANE`: continue current reveal/movement flow.
-  - if `PHENOMENON`: transition to phenomenon resolution state/modal flow.
-- On phenomenon resolution complete:
-  - return to deterministic reveal continuation state.
-  - ensure no invalid input paths are accepted during resolution.
+## Open Follow-Up (Tracked in ISSUES)
 
-### 2.3 Determinism and Logging
-
-- All draws remain deterministic under seed.
-- Set-filter configuration (pre-session selected set codes) must be preserved in session metadata or event log context so phenomenon-capable deck composition is reproducible.
-- Log entries must include:
-  - phenomenon revealed
-  - phenomenon resolved
-  - continuation outcome.
-
-## 3. UX Flow (Proposed)
-
-### 3.1 Visual Treatment
-
-- Phenomenon cards should have clear visual distinction from planes.
-- Modal title uses card name.
-- Modal body uses full rules text.
-
-### 3.2 Interaction Model
-
-- During active phenomenon modal, conflicting controls are disabled.
-- Closing/resolving the modal advances play automatically to the next valid state.
-
-### 3.3 Error/Fallback Behavior
-
-- If phenomenon metadata is missing:
-  - show safe fallback modal with card id
-  - log warning
-  - continue flow without hard crash.
-
-## 4. Definition of Ready for Implementation
-
-Before coding begins:
-
-- Phenomenon card source format is finalized in `cards.json` schema.
-- FSM transition table updates are documented and reviewed.
-- UX copy and modal rules are approved.
-- Test acceptance criteria are listed in `ISSUES.md`.
-
-## 5. Open Decisions
-
-- Exact card data source precedence for phenomenon text (MTGJSON vs Scryfall fallback).
-- Whether phenomenon resolution ever requires multi-step confirmation.
-- How to represent chained phenomenon events, if supported.
-- Whether phenomenon-enabled set selection should be a distinct toggle or inferred from selected card sets.
+- Replace ID-prefix phenomenon detection with explicit card-type metadata.
+- Validate exact enter-plane effect ordering with acceptance tests tied to article matrix.

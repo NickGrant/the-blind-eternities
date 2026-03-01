@@ -91,6 +91,8 @@ export type DomainIntent =
       includedSetCodes?: string[];
       gameMode?: GameMode;
       rulesProfile?: RulesProfile;
+      enableHellride?: boolean;
+      enableAntiStall?: boolean;
       initialDeck?: {
         drawPile: string[];
         discardPile: string[];

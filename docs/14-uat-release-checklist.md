@@ -5,10 +5,13 @@ Use this checklist before release candidate sign-off.
 ## Functional Verification
 
 - [ ] Session start and bootstrap reveal complete successfully
+- [ ] Startup reveal behavior matches configured fog-of-war depth
 - [ ] Die roll outcomes behave correctly (`blank`, `chaos`, `planeswalk`)
 - [ ] Movement flow works end-to-end (select, confirm, auto-complete)
+- [ ] Hellride diagonal movement behavior matches configured rules
 - [ ] Landing modal opens with expected plane details
 - [ ] No invalid FSM transitions are user-reachable
+- [ ] Phenomenon replacement behavior matches article-aligned spec
 
 ## Visual and Interaction Verification
 
@@ -33,5 +36,6 @@ Use this checklist before release candidate sign-off.
 ## Release Notes and Documentation
 
 - [ ] Behavior changes documented in relevant docs
+- [ ] `docs/16-blind-eternities-article-alignment.md` reviewed and current
 - [ ] `ISSUES.md` statuses and resolutions updated
 - [ ] Root `README.md` and docs index are current

@@ -25,6 +25,12 @@ export function isSelectableTile(state: SessionState, coordKey: CoordKey): boole
   return eligible.includes(coordKey);
 }
 
+export function isHellrideSelectableTile(state: SessionState, coordKey: CoordKey): boolean {
+  if (state.fsm.state !== "AWAIT_MOVE") return false;
+  const hellride = state.map.highlights?.hellrideMoveCoords ?? [];
+  return hellride.includes(coordKey);
+}
+
 export function isConfirmSelectionTile(state: SessionState, coordKey: CoordKey): boolean {
   if (state.fsm.state !== "CONFIRM_MOVE") return false;
   return state.ui.selections?.selectedCoord === coordKey;
@@ -35,7 +41,7 @@ export function canInspectTiles(state: SessionState): boolean {
 }
 
 export function isInteractiveTile(state: SessionState, coordKey: CoordKey, isFaceUp: boolean): boolean {
-  if (isSelectableTile(state, coordKey) || isConfirmSelectionTile(state, coordKey)) return true;
+  if (isSelectableTile(state, coordKey) || isHellrideSelectableTile(state, coordKey) || isConfirmSelectionTile(state, coordKey)) return true;
   if (!isFaceUp) return false;
   return canInspectTiles(state);
 }

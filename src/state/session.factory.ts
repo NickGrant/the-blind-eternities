@@ -32,6 +32,8 @@ export const createNewSessionState = (args: {
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
       rulesProfile: "BLIND_FOG_OF_WAR",
+      enableHellride: false,
+      enableAntiStall: false,
     },
 
     rng: {
@@ -52,7 +54,8 @@ export const createNewSessionState = (args: {
     map: {
       tilesByCoord: {},
       partyCoord: undefined,
-      highlights: { eligibleMoveCoords: [] },
+      previousPartyCoord: undefined,
+      highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] },
     },
 
     modal: {

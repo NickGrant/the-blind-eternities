@@ -13,6 +13,7 @@ Historical milestone detail has been moved to:
 - Runtime now operates in issue-driven execution mode
 - Active backlog source of truth: `ISSUES.md`
 - Completed issue history: `ISSUES_ARCHIVE.md`
+- Core docs consolidated and drift-reconciled on March 1, 2026
 
 ## Current Delivery Model
 
@@ -35,23 +36,23 @@ Goal:
 
 ### Milestone 8 - Phenomenon Card Support
 
-Status: Planned
+Status: In progress
 
 Goal:
-- Add phenomenon card play pattern, deterministic state flow, and UX handling
+- Finalize article-aligned phenomenon semantics and remove remaining detection heuristics
 
 Primary specification:
 - `docs/15-phenomenon-support-spec.md`
+- `docs/16-blind-eternities-article-alignment.md`
 
 ### Milestone 9 - Play Modes and Player Onboarding
 
 Status: In progress
 
 Goal:
-- Add pre-session play-mode selection supporting:
-  - `Blind Eternities` (current map movement model)
-  - `Regular Planechase` (single active plane replacement model)
-- Add player-facing "How to Use" guidance accessible during normal play
+- Complete migration from profile wording to numeric Fog-of-War configuration (`1` / `2`)
+- Finalize Blind Eternities setup simplification (always-on Hellride)
+- Keep onboarding/help content synchronized with active controls
 
 Primary scope source:
 - `ISSUES.md`

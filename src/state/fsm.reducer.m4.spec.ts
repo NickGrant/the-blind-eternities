@@ -27,6 +27,57 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     expect(next.map.highlights?.eligibleMoveCoords.slice().sort()).toEqual(
       ["0,-1", "1,0", "0,1", "-1,0"].sort()
     );
+    expect(next.map.highlights?.hellrideMoveCoords ?? []).toEqual([]);
+  });
+
+  it("adds diagonal hellride candidates in AWAIT_MOVE when enabled", () => {
+    const rolling = buildState("ROLLING");
+    rolling.config.enableHellride = true;
+    rolling.map.partyCoord = "0,0";
+    rolling.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "0,-1": mkTile("0,-1"),
+      "1,0": mkTile("1,0"),
+      "0,1": mkTile("0,1"),
+      "-1,0": mkTile("-1,0"),
+    };
+
+    const next = reduceSessionState(rolling, {
+      type: "domain/roll_resolved",
+      atMs: 10,
+      outcome: "planeswalk",
+    });
+
+    expect(next.fsm.state).toBe("AWAIT_MOVE");
+    expect(next.map.highlights?.hellrideMoveCoords?.slice().sort()).toEqual(
+      ["-1,-1", "1,-1", "1,1", "-1,1"].sort()
+    );
+    expect(next.map.tilesByCoord["1,1"]).toBeTruthy();
+    expect(next.map.tilesByCoord["1,1"].isFaceUp).toBe(false);
+  });
+
+  it("filters immediate backtrack options when anti-stall is enabled", () => {
+    const rolling = buildState("ROLLING");
+    rolling.config.enableAntiStall = true;
+    rolling.map.partyCoord = "0,0";
+    rolling.map.previousPartyCoord = "0,1";
+    rolling.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "0,-1": mkTile("0,-1"),
+      "1,0": mkTile("1,0"),
+      "0,1": mkTile("0,1"),
+      "-1,0": mkTile("-1,0"),
+    };
+
+    const next = reduceSessionState(rolling, {
+      type: "domain/roll_resolved",
+      atMs: 10,
+      outcome: "planeswalk",
+    });
+
+    expect(next.fsm.state).toBe("AWAIT_MOVE");
+    expect(next.map.highlights?.eligibleMoveCoords.includes("0,1")).toBe(false);
+    expect(next.map.highlights?.eligibleMoveCoords.slice().sort()).toEqual(["0,-1", "1,0", "-1,0"].sort());
   });
 
   it("replaces active plane directly on planeswalk in regular planechase mode", () => {
@@ -187,6 +238,31 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     expect(next.map.tilesByCoord["-1,0"].planeId).toBe("plane-b");
     expect(next.map.tilesByCoord["1,1"].planeId).toBe("plane-c");
   });
+
+  it("skips phenomenon cards during board fill and draws replacement planes", () => {
+    const moving = buildState("MOVING");
+    moving.map.partyCoord = "0,0";
+    moving.config.ensurePlusEnabled = false;
+    moving.deck.drawPile = ["phenomenon-spatial-merging", "plane-replacement"];
+    moving.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "1,0": mkTile("1,0", false),
+      "0,1": { ...mkTile("0,1", false), planeId: "plane@0,1" },
+    };
+    moving.fsm.context = {
+      pendingMove: { fromCoord: "0,0", toCoord: "1,0" },
+    };
+
+    const next = reduceSessionState(moving, {
+      type: "domain/movement_complete",
+      atMs: 70,
+    });
+
+    expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-replacement");
+    expect(next.deck.discardPile.includes("phenomenon-spatial-merging")).toBe(true);
+    const phase = next.log.entries.find((entry) => entry.message === "Phase: phenomenon_resolve");
+    expect(phase?.meta?.["phenomenonReplaceCount"]).toBe(1);
+  });
 });
 
 function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
@@ -198,13 +274,16 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
       bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      rulesProfile: "BLIND_CLASSIC_PLUS",
+      enableHellride: false,
+      enableAntiStall: false,
     },
     rng: { seed: "seed-1", rollCount: 0 },
     deck: { drawPile: [], discardPile: [], currentPlaneId: "p:0,0" },
     map: {
       tilesByCoord: {},
       partyCoord: undefined,
-      highlights: { eligibleMoveCoords: [] },
+      highlights: { eligibleMoveCoords: [], hellrideMoveCoords: [] },
     },
     modal: { queue: [], isOpen: false },
     log: { entries: [] },
