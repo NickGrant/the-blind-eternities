@@ -85,7 +85,9 @@ export class ModalHostComponent implements AfterViewChecked {
     const dy = event.clientY - this.dragLast.y;
     if (dx === 0 && dy === 0) return;
     this.dragLast = { x: event.clientX, y: event.clientY };
-    this.modalOffset.update((offset) => ({ x: offset.x + dx, y: offset.y + dy }));
+    const delta = this.clampDragDelta(dx, dy);
+    if (delta.dx === 0 && delta.dy === 0) return;
+    this.modalOffset.update((offset) => ({ x: offset.x + delta.dx, y: offset.y + delta.dy }));
   }
 
   @HostListener("document:pointerup", ["$event"])
@@ -152,5 +154,21 @@ export class ModalHostComponent implements AfterViewChecked {
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       )
     ).filter((el) => !el.hasAttribute("disabled"));
+  }
+
+  private clampDragDelta(dx: number, dy: number): { dx: number; dy: number } {
+    const panel = this.modalPanel?.nativeElement;
+    if (!panel) return { dx, dy };
+
+    const rect = panel.getBoundingClientRect();
+    const minDx = -rect.left;
+    const maxDx = window.innerWidth - rect.right;
+    const minDy = -rect.top;
+    const maxDy = window.innerHeight - rect.bottom;
+
+    return {
+      dx: Math.min(maxDx, Math.max(minDx, dx)),
+      dy: Math.min(maxDy, Math.max(minDy, dy)),
+    };
   }
 }

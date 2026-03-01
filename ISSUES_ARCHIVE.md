@@ -682,3 +682,18 @@ status: complete
 description: Pull https://github.com/NickGrant/the-blind-eternities, replace its existing project contents with this application, and prepare the migrated codebase as a major release by setting application version to 2.0.0 (reflecting a breaking/major change from prior repo state). Include any required project metadata/version updates needed for consistency.
 Resolution: Added Git remote to target repository, bumped project version metadata to 2.0.0, and completed overwrite push to origin/main from this working directory.
 
+
+---
+
+title: Disable dev mode on GitHub Pages deployments
+status: complete
+description: The production build served via GitHub Pages should default to dev mode off so debug-only panels and controls are hidden in the hosted experience.
+Resolution: Added production file replacement in ngular.json so Pages/production builds use environment.prod.ts where dev is false, ensuring debug-only UI is disabled in hosted builds.
+
+---
+
+title: Constrain modal drag movement to viewport bounds
+status: complete
+description: Modal drag behavior should be clamped to the visible viewport so users cannot drag the modal off-screen (top edge above viewport, bottom edge below viewport, or similarly out of horizontal bounds).
+Resolution: Modal drag now clamps pointer deltas against current panel bounds and viewport dimensions, preventing off-screen drag in any direction; added unit coverage for boundary clamping behavior.
+

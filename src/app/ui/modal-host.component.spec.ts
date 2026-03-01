@@ -152,4 +152,58 @@ describe("ModalHostComponent (class-only)", () => {
     expect(cmp.modalOffsetX()).toBe("30px");
     expect(cmp.modalOffsetY()).toBe("20px");
   });
+
+  it("clamps modal drag to viewport bounds", () => {
+    const initial = createNewSessionState({ atMs: 10 });
+    initial.modal.active = {
+      id: "m5",
+      type: "PLANE",
+      planeId: "plane-akoum",
+      resumeToState: "IDLE",
+    };
+    initial.modal.isOpen = true;
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: vi.fn(),
+    };
+
+    const cmp = new ModalHostComponent(
+      storeMock as SessionStore,
+      orchestratorMock as SessionOrchestrator,
+      new DeckService()
+    );
+
+    (cmp as unknown as { modalPanel: { nativeElement: HTMLElement } }).modalPanel = {
+      nativeElement: {
+        getBoundingClientRect: () =>
+          ({
+            left: 5,
+            top: 5,
+            right: 400,
+            bottom: 300,
+          }) as DOMRect,
+      } as HTMLElement,
+    };
+
+    cmp.onDragHandleDown({
+      button: 0,
+      pointerId: 12,
+      clientX: 100,
+      clientY: 100,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent);
+
+    cmp.onPointerMove({
+      pointerId: 12,
+      clientX: 80,
+      clientY: 80,
+    } as PointerEvent);
+
+    expect(cmp.modalOffset()).toEqual({ x: -5, y: -5 });
+  });
 });
