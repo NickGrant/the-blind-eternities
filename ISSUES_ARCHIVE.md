@@ -880,3 +880,19 @@ title: Add priority levels to issue schema (low/medium/high)
 status: complete
 description: Extend active issue format to support a required priority field (`low`, `medium`, `high`) and keep priority preserved when moving entries between `ISSUES.md` and `ISSUES_ARCHIVE.md`. Update relevant guidance docs and issue-maintenance scripts accordingly.
 Resolution: Updated issue schema guidance in `ISSUES.md` and operating rules in `AGENTS.md` to include explicit `priority` values and priority-aware triage ordering.
+
+---
+
+title: Replace "Rules Profile" setup with numeric "Fog of War" setting (1 or 2)
+status: complete
+priority: high
+description: Remove the current "Rules Profile" configuration and replace it with a "Fog of War" setting that accepts only numeric values `1` or `2`. Behavior requirements: `1` means only the current square (current plane tile) is face up; on movement, only the destination square is turned face up. `2` means movement reveal follows the article-style directional reveal: after entering destination, reveal current square if needed, then reveal adjacent squares in NESW order until all empty adjacent cardinal squares are face up. Diagonal squares are excluded from this reveal behavior.
+Resolution: Replaced setup-time Rules Profile selection with a numeric Fog of War control and updated gameplay to use distance-based reveal semantics. Per updated UX direction, this is now implemented as `0` (reveal entered square only) and `1` (reveal entered square plus adjacent cardinal squares) for Blind Eternities mode.
+
+---
+
+title: Remove Hellride toggle from setup; Hellride must always be on in Blind Eternities mode
+status: complete
+priority: high
+description: Remove user-facing enable/disable controls for Hellride. In Blind Eternities mode, Hellride behavior should always be active and enforced in state/rules flow. Regular Planechase behavior remains unaffected.
+Resolution: Removed Hellride controls from setup UI and help copy now states Hellride is always active in Blind Eternities. Movement eligibility now enforces Hellride diagonals automatically in Blind Eternities and keeps Regular Planechase behavior unchanged.

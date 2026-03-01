@@ -2,7 +2,7 @@ import { Component, Input, computed, signal } from "@angular/core";
 import { DeckService } from "../core/deck.service";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
-import { DOMAIN_INTENT, GAME_MODE, RULES_PROFILE, type GameMode, type RulesProfile } from "../../state/intents.types";
+import { DOMAIN_INTENT, FOG_OF_WAR_DISTANCE, GAME_MODE, type FogOfWarDistance, type GameMode } from "../../state/intents.types";
 
 @Component({
   selector: "app-control-bar",
@@ -24,7 +24,7 @@ export class ControlBarComponent {
 
   protected readonly DOMAIN_INTENT = DOMAIN_INTENT;
   protected readonly GAME_MODE = GAME_MODE;
-  protected readonly RULES_PROFILE = RULES_PROFILE;
+  protected readonly FOG_OF_WAR_DISTANCE = FOG_OF_WAR_DISTANCE;
   readonly state;
   readonly fsmState = computed(() => this.state().fsm.state);
   readonly planeSets;
@@ -32,33 +32,23 @@ export class ControlBarComponent {
   readonly selectedSetCodes = computed(() => [...this.selectedSets()].sort());
   readonly selectedPlayableCount = computed(() => this.deckService.countPlayablePlanesForSets(this.selectedSetCodes()));
   readonly canStartSession = computed(() => this.selectedPlayableCount() >= this.minimumSessionPlanes);
-  readonly availableRulesProfiles = computed(() =>
-    this.selectedGameMode() === GAME_MODE.REGULAR_PLANECHASE
-      ? [RULES_PROFILE.REGULAR_STANDARD]
-      : [RULES_PROFILE.BLIND_FOG_OF_WAR, RULES_PROFILE.BLIND_CLASSIC_PLUS]
-  );
-  readonly showRulesProfilePicker = computed(() => this.availableRulesProfiles().length > 1);
   readonly activeGameMode = computed(() =>
     this.fsmState() === "SETUP" ? this.selectedGameMode() : this.state().config.gameMode
   );
-  readonly activeRulesProfile = computed(() =>
-    this.fsmState() === "SETUP" ? this.selectedRulesProfile() : this.state().config.rulesProfile
-  );
-  readonly activeHellrideEnabled = computed(() =>
-    this.fsmState() === "SETUP" ? this.enableHellride() : this.state().config.enableHellride === true
+  readonly activeFogOfWarDistance = computed(() =>
+    this.fsmState() === "SETUP" ? this.selectedFogOfWarDistance() : this.state().config.fogOfWarDistance
   );
   readonly activeAntiStallEnabled = computed(() =>
     this.fsmState() === "SETUP" ? this.enableAntiStall() : this.state().config.enableAntiStall === true
   );
-  readonly revealProfile = computed(() => this.getRevealProfileLabel(this.activeRulesProfile()));
+  readonly revealProfile = computed(() => this.getRevealProfileLabel(this.activeFogOfWarDistance()));
   readonly helpModeLabel = computed(() =>
     this.activeGameMode() === GAME_MODE.BLIND_ETERNITIES ? "Blind Eternities" : "Regular Planechase"
   );
   readonly showRollButton = computed(() => this.fsmState() === "IDLE" || this.rollToastVisibleState());
   readonly rollButtonDisabled = computed(() => this.rollToastVisibleState() || this.fsmState() !== "IDLE");
   readonly selectedGameMode = signal<GameMode>(GAME_MODE.BLIND_ETERNITIES);
-  readonly selectedRulesProfile = signal<RulesProfile>(RULES_PROFILE.BLIND_FOG_OF_WAR);
-  readonly enableHellride = signal(false);
+  readonly selectedFogOfWarDistance = signal<FogOfWarDistance>(FOG_OF_WAR_DISTANCE.CURRENT_ONLY);
   readonly enableAntiStall = signal(false);
   readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
@@ -112,8 +102,7 @@ export class ControlBarComponent {
       atMs: Date.now(),
       includedSetCodes: this.selectedSetCodes(),
       gameMode: this.selectedGameMode(),
-      rulesProfile: this.selectedRulesProfile(),
-      enableHellride: this.enableHellride(),
+      fogOfWarDistance: this.selectedFogOfWarDistance(),
       enableAntiStall: this.enableAntiStall(),
     });
   }
@@ -121,22 +110,13 @@ export class ControlBarComponent {
   setGameMode(mode: GameMode): void {
     this.selectedGameMode.set(mode);
     if (mode === GAME_MODE.REGULAR_PLANECHASE) {
-      this.selectedRulesProfile.set(RULES_PROFILE.REGULAR_STANDARD);
-      this.enableHellride.set(false);
       this.enableAntiStall.set(false);
       return;
     }
-    if (this.selectedRulesProfile() === RULES_PROFILE.REGULAR_STANDARD) {
-      this.selectedRulesProfile.set(RULES_PROFILE.BLIND_FOG_OF_WAR);
-    }
   }
 
-  setRulesProfile(profile: RulesProfile): void {
-    this.selectedRulesProfile.set(profile);
-  }
-
-  setEnableHellride(value: boolean): void {
-    this.enableHellride.set(value);
+  setFogOfWarDistance(distance: FogOfWarDistance): void {
+    this.selectedFogOfWarDistance.set(distance);
   }
 
   setEnableAntiStall(value: boolean): void {
@@ -179,10 +159,8 @@ export class ControlBarComponent {
     this.orchestrator.dispatch({ type, atMs: Date.now() });
   }
 
-  private getRevealProfileLabel(profile: RulesProfile | undefined): string {
-    if (profile === RULES_PROFILE.BLIND_CLASSIC_PLUS) return "Classic Plus Reveal";
-    if (profile === RULES_PROFILE.BLIND_FOG_OF_WAR) return "Center Only Reveal";
-    if (profile === RULES_PROFILE.REGULAR_STANDARD) return "Regular Centered";
-    return "Center Only Reveal";
+  private getRevealProfileLabel(distance: number | undefined): string {
+    if (distance === 1) return "Reveal current + adjacent cardinals";
+    return "Reveal current square only";
   }
 }

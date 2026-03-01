@@ -52,6 +52,13 @@ export const GAME_MODE = {
 
 export type GameMode = (typeof GAME_MODE)[keyof typeof GAME_MODE];
 
+export const FOG_OF_WAR_DISTANCE = {
+  CURRENT_ONLY: 0,
+  CURRENT_PLUS_CARDINAL: 1,
+} as const;
+
+export type FogOfWarDistance = (typeof FOG_OF_WAR_DISTANCE)[keyof typeof FOG_OF_WAR_DISTANCE];
+
 export const RULES_PROFILE = {
   BLIND_FOG_OF_WAR: "BLIND_FOG_OF_WAR",
   BLIND_CLASSIC_PLUS: "BLIND_CLASSIC_PLUS",
@@ -90,6 +97,7 @@ export type DomainIntent =
       atMs: number;
       includedSetCodes?: string[];
       gameMode?: GameMode;
+      fogOfWarDistance?: FogOfWarDistance;
       rulesProfile?: RulesProfile;
       enableHellride?: boolean;
       enableAntiStall?: boolean;

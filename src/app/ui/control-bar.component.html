@@ -39,27 +39,28 @@
         </label>
       </div>
     </div>
-    @if (showRulesProfilePicker()) {
+    @if (selectedGameMode() === GAME_MODE.BLIND_ETERNITIES) {
       <div class="control-bar__set-picker">
-        <div class="control-bar__set-picker-title">Rules Profile</div>
+        <div class="control-bar__set-picker-title">Fog of War</div>
         <div class="control-bar__set-options">
-          @for (profile of availableRulesProfiles(); track profile) {
-            <label class="control-bar__set-option">
-              <input
-                type="radio"
-                name="rules-profile"
-                [checked]="selectedRulesProfile() === profile"
-                (change)="setRulesProfile(profile)"
-              />
-              @if (profile === RULES_PROFILE.BLIND_FOG_OF_WAR) {
-                Fog of War (start with center only)
-              } @else if (profile === RULES_PROFILE.BLIND_CLASSIC_PLUS) {
-                Classic Plus (start with center and four neighbors)
-              } @else {
-                Regular Planechase
-              }
-            </label>
-          }
+          <label class="control-bar__set-option">
+            <input
+              type="radio"
+              name="fog-of-war"
+              [checked]="selectedFogOfWarDistance() === FOG_OF_WAR_DISTANCE.CURRENT_ONLY"
+              (change)="setFogOfWarDistance(FOG_OF_WAR_DISTANCE.CURRENT_ONLY)"
+            />
+            0: Reveal only the square you enter.
+          </label>
+          <label class="control-bar__set-option">
+            <input
+              type="radio"
+              name="fog-of-war"
+              [checked]="selectedFogOfWarDistance() === FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL"
+              (change)="setFogOfWarDistance(FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL)"
+            />
+            1: Reveal entered square and adjacent cardinal squares.
+          </label>
         </div>
       </div>
     }
@@ -67,10 +68,6 @@
       <div class="control-bar__set-picker">
         <div class="control-bar__set-picker-title">Optional Rules</div>
         <div class="control-bar__set-options">
-          <label class="control-bar__set-option">
-            <input type="checkbox" [checked]="enableHellride()" (change)="setEnableHellride(($any($event.target)).checked)" />
-            Enable Hellride (diagonal move into unrevealed spaces)
-          </label>
           <label class="control-bar__set-option">
             <input type="checkbox" [checked]="enableAntiStall()" (change)="setEnableAntiStall(($any($event.target)).checked)" />
             Prevent immediate backtracking
@@ -101,9 +98,7 @@
       Cancel Move
     </button>
     <span class="control-bar__hint">Click a highlighted plane to select movement.</span>
-    @if (activeHellrideEnabled()) {
-      <span class="control-bar__hint">Teal highlights are Hellride diagonal options.</span>
-    }
+    <span class="control-bar__hint">Teal highlights are Hellride diagonal options.</span>
   }
 
   @if (fsmState() === "CONFIRM_MOVE") {
@@ -165,7 +160,7 @@
         Tip: drag modals from anywhere except buttons. Press <kbd>Esc</kbd> to close a modal quickly.
       </p>
       <p>
-        If Hellride is enabled, diagonal highlights show optional diagonal moves into unrevealed spaces.
+        Hellride is always active in Blind Eternities mode; diagonal highlights show optional diagonal moves into unrevealed spaces.
       </p>
       <p>
         If anti-stall is enabled, you cannot immediately move back to the plane you just left.

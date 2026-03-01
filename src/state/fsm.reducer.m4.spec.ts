@@ -3,7 +3,7 @@ import { reduceSessionState } from "./fsm.reducer";
 import type { SessionState } from "./session.types";
 
 describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
-  it("highlights adjacent movement options on planeswalk without auto-moving", () => {
+  it("highlights adjacent and hellride movement options on planeswalk without auto-moving", () => {
     const rolling = buildState("ROLLING");
     rolling.map.partyCoord = "0,0";
     rolling.map.tilesByCoord = {
@@ -27,12 +27,13 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     expect(next.map.highlights?.eligibleMoveCoords.slice().sort()).toEqual(
       ["0,-1", "1,0", "0,1", "-1,0"].sort()
     );
-    expect(next.map.highlights?.hellrideMoveCoords ?? []).toEqual([]);
+    expect(next.map.highlights?.hellrideMoveCoords?.slice().sort()).toEqual(
+      ["-1,-1", "1,-1", "1,1", "-1,1"].sort()
+    );
   });
 
-  it("adds diagonal hellride candidates in AWAIT_MOVE when enabled", () => {
+  it("adds diagonal hellride candidates in AWAIT_MOVE", () => {
     const rolling = buildState("ROLLING");
-    rolling.config.enableHellride = true;
     rolling.map.partyCoord = "0,0";
     rolling.map.tilesByCoord = {
       "0,0": mkTile("0,0"),
@@ -194,6 +195,7 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     const moving = buildState("MOVING");
     moving.map.partyCoord = "0,0";
     moving.config.ensurePlusEnabled = false;
+    moving.config.fogOfWarDistance = 0;
     moving.deck.drawPile = [];
     moving.deck.discardPile = ["plane-recycled-1", "plane-recycled-2"];
     moving.map.tilesByCoord = {
@@ -218,6 +220,7 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     const moving = buildState("MOVING");
     moving.map.partyCoord = "0,0";
     moving.config.ensurePlusEnabled = false;
+    moving.config.fogOfWarDistance = 0;
     moving.deck.drawPile = ["plane-a", "plane-b", "plane-c"];
     moving.map.tilesByCoord = {
       "0,0": mkTile("0,0"),
@@ -243,6 +246,7 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     const moving = buildState("MOVING");
     moving.map.partyCoord = "0,0";
     moving.config.ensurePlusEnabled = false;
+    moving.config.fogOfWarDistance = 0;
     moving.deck.drawPile = ["phenomenon-spatial-merging", "plane-replacement"];
     moving.map.tilesByCoord = {
       "0,0": mkTile("0,0"),
@@ -274,8 +278,9 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
       bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      fogOfWarDistance: 1,
       rulesProfile: "BLIND_CLASSIC_PLUS",
-      enableHellride: false,
+      enableHellride: true,
       enableAntiStall: false,
     },
     rng: { seed: "seed-1", rollCount: 0 },

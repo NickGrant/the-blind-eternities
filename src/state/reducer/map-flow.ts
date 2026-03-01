@@ -12,31 +12,27 @@ import { drawPlanes, shuffleDeterministic } from "../deck/deck-model";
 import { appendLog } from "./logging";
 
 type BootstrapSlot = SessionState["config"]["bootstrapRevealOrder"][number];
-type RulesProfile = NonNullable<SessionState["config"]["rulesProfile"]>;
+type FogOfWarDistance = SessionState["config"]["fogOfWarDistance"];
 type Coord = { x: number; y: number };
 
-function getRevealProfileCode(state: SessionState): RulesProfile {
-  if (state.config.rulesProfile) return state.config.rulesProfile;
-  const classic: SessionState["config"]["bootstrapRevealOrder"] = ["C", "N", "E", "S", "W"];
-  return state.config.bootstrapRevealOrder.length === classic.length &&
-      classic.every((slot, idx) => state.config.bootstrapRevealOrder[idx] === slot)
-    ? "BLIND_CLASSIC_PLUS"
-    : "BLIND_FOG_OF_WAR";
+function getFogOfWarDistance(state: SessionState): FogOfWarDistance {
+  return state.config.fogOfWarDistance === 1 ? 1 : 0;
 }
 
-function resolveRulesProfile(args: {
+function resolveFogOfWarDistance(args: {
   gameMode: SessionState["config"]["gameMode"];
-  requested: SessionState["config"]["rulesProfile"] | undefined;
-  current: SessionState["config"]["rulesProfile"] | undefined;
-}): RulesProfile {
-  if (args.gameMode === "REGULAR_PLANECHASE") return "REGULAR_STANDARD";
-  if (args.requested === "BLIND_CLASSIC_PLUS" || args.requested === "BLIND_FOG_OF_WAR") return args.requested;
-  if (args.current === "BLIND_CLASSIC_PLUS" || args.current === "BLIND_FOG_OF_WAR") return args.current;
-  return "BLIND_FOG_OF_WAR";
+  requested: number | undefined;
+  current: number | undefined;
+}): FogOfWarDistance {
+  if (args.gameMode === "REGULAR_PLANECHASE") return 0;
+  if (args.requested === 1) return 1;
+  if (args.requested === 0) return 0;
+  if (args.current === 1) return 1;
+  return 0;
 }
 
-function revealOrderForProfile(profile: RulesProfile): SessionState["config"]["bootstrapRevealOrder"] {
-  if (profile === "BLIND_CLASSIC_PLUS") return ["C", "N", "E", "S", "W"];
+function revealOrderForDistance(distance: FogOfWarDistance): SessionState["config"]["bootstrapRevealOrder"] {
+  if (distance === 1) return ["C", "N", "E", "S", "W"];
   return ["C"];
 }
 
@@ -95,12 +91,12 @@ export function initMapForSession(
       }).tilesByCoord
     : tilesSeeded;
 
-  const rulesProfile = resolveRulesProfile({
+  const fogOfWarDistance = resolveFogOfWarDistance({
     gameMode,
-    requested: intent.rulesProfile,
-    current: state.config.rulesProfile,
+    requested: intent.fogOfWarDistance,
+    current: state.config.fogOfWarDistance,
   });
-  const bootstrapRevealOrder = revealOrderForProfile(rulesProfile);
+  const bootstrapRevealOrder = revealOrderForDistance(fogOfWarDistance);
   const bootstrapCount = bootstrapRevealOrder.length;
   const dealt = drawPlanes(deck.drawPile, bootstrapCount);
   const withAssignedPlanes = { ...ensured };
@@ -124,9 +120,9 @@ export function initMapForSession(
     config: {
       ...state.config,
       gameMode,
-      rulesProfile,
+      fogOfWarDistance,
       bootstrapRevealOrder,
-      enableHellride: intent.enableHellride ?? state.config.enableHellride ?? false,
+      enableHellride: gameMode === "BLIND_ETERNITIES",
       enableAntiStall: intent.enableAntiStall ?? state.config.enableAntiStall ?? false,
     },
     deck: {
@@ -150,7 +146,7 @@ export function initMapForSession(
     message: "Session setup complete.",
     meta: {
       gameMode,
-      rulesProfile,
+      fogOfWarDistance,
       selectedSetCount: intent.includedSetCodes?.length ?? 0,
       selectedSetCodes: intent.includedSetCodes?.join(",") ?? null,
     },
@@ -195,7 +191,7 @@ export function applyBootstrapReveal(state: SessionState, atMs: number): Session
     meta: {
       currentPlaneId: withDistances[centerKey]?.planeId ?? null,
       gameMode: state.config.gameMode,
-      rulesProfile: getRevealProfileCode(state),
+      fogOfWarDistance: getFogOfWarDistance(state),
       revealedCount: state.config.bootstrapRevealOrder.length,
     },
   });
@@ -208,7 +204,7 @@ export function setEligibleMoves(state: SessionState): SessionState {
   const antiStallBlockedCoord = state.config.enableAntiStall ? state.map.previousPartyCoord : undefined;
   const candidates = neighborsCardinal(party).map(toCoordKey);
   const eligible = candidates.filter((k) => Boolean(state.map.tilesByCoord[k]) && k !== antiStallBlockedCoord);
-  const enableHellride = state.config.gameMode === "BLIND_ETERNITIES" && state.config.enableHellride === true;
+  const enableHellride = state.config.gameMode === "BLIND_ETERNITIES";
   const hellride: CoordKey[] = [];
   let tilesByCoord = state.map.tilesByCoord;
 
@@ -281,6 +277,12 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       revealedAtMs: atMs,
     };
   }
+  revealCardinalByFogDistance({
+    tilesByCoord: revealedDestination,
+    centerCoordKey: partyCoord,
+    distance: getFogOfWarDistance(state),
+    atMs,
+  });
 
   const placeholders = Object.entries(revealedDestination)
     .filter(([, tile]) => tile.planeId.startsWith("plane@"))
@@ -352,7 +354,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       phaseIndex: 1,
       toCoord: partyCoord,
       gameMode: state.config.gameMode,
-      rulesProfile: getRevealProfileCode(state),
+      fogOfWarDistance: getFogOfWarDistance(state),
     },
   });
   logged = appendLog(logged, {
@@ -364,7 +366,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       phaseIndex: 2,
       assignedCount: placeholders.length,
       gameMode: state.config.gameMode,
-      rulesProfile: getRevealProfileCode(state),
+      fogOfWarDistance: getFogOfWarDistance(state),
     },
   });
   logged = appendLog(logged, {
@@ -376,7 +378,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       phaseIndex: 3,
       phenomenonReplaceCount,
       gameMode: state.config.gameMode,
-      rulesProfile: getRevealProfileCode(state),
+      fogOfWarDistance: getFogOfWarDistance(state),
     },
   });
   return appendLog(logged, {
@@ -387,7 +389,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       toCoord: partyCoord,
       decayRemoved: decayed.removed.length,
       gameMode: state.config.gameMode,
-      rulesProfile: getRevealProfileCode(state),
+      fogOfWarDistance: getFogOfWarDistance(state),
       phenomenonReplaceCount,
       phase: "finalize",
       phaseIndex: 4,
@@ -457,10 +459,38 @@ export function applyRegularPlaneswalk(state: SessionState, atMs: number): Sessi
     meta: {
       currentPlaneId: nextPlaneId,
       gameMode: state.config.gameMode,
-      rulesProfile: getRevealProfileCode(state),
+      fogOfWarDistance: getFogOfWarDistance(state),
       hellrideUsed: false,
       phenomenonReplaceCount: 0,
     },
+  });
+}
+
+function revealCardinalByFogDistance(args: {
+  tilesByCoord: Record<CoordKey, SessionState["map"]["tilesByCoord"][CoordKey]>;
+  centerCoordKey: CoordKey;
+  distance: FogOfWarDistance;
+  atMs: number;
+}): void {
+  if (args.distance <= 0) return;
+  const center = parseCoordKey(args.centerCoordKey);
+  neighborsCardinal(center).forEach((coord, idx) => {
+    const coordKey = toCoordKey(coord);
+    const tile = args.tilesByCoord[coordKey];
+    if (!tile) {
+      args.tilesByCoord[coordKey] = createTile({
+        coordKey,
+        planeId: stubPlaneIdForCoord(coordKey),
+        atMs: args.atMs + idx + 1,
+        isFaceUp: true,
+      });
+      return;
+    }
+    args.tilesByCoord[coordKey] = {
+      ...tile,
+      isFaceUp: true,
+      revealedAtMs: args.atMs + idx + 1,
+    };
   });
 }
 

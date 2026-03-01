@@ -64,6 +64,7 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
       bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      fogOfWarDistance: 1,
     },
     rng: { rollCount: 0, seed: "seed-1" },
     deck: { drawPile: [], discardPile: [] },

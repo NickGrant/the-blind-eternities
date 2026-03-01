@@ -55,7 +55,7 @@ describe("reduceSessionState (Milestone 2 map invariants)", () => {
   it("reveals tiles according to configured bootstrap reveal profile", () => {
     const classic = buildState("BOOTSTRAP_REVEAL");
     classic.config.bootstrapRevealOrder = ["C", "N", "E", "S", "W"];
-    classic.config.rulesProfile = "BLIND_CLASSIC_PLUS";
+    classic.config.fogOfWarDistance = 1;
     classic.map.partyCoord = "0,0";
     classic.map.tilesByCoord = {
       "0,0": { ...mkTile("0,0"), isFaceUp: false },
@@ -73,7 +73,7 @@ describe("reduceSessionState (Milestone 2 map invariants)", () => {
 
     const fog = buildState("BOOTSTRAP_REVEAL");
     fog.config.bootstrapRevealOrder = ["C"];
-    fog.config.rulesProfile = "BLIND_FOG_OF_WAR";
+    fog.config.fogOfWarDistance = 0;
     fog.map.partyCoord = "0,0";
     fog.map.tilesByCoord = {
       "0,0": { ...mkTile("0,0"), isFaceUp: false },
@@ -101,8 +101,9 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
       bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      fogOfWarDistance: 1,
       rulesProfile: "BLIND_CLASSIC_PLUS",
-      enableHellride: false,
+      enableHellride: true,
     },
     rng: { rollCount: 0 },
     deck: { drawPile: [], discardPile: [] },

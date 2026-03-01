@@ -40,7 +40,7 @@ describe("ControlBarComponent (class-only)", () => {
     if (intent.type === "domain/start_session") {
       expect(intent.includedSetCodes).toEqual(["OPCA"]);
       expect(intent.gameMode).toBe("BLIND_ETERNITIES");
-      expect(intent.rulesProfile).toBe("BLIND_FOG_OF_WAR");
+      expect(intent.fogOfWarDistance).toBe(0);
     }
   });
 
@@ -54,43 +54,26 @@ describe("ControlBarComponent (class-only)", () => {
     cmp.startSession();
 
     const intent = dispatchMock.mock.calls[0][0];
-    expect(intent.type).toBe("domain/start_session");
+      expect(intent.type).toBe("domain/start_session");
     if (intent.type === "domain/start_session") {
       expect(intent.gameMode).toBe("REGULAR_PLANECHASE");
-      expect(intent.rulesProfile).toBe("REGULAR_STANDARD");
-      expect(intent.enableHellride).toBe(false);
+      expect(intent.fogOfWarDistance).toBe(0);
     }
   });
 
-  it("allows selecting classic blind profile before session start", () => {
+  it("allows selecting cardinal fog distance before session start", () => {
     const { cmp, dispatchMock } = buildComponent({
       fsmState: "SETUP",
       deckMock: buildDeckMock(),
     });
 
-    cmp.setRulesProfile("BLIND_CLASSIC_PLUS");
+    cmp.setFogOfWarDistance(1);
     cmp.startSession();
 
     const intent = dispatchMock.mock.calls[0][0];
     expect(intent.type).toBe("domain/start_session");
     if (intent.type === "domain/start_session") {
-      expect(intent.rulesProfile).toBe("BLIND_CLASSIC_PLUS");
-    }
-  });
-
-  it("includes hellride toggle in start_session payload when enabled", () => {
-    const { cmp, dispatchMock } = buildComponent({
-      fsmState: "SETUP",
-      deckMock: buildDeckMock(),
-    });
-
-    cmp.setEnableHellride(true);
-    cmp.startSession();
-
-    const intent = dispatchMock.mock.calls[0][0];
-    expect(intent.type).toBe("domain/start_session");
-    if (intent.type === "domain/start_session") {
-      expect(intent.enableHellride).toBe(true);
+      expect(intent.fogOfWarDistance).toBe(1);
     }
   });
 
@@ -110,14 +93,14 @@ describe("ControlBarComponent (class-only)", () => {
     }
   });
 
-  it("hides rules profile selector when only one profile is available", () => {
+  it("resets anti-stall when switching to regular planechase mode", () => {
     const { cmp } = buildComponent({
       fsmState: "SETUP",
       deckMock: buildDeckMock(),
     });
-    expect(cmp.showRulesProfilePicker()).toBe(true);
+    cmp.setEnableAntiStall(true);
     cmp.setGameMode("REGULAR_PLANECHASE");
-    expect(cmp.showRulesProfilePicker()).toBe(false);
+    expect(cmp.enableAntiStall()).toBe(false);
   });
 
   it("uses DeckService minimum threshold to gate session start", () => {

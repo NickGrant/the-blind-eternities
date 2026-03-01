@@ -31,8 +31,9 @@ export const createNewSessionState = (args: {
       bootstrapRevealOrder: ["C"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      fogOfWarDistance: 0,
       rulesProfile: "BLIND_FOG_OF_WAR",
-      enableHellride: false,
+      enableHellride: true,
       enableAntiStall: false,
     },
 

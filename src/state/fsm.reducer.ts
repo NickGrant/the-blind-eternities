@@ -14,13 +14,8 @@ import { closeModal, enqueueModal, toModalDescriptor } from "./reducer/modal-flo
 
 type FsmState = SessionState["fsm"]["state"];
 
-function getRevealProfileCode(state: SessionState): string {
-  if (state.config.rulesProfile) return state.config.rulesProfile;
-  const classic: SessionState["config"]["bootstrapRevealOrder"] = ["C", "N", "E", "S", "W"];
-  return state.config.bootstrapRevealOrder.length === classic.length &&
-      classic.every((slot, idx) => state.config.bootstrapRevealOrder[idx] === slot)
-    ? "BLIND_CLASSIC_PLUS"
-    : "BLIND_FOG_OF_WAR";
+function getFogOfWarDistance(state: SessionState): number {
+  return state.config.fogOfWarDistance === 1 ? 1 : 0;
 }
 
 /**
@@ -38,7 +33,7 @@ function withRollOutcomeLogged(
       rollCount: state.rng.rollCount,
       currentPlaneId: state.deck.currentPlaneId ?? null,
       gameMode: state.config.gameMode,
-      rulesProfile: getRevealProfileCode(state),
+      fogOfWarDistance: getFogOfWarDistance(state),
       hellrideUsed: false,
       phenomenonReplaceCount: 0,
     },
