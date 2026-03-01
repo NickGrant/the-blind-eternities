@@ -14,7 +14,9 @@
     "art:cache:dry": "node scripts/cache-plane-art.mjs --dry-run",
     "art:cache:fetch": "node scripts/cache-plane-art.mjs --fetch --max=2 --delay-ms=1500",
     "cards:sync:mtgjson": "node scripts/sync-cards-from-mtgjson.mjs",
-    "docs:normalize:issues": "node scripts/normalize-issues.mjs"
+    "docs:normalize:issues": "node scripts/normalize-issues.mjs",
+    "build:pages": "ng build --base-href=/the-blind-eternities/",
+    "deploy:pages": "angular-cli-ghpages --dir=dist/blind-eternities/browser"
   },
   "prettier": {
     "printWidth": 100,
@@ -45,6 +47,7 @@
     "@angular/build": "^21.0.0",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
+    "angular-cli-ghpages": "^3.0.2",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

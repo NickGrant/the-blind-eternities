@@ -15,9 +15,19 @@ App URL: `http://localhost:4200/`
 
 - `npm run start`: Start development server
 - `npm run build`: Create production build
+- `npm run build:pages`: Build for GitHub Pages (`/the-blind-eternities/` base href)
 - `npm run test:unit`: Run unit test suite (Vitest)
 - `npm run art:cache:fetch`: Fetch a small, throttled batch of plane art
 - `npm run cards:sync:mtgjson`: Sync plane metadata from MTGJSON
+- `npm run deploy:pages`: Publish local build output to `gh-pages` branch
+
+## GitHub Pages
+
+- Auto-deploy is configured via [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) on push to `main`.
+- Live site URL: `https://nickgrant.github.io/the-blind-eternities/`
+- Manual local deploy is also available:
+  1. `npm run build:pages`
+  2. `npm run deploy:pages`
 
 ## Documentation
 
