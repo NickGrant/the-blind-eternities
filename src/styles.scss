@@ -65,6 +65,9 @@ body {
   --be-shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.55);
   --be-shadow-panel: 0 14px 32px rgba(0, 0, 0, 0.28);
   --be-page-bg: radial-gradient(circle at 20% 20%, #25323f 0%, #10161b 45%, #080b0e 100%);
+  --be-theme-overlay: linear-gradient(145deg, rgba(255, 255, 255, 0.04), transparent 55%);
+  --be-panel-overlay: linear-gradient(155deg, rgba(255, 255, 255, 0.05), transparent 56%);
+  --be-control-overlay: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.12));
 }
 
 :root[data-be-theme="phyrexian"] {
@@ -78,6 +81,14 @@ body {
   --be-color-border-subtle: rgba(152, 180, 168, 0.24);
   --be-gradient-modal: linear-gradient(180deg, #151d1f 0%, #0c1113 100%);
   --be-page-bg: radial-gradient(circle at 25% 18%, #293338 0%, #111518 47%, #07090a 100%);
+  --be-theme-overlay:
+    radial-gradient(ellipse at 12% 10%, rgba(173, 208, 190, 0.14), transparent 44%),
+    repeating-linear-gradient(115deg, rgba(17, 27, 25, 0.48) 0 10px, rgba(10, 15, 14, 0.58) 10px 20px),
+    linear-gradient(180deg, rgba(63, 95, 81, 0.18), transparent 62%);
+  --be-panel-overlay:
+    linear-gradient(135deg, rgba(194, 222, 203, 0.08), transparent 48%),
+    repeating-linear-gradient(160deg, rgba(0, 0, 0, 0.14) 0 2px, transparent 2px 6px);
+  --be-control-overlay: linear-gradient(180deg, rgba(175, 206, 189, 0.14), rgba(13, 20, 19, 0.48));
 }
 
 :root[data-be-theme="neon-dynasty"] {
@@ -92,20 +103,37 @@ body {
   --be-gradient-modal: linear-gradient(180deg, #1a1f4b 0%, #111634 100%);
   --be-gradient-attention: linear-gradient(90deg, #67e8f9 0%, #818cf8 50%, #f472b6 100%);
   --be-page-bg: radial-gradient(circle at 15% 12%, #2f2d6f 0%, #1a1a3f 42%, #0a0b1a 100%);
+  --be-theme-overlay:
+    linear-gradient(135deg, rgba(251, 113, 244, 0.12), transparent 45%),
+    repeating-linear-gradient(90deg, rgba(34, 211, 238, 0.08) 0 1px, transparent 1px 20px),
+    radial-gradient(circle at 78% 24%, rgba(99, 102, 241, 0.34), transparent 34%);
+  --be-panel-overlay:
+    linear-gradient(125deg, rgba(56, 189, 248, 0.18), transparent 44%),
+    linear-gradient(335deg, rgba(236, 72, 153, 0.14), transparent 55%);
+  --be-control-overlay: linear-gradient(180deg, rgba(125, 211, 252, 0.2), rgba(30, 41, 95, 0.45));
 }
 
 :root[data-be-theme="lithomancy"] {
-  --be-color-bg: #1f1a16;
-  --be-color-surface: rgba(54, 43, 34, 0.84);
-  --be-color-surface-subtle: rgba(84, 64, 45, 0.68);
-  --be-color-text: #f6eee3;
-  --be-color-text-strong: #fff9f2;
-  --be-color-text-muted: #d7c3a8;
-  --be-color-border: rgba(205, 168, 118, 0.38);
-  --be-color-border-subtle: rgba(188, 147, 96, 0.28);
-  --be-gradient-modal: linear-gradient(180deg, #4f3724 0%, #2f2118 100%);
-  --be-gradient-attention: linear-gradient(90deg, #fbbf24 0%, #f97316 55%, #ef4444 100%);
-  --be-page-bg: radial-gradient(circle at 50% 8%, #70523a 0%, #3e2c21 40%, #1f1713 100%);
+  --be-color-bg: #f3ecdf;
+  --be-color-surface: rgba(255, 248, 236, 0.84);
+  --be-color-surface-subtle: rgba(244, 228, 199, 0.72);
+  --be-color-text: #483322;
+  --be-color-text-strong: #2f1f14;
+  --be-color-text-muted: #80614a;
+  --be-color-text-inverse: #2f1f14;
+  --be-color-border: rgba(184, 145, 101, 0.44);
+  --be-color-border-subtle: rgba(198, 163, 121, 0.32);
+  --be-gradient-modal: linear-gradient(180deg, #f5e9d2 0%, #e6d1ad 100%);
+  --be-gradient-attention: linear-gradient(90deg, #eab308 0%, #f59e0b 56%, #f97316 100%);
+  --be-page-bg: radial-gradient(circle at 50% 0%, #fff9ee 0%, #f2e3c8 48%, #d6b989 100%);
+  --be-theme-overlay:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.5), transparent 52%),
+    repeating-linear-gradient(90deg, rgba(151, 116, 75, 0.1) 0 2px, transparent 2px 46px),
+    conic-gradient(from 12deg at 24% 30%, rgba(179, 138, 90, 0.2), transparent 34%, rgba(216, 184, 133, 0.24) 62%, transparent 82%);
+  --be-panel-overlay:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.42), transparent 60%),
+    repeating-linear-gradient(145deg, rgba(171, 128, 81, 0.08) 0 2px, transparent 2px 14px);
+  --be-control-overlay: linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(219, 188, 144, 0.32));
 }
 
 :root[data-be-theme="halo-fountain"] {
@@ -120,4 +148,12 @@ body {
   --be-gradient-modal: linear-gradient(180deg, #11596e 0%, #0a3441 100%);
   --be-gradient-attention: linear-gradient(90deg, #99f6e4 0%, #67e8f9 50%, #a5b4fc 100%);
   --be-page-bg: radial-gradient(circle at 60% 0%, #2f7f8e 0%, #154759 45%, #092834 100%);
+  --be-theme-overlay:
+    radial-gradient(circle at 82% 10%, rgba(153, 246, 228, 0.24), transparent 44%),
+    repeating-radial-gradient(circle at 30% 70%, rgba(196, 240, 255, 0.08) 0 8px, transparent 8px 16px),
+    linear-gradient(160deg, rgba(196, 244, 255, 0.12), transparent 60%);
+  --be-panel-overlay:
+    linear-gradient(135deg, rgba(186, 230, 253, 0.2), transparent 46%),
+    linear-gradient(330deg, rgba(153, 246, 228, 0.14), transparent 58%);
+  --be-control-overlay: linear-gradient(180deg, rgba(153, 246, 228, 0.22), rgba(14, 73, 88, 0.4));
 }

@@ -1,4 +1,4 @@
-﻿# ISSUES ARCHIVE
+# ISSUES ARCHIVE
 ----
 
 ## Purpose
@@ -590,4 +590,32 @@ title: Add switchable MTG-themed visual themes with persisted preference
 status: complete
 description: Implement user-selectable visual themes that control UI background images/colors, border colors, text colors, and related styling tokens. Support four themes: Phyrexian, Neon Dynasty, Lithomancy, and Halo Fountain; remember user selection across sessions.
 Resolution: Added a persisted theme system with four selectable MTG-inspired themes (Phyrexian, Neon Dynasty, Lithomancy, Halo Fountain), a header theme picker, and CSS variable overrides applied via root theme attribute.
+
+
+---
+
+title: Modal popup flickers from default position to saved position on open
+status: complete
+description: Modal currently renders at the default location briefly before applying saved drag offset, causing visible position flicker. Apply saved position at first paint so modal opens directly at persisted coordinates.
+Resolution: Modal positioning now uses CSS custom properties from first paint, and modal open animation respects saved offsets, eliminating the visible jump from default to persisted position.
+
+---
+
+title: Refine MTG theme implementations for stronger world-accurate art direction
+status: complete
+description: Current themes need deeper visual polish and stronger identity. Lithomancy should shift to lighter white/tan Zendikar-inspired styling with hedron visual motifs; Phyrexian should feel oily and biomechanical with matching UI treatment; remaining themes should receive similarly distinctive directional refinement.
+Resolution: Refined theme tokens and overlays for stronger world identity, including a lighter Zendikar-inspired Lithomancy palette with hedron-like geometric motifs and an oily, biomechanical Phyrexian treatment.
+
+---`r`n`r`ntitle: Disable Roll Die button while roll-result toast is visible
+status: complete
+description: During active roll toast display, the Roll Die control should remain visible but disabled instead of disappearing, to preserve layout stability and prevent accidental clicks on neighboring controls.
+Resolution: Control bar now keeps Roll Die visible during roll toast display and disables it instead of removing it, preserving layout stability during state transitions.
+
+---
+
+title: Audit AGENTS/context strategy for portability and LLM efficiency
+status: complete
+description: Review `AGENTS.md` and the broader project setup used to feed LLM context, then produce actionable issues to improve process quality and portability across projects. Include opportunities such as skill-based workflows, explicit context include/exclude rules, file prioritization, and reusable conventions that reduce token overhead while preserving decision quality.
+Resolution: Completed an AGENTS/context audit and generated targeted follow-up issues covering context manifests, reusable skills, budget guardrails, startup validation, and docs normalization automation for portability.
+
 

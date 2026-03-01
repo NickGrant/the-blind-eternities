@@ -8,6 +8,8 @@
   padding: 84px var(--be-space-4) var(--be-space-4);
 
   &__panel {
+    --be-modal-offset-x: 0px;
+    --be-modal-offset-y: 0px;
     width: min(560px, 100%);
     border-radius: var(--be-radius-lg);
     border: 1px solid var(--be-color-border-contrast-strong);
@@ -18,6 +20,7 @@
     display: grid;
     gap: var(--be-space-3);
     pointer-events: auto;
+    transform: translate(var(--be-modal-offset-x), var(--be-modal-offset-y));
     animation: be-modal-pop 220ms ease-out;
   }
 
@@ -79,10 +82,10 @@
 @keyframes be-modal-pop {
   from {
     opacity: 0;
-    transform: translateY(-8px) scale(0.98);
+    transform: translate(var(--be-modal-offset-x), calc(var(--be-modal-offset-y) - 8px)) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate(var(--be-modal-offset-x), var(--be-modal-offset-y)) scale(1);
   }
 }

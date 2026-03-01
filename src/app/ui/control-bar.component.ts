@@ -1,4 +1,4 @@
-﻿import { Component, computed, signal } from "@angular/core";
+import { Component, Input, computed, signal } from "@angular/core";
 import { DeckService } from "../core/deck.service";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
@@ -14,6 +14,8 @@ import { DOMAIN_INTENT } from "../../state/intents.types";
  * Renders primary session controls and pre-session set selection.
  */
 export class ControlBarComponent {
+  @Input() rollToastVisible = false;
+
   protected readonly DOMAIN_INTENT = DOMAIN_INTENT;
   readonly state;
   readonly fsmState = computed(() => this.state().fsm.state);
@@ -22,6 +24,8 @@ export class ControlBarComponent {
   readonly selectedSetCodes = computed(() => [...this.selectedSets()].sort());
   readonly selectedPlayableCount = computed(() => this.deckService.countPlayablePlanesForSets(this.selectedSetCodes()));
   readonly canStartSession = computed(() => this.selectedPlayableCount() >= this.minimumSessionPlanes);
+  readonly showRollButton = computed(() => this.fsmState() === "IDLE" || this.rollToastVisible);
+  readonly rollButtonDisabled = computed(() => this.rollToastVisible || this.fsmState() !== "IDLE");
   readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
 
@@ -112,4 +116,3 @@ export class ControlBarComponent {
     this.orchestrator.dispatch({ type, atMs: Date.now() });
   }
 }
-

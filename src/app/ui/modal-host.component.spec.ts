@@ -149,6 +149,7 @@ describe("ModalHostComponent (class-only)", () => {
     cmp.onPointerUp({ pointerId: 11 } as PointerEvent);
 
     expect(cmp.modalOffset()).toEqual({ x: 30, y: 20 });
-    expect(cmp.modalTransform()).toBe("translate(30px, 20px)");
+    expect(cmp.modalOffsetX()).toBe("30px");
+    expect(cmp.modalOffsetY()).toBe("20px");
   });
 });

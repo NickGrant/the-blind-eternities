@@ -20,10 +20,8 @@ export class ModalHostComponent implements AfterViewChecked {
   readonly activeModal = computed(() => this.state().modal.active);
   readonly queueCount = computed(() => this.state().modal.queue.length);
   readonly modalOffset = signal({ x: 0, y: 0 });
-  readonly modalTransform = computed(() => {
-    const offset = this.modalOffset();
-    return `translate(${offset.x}px, ${offset.y}px)`;
-  });
+  readonly modalOffsetX = computed(() => `${this.modalOffset().x}px`);
+  readonly modalOffsetY = computed(() => `${this.modalOffset().y}px`);
   readonly modalTitle = computed(() => {
     const modal = this.activeModal();
     if (!modal) return "";

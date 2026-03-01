@@ -2211,7 +2211,8 @@
       ],
       "number": "592",
       "mtgjsonId": "d0695847-8740-5850-83b8-ebc114c2d96f",
-      "scryfallId": "5185dfce-d3ad-4509-b356-f6750d7c6a09"
+      "scryfallId": "5185dfce-d3ad-4509-b356-f6750d7c6a09",
+      "artUrl": "assets/plane-art/plane-new-new-york.jpg"
     },
     {
       "id": "plane-north-pole-research-base",
@@ -2231,7 +2232,8 @@
       ],
       "number": "593",
       "mtgjsonId": "4be7f5b0-0dca-5626-beab-f5aee3d6b68f",
-      "scryfallId": "6489955c-1571-41dd-9419-5c071a8b3e30"
+      "scryfallId": "6489955c-1571-41dd-9419-5c071a8b3e30",
+      "artUrl": "assets/plane-art/plane-north-pole-research-base.jpg"
     },
     {
       "id": "plane-ood-sphere",
@@ -2251,7 +2253,8 @@
       ],
       "number": "594",
       "mtgjsonId": "f2d459d3-7028-5c73-ba35-7e322cedb434",
-      "scryfallId": "642c9e68-4d5f-4e7f-894b-56dec4081fc7"
+      "scryfallId": "642c9e68-4d5f-4e7f-894b-56dec4081fc7",
+      "artUrl": "assets/plane-art/plane-ood-sphere.jpg"
     },
     {
       "id": "plane-pompeii",
@@ -2270,7 +2273,8 @@
       ],
       "number": "595",
       "mtgjsonId": "b9083c96-30db-5cfe-96f6-6cda111e4613",
-      "scryfallId": "a549ee7a-276b-45eb-a2c7-f74c85dc6a0d"
+      "scryfallId": "a549ee7a-276b-45eb-a2c7-f74c85dc6a0d",
+      "artUrl": "assets/plane-art/plane-pompeii.jpg"
     },
     {
       "id": "plane-prime-minister-s-cabinet-room",
@@ -2290,7 +2294,8 @@
       ],
       "number": "596",
       "mtgjsonId": "534af165-6b05-5c7d-b0c4-5a9a583c9882",
-      "scryfallId": "291478b8-a8f6-4449-8cd8-9d70484d3398"
+      "scryfallId": "291478b8-a8f6-4449-8cd8-9d70484d3398",
+      "artUrl": "assets/plane-art/plane-prime-minister-s-cabinet-room.jpg"
     },
     {
       "id": "plane-the-pyramid-of-mars",
@@ -2310,7 +2315,8 @@
       ],
       "number": "597",
       "mtgjsonId": "4857443f-7980-5838-9163-a1c6449cfb77",
-      "scryfallId": "8aec22c6-4986-45aa-9b6b-8517bbbaed4e"
+      "scryfallId": "8aec22c6-4986-45aa-9b6b-8517bbbaed4e",
+      "artUrl": "assets/plane-art/plane-the-pyramid-of-mars.jpg"
     },
     {
       "id": "plane-singing-towers-of-darillium",
@@ -2330,7 +2336,8 @@
       ],
       "number": "598",
       "mtgjsonId": "edaa95c4-4a8c-58bb-9182-4721a7e13b9e",
-      "scryfallId": "b30f88bd-426a-48fb-a921-c7c5831120bd"
+      "scryfallId": "b30f88bd-426a-48fb-a921-c7c5831120bd",
+      "artUrl": "assets/plane-art/plane-singing-towers-of-darillium.jpg"
     },
     {
       "id": "plane-spectrox-mines",
@@ -2350,7 +2357,8 @@
       ],
       "number": "599",
       "mtgjsonId": "a200ec7c-6c36-5bd2-b3f4-6b96c30aa760",
-      "scryfallId": "84933e48-8b10-4ccf-a7e8-140fbb9c0c9b"
+      "scryfallId": "84933e48-8b10-4ccf-a7e8-140fbb9c0c9b",
+      "artUrl": "assets/plane-art/plane-spectrox-mines.jpg"
     },
     {
       "id": "plane-stormcage-containment-facility",
@@ -2370,7 +2378,8 @@
       ],
       "number": "600",
       "mtgjsonId": "6570ab5c-4582-5b8a-8072-11340f966e53",
-      "scryfallId": "5665c85f-f564-47fe-a123-4e5a70e179d9"
+      "scryfallId": "5665c85f-f564-47fe-a123-4e5a70e179d9",
+      "artUrl": "assets/plane-art/plane-stormcage-containment-facility.jpg"
     },
     {
       "id": "plane-tardis-bay",
@@ -2389,7 +2398,8 @@
       ],
       "number": "601",
       "mtgjsonId": "b80c362d-3cba-5db1-9eee-81219c7071d8",
-      "scryfallId": "0e2d8456-6e3c-42ee-8bd4-215db5fbda98"
+      "scryfallId": "0e2d8456-6e3c-42ee-8bd4-215db5fbda98",
+      "artUrl": "assets/plane-art/plane-tardis-bay.jpg"
     },
     {
       "id": "plane-temple-of-atropos",
@@ -2408,7 +2418,8 @@
       ],
       "number": "602",
       "mtgjsonId": "6b313e3f-3c83-55f2-a984-eea562169f18",
-      "scryfallId": "75481e04-ab27-4fdd-b789-4a53ffc92430"
+      "scryfallId": "75481e04-ab27-4fdd-b789-4a53ffc92430",
+      "artUrl": "assets/plane-art/plane-temple-of-atropos.jpg"
     },
     {
       "id": "plane-two-streams-facility",
@@ -2428,7 +2439,8 @@
       ],
       "number": "603",
       "mtgjsonId": "64f6f47e-3881-5342-9503-e9889d206d7d",
-      "scryfallId": "40732207-291c-4cea-be87-dd4dbb8b6259"
+      "scryfallId": "40732207-291c-4cea-be87-dd4dbb8b6259",
+      "artUrl": "assets/plane-art/plane-two-streams-facility.jpg"
     },
     {
       "id": "plane-unit-headquarters",
@@ -2448,7 +2460,8 @@
       ],
       "number": "604",
       "mtgjsonId": "08873df2-d77b-52bb-adae-3056bcf45bd8",
-      "scryfallId": "9f7ec46f-1499-4c75-8568-d9266a3d1e69"
+      "scryfallId": "9f7ec46f-1499-4c75-8568-d9266a3d1e69",
+      "artUrl": "assets/plane-art/plane-unit-headquarters.jpg"
     }
   ]
 }

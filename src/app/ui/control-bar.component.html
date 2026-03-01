@@ -23,8 +23,10 @@
     </span>
   }
 
-  @if (fsmState() === "IDLE") {
-    <button type="button" class="control-bar__button" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">Roll Die</button>
+  @if (showRollButton()) {
+    <button type="button" class="control-bar__button" [disabled]="rollButtonDisabled()" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">
+      Roll Die
+    </button>
   }
 
   @if (fsmState() === "AWAIT_MOVE") {

@@ -3,7 +3,8 @@
     <section
       #modalPanel
       class="modal-host__panel"
-      [style.transform]="modalTransform()"
+      [style.--be-modal-offset-x]="modalOffsetX()"
+      [style.--be-modal-offset-y]="modalOffsetY()"
       role="dialog"
       aria-modal="false"
       [attr.aria-labelledby]="'modal-title-' + activeModal()!.id"

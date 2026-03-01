@@ -108,6 +108,18 @@ describe("ControlBarComponent (class-only)", () => {
 
     expect(cmp.selectedSetCodes()).toEqual(["OPCA"]);
   });
+
+  it("keeps Roll Die visible but disabled while roll toast is active", () => {
+    const { cmp } = buildComponent({
+      fsmState: "MODAL_OPEN",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.rollToastVisible = true;
+
+    expect(cmp.showRollButton()).toBe(true);
+    expect(cmp.rollButtonDisabled()).toBe(true);
+  });
 });
 
 function buildComponent(args: { fsmState: ReturnType<typeof createNewSessionState>["fsm"]["state"]; deckMock: DeckMock }) {

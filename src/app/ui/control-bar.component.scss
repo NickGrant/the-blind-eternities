@@ -42,12 +42,17 @@
     padding: var(--be-space-2) var(--be-space-3);
     border: 1px solid var(--be-color-border);
     border-radius: var(--be-radius-md);
-    background: var(--be-color-surface);
+    background: var(--be-control-overlay), var(--be-color-surface);
     color: var(--be-color-text);
     cursor: pointer;
 
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
     &--secondary {
-      background: var(--be-color-surface-subtle);
+      background: var(--be-control-overlay), var(--be-color-surface-subtle);
     }
 
     &--danger {
