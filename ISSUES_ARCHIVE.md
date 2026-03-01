@@ -606,7 +606,9 @@ status: complete
 description: Current themes need deeper visual polish and stronger identity. Lithomancy should shift to lighter white/tan Zendikar-inspired styling with hedron visual motifs; Phyrexian should feel oily and biomechanical with matching UI treatment; remaining themes should receive similarly distinctive directional refinement.
 Resolution: Refined theme tokens and overlays for stronger world identity, including a lighter Zendikar-inspired Lithomancy palette with hedron-like geometric motifs and an oily, biomechanical Phyrexian treatment.
 
----`r`n`r`ntitle: Disable Roll Die button while roll-result toast is visible
+---
+
+title: Disable Roll Die button while roll-result toast is visible
 status: complete
 description: During active roll toast display, the Roll Die control should remain visible but disabled instead of disappearing, to preserve layout stability and prevent accidental clicks on neighboring controls.
 Resolution: Control bar now keeps Roll Die visible during roll toast display and disables it instead of removing it, preserving layout stability during state transitions.
@@ -618,4 +620,57 @@ status: complete
 description: Review `AGENTS.md` and the broader project setup used to feed LLM context, then produce actionable issues to improve process quality and portability across projects. Include opportunities such as skill-based workflows, explicit context include/exclude rules, file prioritization, and reusable conventions that reduce token overhead while preserving decision quality.
 Resolution: Completed an AGENTS/context audit and generated targeted follow-up issues covering context manifests, reusable skills, budget guardrails, startup validation, and docs normalization automation for portability.
 
+
+
+---
+
+title: Add portable LLM context manifest with include/exclude rules
+status: complete
+description: Create a repository-level context manifest (for example LLM_CONTEXT.md or context.manifest.json) that explicitly defines high-priority include files and low-value exclude paths (generated output, caches, archives, binaries) so the setup is portable across projects and minimizes token waste.
+Resolution: Added LLM_CONTEXT.md with explicit include/exclude guidance, context budget targets, and portability rules for reuse across projects.
+
+---
+
+title: Introduce reusable project skills for issue workflow and documentation hygiene
+status: complete
+description: Add Codex skills that encapsulate repeated workflows used in this project (issue lifecycle updates, archive movement, doc trimming, release readiness checks) so the process can be reused with minimal prompt overhead in future repos.
+Resolution: Added reusable local skills at .codex/skills/issue-workflow/SKILL.md and .codex/skills/doc-hygiene/SKILL.md and referenced them from AGENTS workflow guidance.
+
+---
+
+title: Define context budget and document size guardrails for active docs
+status: complete
+description: Add explicit token/length guardrails for active coordination docs (AGENTS.md, ROLES.md, ISSUES.md) and define trimming/archiving triggers to prevent context bloat over time.
+Resolution: Added explicit line-count guardrails and trim-before-growth rules to AGENTS.md, including archive-first guidance when active docs exceed limits.
+
+---
+
+title: Add startup verification checklist for agent operating context
+status: complete
+description: Create a concise startup checklist that validates required control files are present, current, and internally consistent (AGENTS.md/ROLES.md/ISSUES.md/docs index), with fallback behavior when files are missing or stale.
+Resolution: Added a startup verification checklist to AGENTS.md covering required control docs, optional context docs, status validation, and fallback behavior when files are stale or missing.
+
+---
+
+title: Add optional automation to lint and normalize working docs
+status: complete
+description: Provide a scriptable docs-maintenance pass to normalize formatting, section order, and issue entry schema in active tracking files so context remains machine-friendly and portable between projects.
+Resolution: Added scripts/normalize-issues.mjs and npm command docs:normalize:issues to normalize active issue formatting and keep issue-tracking structure machine-friendly.
+
+---
+
+title: Roll Die remains disabled after chaos modal closes
+status: complete
+description: After a chaos roll triggers a modal, the Roll Die button stays disabled even once the modal is closed and the game returns to idle. Ensure control state re-enables Roll Die correctly after modal dismissal when gameplay is ready for another roll.
+Resolution: Made `rollToastVisible` reactive via a signal-backed input setter and added regression coverage to verify the Roll Die button re-enables after toast clearance in IDLE state.
+
+
+
+
+---
+
+title: Phaser scene visuals should respond to selected application theme
+status: complete
+description: Phaser map scene palette/background currently remains static while app UI theme changes. Update Phaser scene colors/background treatment so it follows the active selected theme for a cohesive presentation.
+Resolution: Added live theme synchronization in MapScene with theme-specific palettes and generated background textures; Phaser scene colors, tile treatment, HUD colors, and backdrop now update when app theme changes.
 

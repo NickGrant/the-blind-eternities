@@ -17,6 +17,86 @@ type SceneDeps = {
   getPlaneArtUrl?: (planeId: string | undefined) => string | undefined;
 };
 
+type MapThemeId = "phyrexian" | "neon-dynasty" | "lithomancy" | "halo-fountain";
+type ThemePalette = {
+  cameraBg: number;
+  tileFill: number;
+  idleStroke: number;
+  partyStroke: number;
+  selectionStroke: number;
+  faceDownFill: number;
+  faceDownStroke: number;
+  faceUpFallbackFill: number;
+  nameBackdropFill: number;
+  nameBackdropStroke: number;
+  nameText: string;
+  zoomHudPanel: number;
+  zoomHudText: string;
+};
+
+const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
+  phyrexian: {
+    cameraBg: 0x0d1315,
+    tileFill: 0x111a1e,
+    idleStroke: 0x7fa39a,
+    partyStroke: 0xb6d6cf,
+    selectionStroke: 0xe3ff7a,
+    faceDownFill: 0x1a252a,
+    faceDownStroke: 0x516660,
+    faceUpFallbackFill: 0x202f34,
+    nameBackdropFill: 0x090f11,
+    nameBackdropStroke: 0x3f5750,
+    nameText: "#e7f4ed",
+    zoomHudPanel: 0x091114,
+    zoomHudText: "#d8f3e5",
+  },
+  "neon-dynasty": {
+    cameraBg: 0x0f1230,
+    tileFill: 0x121738,
+    idleStroke: 0x8d7dff,
+    partyStroke: 0x5bd2ff,
+    selectionStroke: 0xff73d2,
+    faceDownFill: 0x20264e,
+    faceDownStroke: 0x6b6bd8,
+    faceUpFallbackFill: 0x242f63,
+    nameBackdropFill: 0x0a1231,
+    nameBackdropStroke: 0x3c5ace,
+    nameText: "#f5f7ff",
+    zoomHudPanel: 0x0a1130,
+    zoomHudText: "#cbdbff",
+  },
+  lithomancy: {
+    cameraBg: 0xf3e6cd,
+    tileFill: 0xebd9b3,
+    idleStroke: 0xb78a57,
+    partyStroke: 0x835d36,
+    selectionStroke: 0xd5902f,
+    faceDownFill: 0xe4cfa2,
+    faceDownStroke: 0xae8455,
+    faceUpFallbackFill: 0xf0dfbf,
+    nameBackdropFill: 0xe1c695,
+    nameBackdropStroke: 0xa97d4b,
+    nameText: "#3b2818",
+    zoomHudPanel: 0xd9bf8f,
+    zoomHudText: "#3f2a19",
+  },
+  "halo-fountain": {
+    cameraBg: 0x082634,
+    tileFill: 0x0d3341,
+    idleStroke: 0x70c5cc,
+    partyStroke: 0xb7f2f3,
+    selectionStroke: 0x95ffd4,
+    faceDownFill: 0x123c4d,
+    faceDownStroke: 0x58a8b0,
+    faceUpFallbackFill: 0x185165,
+    nameBackdropFill: 0x062a35,
+    nameBackdropStroke: 0x4a9ea5,
+    nameText: "#e4ffff",
+    zoomHudPanel: 0x082a37,
+    zoomHudText: "#ccf6ff",
+  },
+};
+
 export class MapScene extends Phaser.Scene {
   private readonly deps: SceneDeps;
   private lastState: SessionState | null = null;
@@ -36,6 +116,8 @@ export class MapScene extends Phaser.Scene {
   private readonly artTextureByUrl = new Map<string, string>();
   private readonly pendingArtLoads = new Set<string>();
   private background?: Phaser.GameObjects.TileSprite;
+  private activeThemeId: MapThemeId = "phyrexian";
+  private palette: ThemePalette = THEME_PALETTES.phyrexian;
   private readonly minZoom = 0.5;
   private readonly maxZoom = 1.5;
   private readonly zoomStep = 0.1;
@@ -69,15 +151,18 @@ export class MapScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor(0x111111);
+    this.syncTheme(true);
     this.updateViewportForZoom(this.uiZoom);
-    this.ensureGraniteTexture();
     this.setupBackground();
     this.setupZoomHud();
     this.setupCameraControls();
     this.scale.on("resize", this.onResize, this);
     this.renderFromState();
     this.centerCamera();
+  }
+
+  override update(): void {
+    this.syncTheme();
   }
 
   setSessionState(state: SessionState): void {
@@ -116,11 +201,16 @@ export class MapScene extends Phaser.Scene {
       const isFaceUp = tile.isFaceUp;
       const selectable = isSelectableTile(state, coordKey);
       const confirmSelection = isConfirmSelectionTile(state, coordKey);
-      const stroke = selectable || confirmSelection ? 0xffd166 : isParty ? 0x6eb8ff : 0x8b96a8;
+      const stroke = selectable || confirmSelection
+        ? this.palette.selectionStroke
+        : isParty
+          ? this.palette.partyStroke
+          : this.palette.idleStroke;
       const signature = this.getTileSignature({
         coordKey,
         planeId: tile.planeId,
         art: this.getArtSignature(tile.planeId, isFaceUp),
+        theme: this.activeThemeId,
         zoom: this.uiZoom,
         x: world.x,
         y: world.y,
@@ -134,7 +224,7 @@ export class MapScene extends Phaser.Scene {
       if (existing) this.destroyTile(coordKey);
 
       const frame = this.add
-        .rectangle(world.x, world.y, this.viewport.tileWidth, this.viewport.tileHeight, 0x0b111b, 0.96)
+        .rectangle(world.x, world.y, this.viewport.tileWidth, this.viewport.tileHeight, this.palette.tileFill, 0.96)
         .setStrokeStyle(selectable ? 4 : 3, stroke, 1);
 
       const art = this.renderCardFace({
@@ -199,8 +289,8 @@ export class MapScene extends Phaser.Scene {
     const nameY = args.y + this.viewport.tileHeight / 2 - 12;
 
     if (!args.isFaceUp) {
-      const back = this.add.rectangle(args.x, args.y, artWidth, artHeight, 0x1f2937, 0.9);
-      back.setStrokeStyle(1, 0x566178, 1);
+      const back = this.add.rectangle(args.x, args.y, artWidth, artHeight, this.palette.faceDownFill, 0.9);
+      back.setStrokeStyle(1, this.palette.faceDownStroke, 1);
       objects.push(back);
       return objects;
     }
@@ -209,17 +299,17 @@ export class MapScene extends Phaser.Scene {
     if (artTexture) {
       objects.push(this.add.image(args.x, args.y - 8, artTexture).setDisplaySize(artWidth, artHeight));
     } else {
-      objects.push(this.add.rectangle(args.x, args.y - 8, artWidth, artHeight, 0x2a3444, 0.88));
+      objects.push(this.add.rectangle(args.x, args.y - 8, artWidth, artHeight, this.palette.faceUpFallbackFill, 0.88));
     }
 
     const name = this.resolvePlaneName(args.planeId);
     const labelFontSizePx = Math.max(14, Math.round(14 + this.uiZoom * 4));
-    const labelBackdrop = this.add.rectangle(args.x, nameY - 10, artWidth - 6, 26, 0x02060d, 0.72);
-    labelBackdrop.setStrokeStyle(1, 0x0a1422, 0.45);
+    const labelBackdrop = this.add.rectangle(args.x, nameY - 10, artWidth - 6, 26, this.palette.nameBackdropFill, 0.72);
+    labelBackdrop.setStrokeStyle(1, this.palette.nameBackdropStroke, 0.45);
     const label = this.add.text(args.x, nameY, name, {
       fontFamily: "Arial, sans-serif",
       fontSize: `${labelFontSizePx}px`,
-      color: "#f5f7fb",
+      color: this.palette.nameText,
       fontStyle: "bold",
       align: "center",
       wordWrap: { width: artWidth - 10, useAdvancedWrap: true },
@@ -412,38 +502,94 @@ export class MapScene extends Phaser.Scene {
     this.updateBackgroundScroll();
   }
 
-  private ensureGraniteTexture(): void {
-    if (this.textures.exists("granite-soft")) return;
-
-    const graphics = this.add.graphics();
-    graphics.fillStyle(0xb8bdc6, 1);
-    graphics.fillRect(0, 0, 256, 256);
-
-    for (let i = 0; i < 420; i += 1) {
-      const shade = 0xa7adb8 + ((i * 37) % 0x14);
-      const x = (i * 31) % 256;
-      const y = (i * 47) % 256;
-      const w = 2 + (i % 5);
-      const h = 2 + ((i * 3) % 5);
-      graphics.fillStyle(shade, 0.18);
-      graphics.fillEllipse(x, y, w, h);
-    }
-
-    graphics.generateTexture("granite-soft", 256, 256);
-    graphics.destroy();
-  }
-
   private setupBackground(): void {
+    const textureKey = this.ensureThemeBackgroundTexture(this.activeThemeId);
     const w = this.scale.width;
     const h = this.scale.height;
     if (!this.background) {
-      this.background = this.add.tileSprite(0, 0, w, h, "granite-soft").setOrigin(0, 0);
+      this.background = this.add.tileSprite(0, 0, w, h, textureKey).setOrigin(0, 0);
       this.background.setScrollFactor(0, 0);
       this.background.setDepth(-10);
     } else {
       this.background.setSize(w, h);
+      this.background.setTexture(textureKey);
     }
     this.updateBackgroundScroll();
+  }
+
+  private syncTheme(force = false): void {
+    const nextTheme = this.readThemeId();
+    if (!force && nextTheme === this.activeThemeId) return;
+    this.activeThemeId = nextTheme;
+    this.palette = THEME_PALETTES[nextTheme];
+    this.cameras.main.setBackgroundColor(this.palette.cameraBg);
+    this.setupBackground();
+    this.updateZoomHudTheme();
+    this.renderFromState();
+  }
+
+  private readThemeId(): MapThemeId {
+    const raw = document.documentElement.getAttribute("data-be-theme");
+    if (
+      raw === "phyrexian" ||
+      raw === "neon-dynasty" ||
+      raw === "lithomancy" ||
+      raw === "halo-fountain"
+    ) {
+      return raw;
+    }
+    return "phyrexian";
+  }
+
+  private ensureThemeBackgroundTexture(themeId: MapThemeId): string {
+    const key = `bg-theme-${themeId}`;
+    if (this.textures.exists(key)) return key;
+    const graphics = this.add.graphics();
+    this.drawThemeBackground(graphics, themeId);
+    graphics.generateTexture(key, 256, 256);
+    graphics.destroy();
+    return key;
+  }
+
+  private drawThemeBackground(graphics: Phaser.GameObjects.Graphics, themeId: MapThemeId): void {
+    const fill = (color: number, alpha = 1) => graphics.fillStyle(color, alpha);
+    if (themeId === "lithomancy") {
+      fill(0xf0dfbf);
+      graphics.fillRect(0, 0, 256, 256);
+      for (let i = 0; i < 14; i += 1) {
+        fill(0xc99f66, 0.24);
+        const x = (i * 37) % 256;
+        const y = (i * 53) % 256;
+        graphics.fillTriangle(x, y + 16, x + 10, y - 14, x + 20, y + 16);
+      }
+      return;
+    }
+    if (themeId === "phyrexian") {
+      fill(0x10181a);
+      graphics.fillRect(0, 0, 256, 256);
+      for (let i = 0; i < 24; i += 1) {
+        fill(0x243831, 0.28);
+        graphics.fillEllipse((i * 29) % 256, (i * 41) % 256, 26 + (i % 8), 10 + ((i * 3) % 9));
+      }
+      return;
+    }
+    if (themeId === "neon-dynasty") {
+      fill(0x131a3f);
+      graphics.fillRect(0, 0, 256, 256);
+      for (let i = 0; i < 22; i += 1) {
+        fill(i % 2 === 0 ? 0x6b7bff : 0x29d7ff, 0.24);
+        const y = (i * 11) % 256;
+        graphics.fillRect(0, y, 256, 2);
+      }
+      return;
+    }
+
+    fill(0x0b3340);
+    graphics.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 32; i += 1) {
+      fill(0x71d8d3, 0.16);
+      graphics.fillCircle((i * 31) % 256, (i * 17) % 256, 2 + (i % 4));
+    }
   }
 
   private updateBackgroundScroll(): void {
@@ -476,6 +622,7 @@ export class MapScene extends Phaser.Scene {
     coordKey: CoordKey;
     planeId: string;
     art: string;
+    theme: string;
     zoom: number;
     x: number;
     y: number;
@@ -488,6 +635,7 @@ export class MapScene extends Phaser.Scene {
       args.coordKey,
       args.planeId,
       args.art,
+      args.theme,
       args.zoom,
       args.x,
       args.y,
@@ -534,7 +682,7 @@ export class MapScene extends Phaser.Scene {
 
   private setupZoomHud(): void {
     const panel = this.add
-      .rectangle(0, 0, 136, 36, 0x071221, 0.76)
+      .rectangle(0, 0, 136, 36, this.palette.zoomHudPanel, 0.76)
       .setOrigin(0, 0)
       .setDepth(500)
       .setScrollFactor(0, 0);
@@ -565,7 +713,7 @@ export class MapScene extends Phaser.Scene {
         fontFamily: "Arial, sans-serif",
         fontSize: "12px",
         fontStyle: "bold",
-        color: "#d7e6ff",
+        color: this.palette.zoomHudText,
       })
       .setOrigin(0.5, 0.5)
       .setDepth(501)
@@ -577,6 +725,12 @@ export class MapScene extends Phaser.Scene {
     this.zoomHud = { panel, zoomOut, zoomIn, label };
     this.layoutZoomHud();
     this.updateZoomHudLabel();
+  }
+
+  private updateZoomHudTheme(): void {
+    if (!this.zoomHud) return;
+    this.zoomHud.panel.setFillStyle(this.palette.zoomHudPanel, 0.76);
+    this.zoomHud.label.setColor(this.palette.zoomHudText);
   }
 
   private layoutZoomHud(): void {

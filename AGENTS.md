@@ -6,11 +6,23 @@ This file defines project-specific operating instructions for coding agents work
 
 ## Startup Behavior
 - On each new user turn, check for and read these files if they exist:
+  - `LLM_CONTEXT.md`
   - `ROLES.md`
   - `ISSUES.md`
 - Treat both files as active project context for planning and execution.
 - Only read `ISSUES_ARCHIVE.md` when historical context is explicitly needed.
 - If either file is missing, continue normally and note the missing file only when relevant.
+
+## Startup Verification Checklist
+- Confirm active-control docs exist and are readable:
+  - `AGENTS.md`
+  - `ISSUES.md`
+  - `docs/README.md`
+- If present, load:
+  - `LLM_CONTEXT.md`
+  - `ROLES.md`
+- Validate `ISSUES.md` contains only active statuses (`unstarted`, `in-progress`, `reopened`).
+- If startup docs are missing/stale, continue with best effort and log the gap in the next user update.
 
 ## Instruction Precedence
 - Follow platform/system/developer safety instructions first.
@@ -72,6 +84,20 @@ This file defines project-specific operating instructions for coding agents work
 - Keep active docs concise and current.
 - Move historical or superseded detail to archive docs.
 - When issue or milestone status changes, update only the minimum relevant active docs plus archive movement.
+- Use `LLM_CONTEXT.md` include/exclude guidance when choosing what to load into context.
+
+## Context Budget Guardrails
+- Keep `AGENTS.md` under ~220 lines.
+- Keep `ROLES.md` under ~180 lines.
+- Keep `ISSUES.md` under ~150 lines (active items only).
+- Prefer archive movement over growing active docs.
+- If a guardrail is exceeded, add/execute a trimming pass before additional feature work.
+
+## Skills Workflow
+- If local reusable skills exist in `.codex/skills/`, prefer them for repeated operations.
+- Current project skills:
+  - `.codex/skills/issue-workflow/SKILL.md`
+  - `.codex/skills/doc-hygiene/SKILL.md`
 
 ## Feature Intake Workflow
 - If the user asks to "add new feature" (or equivalent), first capture the requested behavior, constraints, and success criteria.

@@ -120,6 +120,20 @@ describe("ControlBarComponent (class-only)", () => {
     expect(cmp.showRollButton()).toBe(true);
     expect(cmp.rollButtonDisabled()).toBe(true);
   });
+
+  it("re-enables Roll Die after toast clears in IDLE state", () => {
+    const { cmp } = buildComponent({
+      fsmState: "IDLE",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.rollToastVisible = true;
+    expect(cmp.rollButtonDisabled()).toBe(true);
+
+    cmp.rollToastVisible = false;
+    expect(cmp.showRollButton()).toBe(true);
+    expect(cmp.rollButtonDisabled()).toBe(false);
+  });
 });
 
 function buildComponent(args: { fsmState: ReturnType<typeof createNewSessionState>["fsm"]["state"]; deckMock: DeckMock }) {

@@ -8,6 +8,7 @@ This folder contains project documentation for architecture, delivery, operation
 2. `13-ux-behavior-spec.md`
 3. `14-uat-release-checklist.md`
 4. `10-contributor-runbook.md`
+5. `../LLM_CONTEXT.md`
 
 ## Reference Docs (Load On Demand)
 

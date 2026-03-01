@@ -14,7 +14,13 @@ import { DOMAIN_INTENT } from "../../state/intents.types";
  * Renders primary session controls and pre-session set selection.
  */
 export class ControlBarComponent {
-  @Input() rollToastVisible = false;
+  private readonly rollToastVisibleState = signal(false);
+  @Input() set rollToastVisible(value: boolean) {
+    this.rollToastVisibleState.set(value);
+  }
+  get rollToastVisible(): boolean {
+    return this.rollToastVisibleState();
+  }
 
   protected readonly DOMAIN_INTENT = DOMAIN_INTENT;
   readonly state;
@@ -24,8 +30,8 @@ export class ControlBarComponent {
   readonly selectedSetCodes = computed(() => [...this.selectedSets()].sort());
   readonly selectedPlayableCount = computed(() => this.deckService.countPlayablePlanesForSets(this.selectedSetCodes()));
   readonly canStartSession = computed(() => this.selectedPlayableCount() >= this.minimumSessionPlanes);
-  readonly showRollButton = computed(() => this.fsmState() === "IDLE" || this.rollToastVisible);
-  readonly rollButtonDisabled = computed(() => this.rollToastVisible || this.fsmState() !== "IDLE");
+  readonly showRollButton = computed(() => this.fsmState() === "IDLE" || this.rollToastVisibleState());
+  readonly rollButtonDisabled = computed(() => this.rollToastVisibleState() || this.fsmState() !== "IDLE");
   readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
 

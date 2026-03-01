@@ -63,7 +63,7 @@ export class PhaserBootstrapService {
       parent: container,
       width: container.clientWidth || 800,
       height: container.clientHeight || 450,
-      backgroundColor: "#111111",
+      backgroundColor: this.resolveBootstrapThemeBackground(),
       scene: [this.scene],
       fps: {
         // Keep deterministic correctness concerns out of Phaser;
@@ -81,5 +81,13 @@ export class PhaserBootstrapService {
   destroy(): void {
     this.game?.destroy(true);
     this.game = null;
+  }
+
+  private resolveBootstrapThemeBackground(): string {
+    const theme = document.documentElement.getAttribute("data-be-theme");
+    if (theme === "lithomancy") return "#f3e6cd";
+    if (theme === "neon-dynasty") return "#0f1230";
+    if (theme === "halo-fountain") return "#082634";
+    return "#0d1315";
   }
 }
