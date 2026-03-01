@@ -1,9 +1,9 @@
-import { Inject, Injectable } from "@angular/core";
-import { DEV_MODE } from "./dev-mode";
+import { Injectable } from "@angular/core";
+import { DevModeStore } from "./dev-mode";
 import { DeckService, DeckValidationError } from "./deck.service";
 import { DieService } from "./die.service";
 import { FatalErrorStore } from "./fatal-error.store";
-import type { DomainIntent } from "../../state/intents.types";
+import { DOMAIN_INTENT, type DomainIntent } from "../../state/intents.types";
 import { reduceSessionState } from "../../state/fsm.reducer";
 import { SessionStore } from "./session.store";
 
@@ -20,14 +20,17 @@ export class SessionOrchestrator {
     private readonly deckService: DeckService,
     private readonly dieService: DieService,
     private readonly fatalErrorStore: FatalErrorStore,
-    @Inject(DEV_MODE) private readonly devMode: boolean,
+    private readonly devModeStore: DevModeStore,
   ) {}
 
   /**
    * Injects system-sourced payloads before reducer handling.
+   * @param current Current immutable session state snapshot.
+   * @param intent Incoming domain intent.
+   * @returns Prepared intent with injected dependencies when required.
    */
   private prepareIntent(current: ReturnType<SessionStore["state"]>, intent: DomainIntent): DomainIntent {
-    if (intent.type !== "domain/start_session") return intent;
+    if (intent.type !== DOMAIN_INTENT.START_SESSION) return intent;
 
     return {
       ...intent,
@@ -41,12 +44,14 @@ export class SessionOrchestrator {
 
   /**
    * Applies a domain intent and commits resulting state transitions.
+   * @param intent Domain intent to process through reducer/orchestration flow.
+   * @returns void
    */
   dispatch(intent: DomainIntent): void {
     const current = this.store.state();
     let preparedIntent: DomainIntent = intent;
 
-    if (intent.type === "domain/start_session") {
+    if (intent.type === DOMAIN_INTENT.START_SESSION) {
       try {
         preparedIntent = this.prepareIntent(current, intent);
         this.fatalErrorStore.clear();
@@ -67,7 +72,7 @@ export class SessionOrchestrator {
         });
 
         const fatalIntent: DomainIntent = {
-          type: "domain/fatal_error",
+          type: DOMAIN_INTENT.FATAL_ERROR,
           atMs: intent.atMs,
           code: "CARD_DATA_INIT_FAILED",
           detail,
@@ -83,7 +88,7 @@ export class SessionOrchestrator {
     const next = reduceSessionState(current, preparedIntent);
     const handled = next !== current;
 
-    if (!handled && this.devMode) {
+    if (!handled && this.devModeStore.enabled()) {
       console.warn(
         `[FSM] Ignored intent "${preparedIntent.type}" in state "${current.fsm.state}"`,
         preparedIntent
@@ -93,16 +98,16 @@ export class SessionOrchestrator {
     let finalState = next;
     let finalStateIntentTime = preparedIntent.atMs;
 
-    if (preparedIntent.type === "domain/start_session" && next.fsm.state === "BOOTSTRAP_REVEAL") {
+    if (preparedIntent.type === DOMAIN_INTENT.START_SESSION && next.fsm.state === "BOOTSTRAP_REVEAL") {
       const bootstrapIntent: DomainIntent = {
-        type: "domain/bootstrap_reveal_complete",
+        type: DOMAIN_INTENT.BOOTSTRAP_REVEAL_COMPLETE,
         atMs: preparedIntent.atMs + 1,
       };
       finalState = reduceSessionState(next, bootstrapIntent);
       finalStateIntentTime = bootstrapIntent.atMs;
     }
 
-    if (preparedIntent.type === "domain/roll_die" && finalState.fsm.state === "ROLLING") {
+    if (preparedIntent.type === DOMAIN_INTENT.ROLL_DIE && finalState.fsm.state === "ROLLING") {
       const outcome = this.dieService.roll({
         atMs: finalStateIntentTime,
         seed: finalState.rng.seed,
@@ -110,7 +115,7 @@ export class SessionOrchestrator {
       });
 
       const resolvedIntent: DomainIntent = {
-        type: "domain/roll_resolved",
+        type: DOMAIN_INTENT.ROLL_RESOLVED,
         atMs: finalStateIntentTime,
         outcome,
       };
@@ -119,9 +124,9 @@ export class SessionOrchestrator {
       finalState = resolved;
     }
 
-    if (preparedIntent.type === "domain/confirm_move" && finalState.fsm.state === "MOVING") {
+    if (preparedIntent.type === DOMAIN_INTENT.CONFIRM_MOVE && finalState.fsm.state === "MOVING") {
       const completedIntent: DomainIntent = {
-        type: "domain/movement_complete",
+        type: DOMAIN_INTENT.MOVEMENT_COMPLETE,
         atMs: finalStateIntentTime + 1,
       };
       finalState = reduceSessionState(finalState, completedIntent);
@@ -134,11 +139,13 @@ export class SessionOrchestrator {
 
   /**
    * Forces a deterministic debug roll outcome.
+   * @param outcome Forced non-blank die outcome.
+   * @returns void
    */
   debugRollForced(outcome: "chaos" | "planeswalk"): void {
-    if (!this.devMode) return;
+    if (!this.devModeStore.enabled()) return;
     this.dispatch({
-      type: "domain/debug_force_roll",
+      type: DOMAIN_INTENT.DEBUG_FORCE_ROLL,
       atMs: Date.now(),
       outcome,
     });
@@ -146,33 +153,36 @@ export class SessionOrchestrator {
 
   /**
    * Reveals all currently hidden cards for debugging.
+   * @returns void
    */
   debugRevealAllCards(): void {
-    if (!this.devMode) return;
+    if (!this.devModeStore.enabled()) return;
     this.dispatch({
-      type: "domain/debug_reveal_all",
+      type: DOMAIN_INTENT.DEBUG_REVEAL_ALL,
       atMs: Date.now(),
     });
   }
 
   /**
    * Starts a session from setup when debug mode is enabled.
+   * @returns void
    */
   debugStartSession(): void {
-    if (!this.devMode) return;
+    if (!this.devModeStore.enabled()) return;
     if (this.store.state().fsm.state !== "SETUP") return;
 
-    this.dispatch({ type: "domain/start_session", atMs: Date.now() });
+    this.dispatch({ type: DOMAIN_INTENT.START_SESSION, atMs: Date.now() });
   }
 
   /**
    * Resets state and immediately starts a fresh debug session.
+   * @returns void
    */
   debugRestartSession(): void {
-    if (!this.devMode) return;
+    if (!this.devModeStore.enabled()) return;
     const atMs = Date.now();
 
-    this.dispatch({ type: "domain/restart_session", atMs });
-    this.dispatch({ type: "domain/start_session", atMs: atMs + 1 });
+    this.dispatch({ type: DOMAIN_INTENT.RESTART_SESSION, atMs });
+    this.dispatch({ type: DOMAIN_INTENT.START_SESSION, atMs: atMs + 1 });
   }
 }

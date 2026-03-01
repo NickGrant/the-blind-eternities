@@ -1,4 +1,4 @@
-import type { DomainIntent } from "./intents.types";
+import { DIE_OUTCOME, DOMAIN_INTENT, type DomainIntent } from "./intents.types";
 import type { SessionState } from "./session.types";
 import { isAdjacentCardinal, parseCoordKey } from "./map/coord";
 import { createNewSessionState } from "./session.factory";
@@ -14,7 +14,7 @@ type FsmState = SessionState["fsm"]["state"];
  */
 function withRollOutcomeLogged(
   state: SessionState,
-  args: { atMs: number; outcome: "blank" | "chaos" | "planeswalk" }
+  args: { atMs: number; outcome: (typeof DIE_OUTCOME)[keyof typeof DIE_OUTCOME] }
 ): SessionState {
   return appendLog(state, {
     atMs: args.atMs,
@@ -31,7 +31,7 @@ function withRollOutcomeLogged(
  * Canonical pure reducer for all domain intents.
  */
 export function reduceSessionState(state: SessionState, intent: DomainIntent): SessionState {
-  if (intent.type === "domain/restart_session") {
+  if (intent.type === DOMAIN_INTENT.RESTART_SESSION) {
     const reset = createNewSessionState({
       atMs: intent.atMs,
       seed: state.rng.seed,
@@ -46,18 +46,18 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     );
   }
 
-  if (intent.type === "domain/debug_force_roll") {
+  if (intent.type === DOMAIN_INTENT.DEBUG_FORCE_ROLL) {
     if (state.fsm.state !== "IDLE") return state;
-    const rolling = reduceSessionState(state, { type: "domain/roll_die", atMs: intent.atMs });
+    const rolling = reduceSessionState(state, { type: DOMAIN_INTENT.ROLL_DIE, atMs: intent.atMs });
     if (rolling === state) return state;
     return reduceSessionState(rolling, {
-      type: "domain/roll_resolved",
+      type: DOMAIN_INTENT.ROLL_RESOLVED,
       atMs: intent.atMs + 1,
       outcome: intent.outcome,
     });
   }
 
-  if (intent.type === "domain/debug_reveal_all") {
+  if (intent.type === DOMAIN_INTENT.DEBUG_REVEAL_ALL) {
     const hidden = Object.entries(state.map.tilesByCoord).filter(([, tile]) => !tile.isFaceUp);
     if (hidden.length === 0) return state;
 
@@ -83,7 +83,7 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     );
   }
 
-  if (intent.type === "domain/fatal_error") {
+  if (intent.type === DOMAIN_INTENT.FATAL_ERROR) {
     const errored = appendLog(state, {
       atMs: intent.atMs,
       level: "error",
@@ -97,7 +97,7 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     });
   }
 
-  if (intent.type === "domain/open_modal") {
+  if (intent.type === DOMAIN_INTENT.OPEN_MODAL) {
     const resumeTo =
       state.fsm.state === "MODAL_OPEN"
         ? ((state.modal.active?.resumeToState as FsmState | undefined) ?? "IDLE")
@@ -114,7 +114,7 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
 
   switch (state.fsm.state) {
     case "SETUP": {
-      if (intent.type === "domain/start_session") {
+      if (intent.type === DOMAIN_INTENT.START_SESSION) {
         const seeded = initMapForSession(state, intent);
         return transition(seeded, "BOOTSTRAP_REVEAL", intent);
       }
@@ -122,7 +122,7 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     }
 
     case "BOOTSTRAP_REVEAL": {
-      if (intent.type === "domain/bootstrap_reveal_complete") {
+      if (intent.type === DOMAIN_INTENT.BOOTSTRAP_REVEAL_COMPLETE) {
         const revealed = applyBootstrapReveal(state, intent.atMs);
         return transition(revealed, "IDLE", intent);
       }
@@ -130,33 +130,33 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     }
 
     case "IDLE": {
-      if (intent.type === "domain/roll_die") {
+      if (intent.type === DOMAIN_INTENT.ROLL_DIE) {
         return transition(state, "ROLLING", intent);
       }
       return state;
     }
 
     case "ROLLING": {
-      if (intent.type === "domain/roll_resolved") {
-        if (intent.outcome === "blank") {
+      if (intent.type === DOMAIN_INTENT.ROLL_RESOLVED) {
+        if (intent.outcome === DIE_OUTCOME.BLANK) {
           const rolled = withRollCountIncremented(state);
-          const logged = withRollOutcomeLogged(rolled, { atMs: intent.atMs, outcome: "blank" });
+          const logged = withRollOutcomeLogged(rolled, { atMs: intent.atMs, outcome: DIE_OUTCOME.BLANK });
           return transition(logged, "IDLE", intent);
         }
-        if (intent.outcome === "planeswalk") {
+        if (intent.outcome === DIE_OUTCOME.PLANESWALK) {
           const rolled = withRollCountIncremented(state);
-          const logged = withRollOutcomeLogged(rolled, { atMs: intent.atMs, outcome: "planeswalk" });
+          const logged = withRollOutcomeLogged(rolled, { atMs: intent.atMs, outcome: DIE_OUTCOME.PLANESWALK });
           const next = transition(logged, "AWAIT_MOVE", intent);
           return setEligibleMoves(next);
         }
-        if (intent.outcome === "chaos") {
+        if (intent.outcome === DIE_OUTCOME.CHAOS) {
           const withModal = enqueueModal(withRollCountIncremented(state), {
             id: `chaos_${intent.atMs}`,
             type: "PLANE",
             planeId: state.deck.currentPlaneId,
             resumeToState: "IDLE",
           });
-          const logged = withRollOutcomeLogged(withModal, { atMs: intent.atMs, outcome: "chaos" });
+          const logged = withRollOutcomeLogged(withModal, { atMs: intent.atMs, outcome: DIE_OUTCOME.CHAOS });
           return transition(logged, "MODAL_OPEN", intent);
         }
       }
@@ -164,7 +164,7 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     }
 
     case "AWAIT_MOVE": {
-      if (intent.type === "domain/select_plane") {
+      if (intent.type === DOMAIN_INTENT.SELECT_PLANE) {
         const from = state.map.partyCoord;
         if (!from) return state;
         if (!state.map.tilesByCoord[intent.toCoord]) return state;
@@ -188,24 +188,24 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
           },
         };
       }
-      if (intent.type === "domain/cancel_move") {
+      if (intent.type === DOMAIN_INTENT.CANCEL_MOVE) {
         return transition(state, "IDLE", intent);
       }
       return state;
     }
 
     case "CONFIRM_MOVE": {
-      if (intent.type === "domain/confirm_move") {
+      if (intent.type === DOMAIN_INTENT.CONFIRM_MOVE) {
         return transition(state, "MOVING", intent);
       }
-      if (intent.type === "domain/cancel_move") {
+      if (intent.type === DOMAIN_INTENT.CANCEL_MOVE) {
         return transition(state, "AWAIT_MOVE", intent);
       }
       return state;
     }
 
     case "MOVING": {
-      if (intent.type === "domain/movement_complete") {
+      if (intent.type === DOMAIN_INTENT.MOVEMENT_COMPLETE) {
         const mapped = applyMapPostMove(state, intent.atMs);
         if (mapped.deck.currentPlaneId) {
           const withModal = enqueueModal(mapped, {
@@ -222,7 +222,7 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     }
 
     case "MODAL_OPEN": {
-      if (intent.type === "domain/close_modal") {
+      if (intent.type === DOMAIN_INTENT.CLOSE_MODAL) {
         return closeModal(state, intent);
       }
       return state;

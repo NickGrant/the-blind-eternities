@@ -1,10 +1,11 @@
-import { effect, Inject, Injectable } from "@angular/core";
+import { effect, Injectable } from "@angular/core";
 import Phaser from "phaser";
 import { MapScene } from "./scenes/map.scene";
-import { DEV_MODE } from "../app/core/dev-mode";
+import { DevModeStore } from "../app/core/dev-mode";
 import { SessionStore } from "../app/core/session.store";
 import { SessionOrchestrator } from "../app/core/session-orchestrator.service";
 import { DeckService } from "../app/core/deck.service";
+import { DOMAIN_INTENT, MODAL_TYPE } from "../state/intents.types";
 
 @Injectable({ providedIn: "root" })
 export class PhaserBootstrapService {
@@ -12,7 +13,7 @@ export class PhaserBootstrapService {
   private readonly scene: MapScene;
 
   constructor(
-    @Inject(DEV_MODE) private readonly devMode: boolean,
+    private readonly devModeStore: DevModeStore,
     private readonly sessionStore: SessionStore,
     private readonly orchestrator: SessionOrchestrator,
     private readonly deckService: DeckService
@@ -20,25 +21,25 @@ export class PhaserBootstrapService {
     this.scene = new MapScene({
       onSelectPlane: (toCoord) => {
         this.orchestrator.dispatch({
-          type: "domain/select_plane",
+          type: DOMAIN_INTENT.SELECT_PLANE,
           atMs: Date.now(),
           toCoord,
         });
       },
       onConfirmMove: () => {
         this.orchestrator.dispatch({
-          type: "domain/confirm_move",
+          type: DOMAIN_INTENT.CONFIRM_MOVE,
           atMs: Date.now(),
         });
       },
       onInspectPlane: (planeId) => {
         const state = this.sessionStore.state();
         this.orchestrator.dispatch({
-          type: "domain/open_modal",
+          type: DOMAIN_INTENT.OPEN_MODAL,
           atMs: Date.now(),
           modal: {
             id: `inspect_${Date.now()}`,
-            modalType: "PLANE",
+            modalType: MODAL_TYPE.PLANE,
             planeId,
             resumeToState: state.fsm.state,
           },
@@ -68,7 +69,7 @@ export class PhaserBootstrapService {
         // Keep deterministic correctness concerns out of Phaser;
         // this is purely rendering + input intents.
         target: 60,
-        forceSetTimeOut: !this.devMode,
+        forceSetTimeOut: !this.devModeStore.enabled(),
       },
       scale: {
         mode: Phaser.Scale.RESIZE,

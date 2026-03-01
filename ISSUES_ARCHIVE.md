@@ -389,3 +389,80 @@ title: Add immediate dice roll feedback in UI
 status: complete
 description: Users need visible feedback when rolling the die beyond the event log, such as a transient popup/toast message that fades.
 Resolution: Added a transient roll-result toast (`CHAOS`, `PLANESWALK`, `BLANK`) that appears on die-resolution log events and fades automatically.
+
+---
+
+title: Centralize plane set code definitions across deck and pipeline logic
+status: complete
+description: Deck service and related workflows maintain plane set code lists in multiple locations, which caused omissions like missing Doctor Who (`WHO`). Extract set code definitions into a single shared source and consume that source everywhere.
+Resolution: Added shared `src/assets/plane-set-config.json` and consumed it from both DeckService and MTGJSON sync script, eliminating duplicated set-code sources and keeping WHO/default labels in sync.
+
+---
+
+title: Improve JSDoc coverage for function inputs and outputs
+status: complete
+description: Existing JSDoc blocks often omit explicit parameter and return value documentation. Update comments to consistently describe inputs, outputs, and key side effects where relevant.
+Resolution: Expanded JSDoc in orchestration/debug/control and sync-pipeline modules to include explicit `@param`/`@returns` descriptions and clarified side-effect methods used in runtime control flows.
+
+---
+
+title: Do not require confirmation when user explicitly asks to add issues
+status: complete
+description: When the user asks to add issues, the agent should update `ISSUES.md` directly without asking for additional confirmation prompts.
+Resolution: Updated AGENTS issue workflow rules to explicitly require direct issue insertion when user asks to add issues, without additional confirmation prompts.
+
+---
+
+title: Add runtime control to disable dev mode until reload
+status: complete
+description: Dev mode should include a button that disables dev-only behavior for the current session and keeps it disabled until the page is reloaded.
+Resolution: Added `DevModeStore` with runtime disable-until-reload behavior and wired it into debug panel, orchestrator, and Phaser bootstrap so dev-only features can be switched off immediately.
+
+---
+
+title: Replace repeated intent type literals with shared constants
+status: complete
+description: Intent type values and other constants are duplicated as raw strings across the codebase. Extract them into shared constants/enums and update call sites to reduce typo risk and improve maintainability.
+Resolution: Added centralized `DOMAIN_INTENT`, `DIE_OUTCOME`, and `MODAL_TYPE` constants in `intents.types.ts` and refactored runtime dispatch/reducer code to use those shared constants instead of repeated literals.
+
+---
+
+title: Move inline Angular component templates to standalone HTML files
+status: complete
+description: Angular components currently using inline `template` strings should be refactored to use dedicated `.html` template files for readability, consistency, and maintainability.
+Resolution: Refactored control-bar, debug-panel, modal-host, and error-banner components to use external `templateUrl` HTML files with matching component stylesheets.
+
+---
+
+title: Reduce inline component CSS and extract non-trivial styles to stylesheet files
+status: complete
+description: Components with more than minimal inline styles should move styles into dedicated stylesheet files to improve readability and long-term maintenance.
+Resolution: Removed inline style blocks from key UI components and moved styling into dedicated `.scss` files, reducing decorator noise and improving maintainability.
+
+---
+
+title: Update code guidelines to require separate HTML and CSS files for components
+status: complete
+description: Documentation/guidelines should explicitly encourage and standardize external template (`.html`) and style (`.scss`) files rather than inline component definitions.
+Resolution: Updated contributor runbook with explicit frontend structure rules requiring separate component `.ts`/`.html`/`.scss` files and discouraging non-trivial inline templates/styles.
+
+---
+
+title: Replace hardcoded style values with design tokens/CSS variables
+status: complete
+description: Current styles use hardcoded colors/sizing. Migrate to a token-based approach leveraging CSS variables (including Bootstrap variable conventions) for consistency and theming.
+Resolution: Added global `--be-*` design tokens in `styles.scss` (Bootstrap-variable backed where available) and migrated refactored UI/app styles to consume tokenized colors, spacing, borders, and typography.
+
+---
+
+title: Standardize CSS naming to BEM and update docs
+status: complete
+description: Class naming is inconsistent. Adopt BEM naming across components, update stylesheets/selectors, and document the convention in project guidelines.
+Resolution: Applied BEM class naming across refactored app/UI templates and stylesheets and documented the convention in the contributor runbook.
+
+---
+
+title: Ensure component styling uses properly nested SCSS structure
+status: complete
+description: Refactor stylesheet structure to use consistent, properly nested SCSS patterns for clarity and maintainability.
+Resolution: Reworked component and app styles into nested SCSS block structures, keeping selectors scoped and readable under each component root block.

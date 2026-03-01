@@ -6,6 +6,7 @@ import type { SessionStore } from "../core/session.store";
 import type { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { createNewSessionState } from "../../state/session.factory";
 import type { DomainIntent } from "../../state/intents.types";
+import type { DevModeStore } from "../core/dev-mode";
 
 describe("DebugPanelComponent (class-only)", () => {
   it("invokes debug session controls", () => {
@@ -22,9 +23,13 @@ describe("DebugPanelComponent (class-only)", () => {
       debugStartSession: vi.fn(),
       debugRestartSession: vi.fn(),
     };
+    const devModeMock: Pick<DevModeStore, "enabled" | "disableUntilReload"> = {
+      enabled: signal(true).asReadonly(),
+      disableUntilReload: vi.fn(),
+    };
 
     const cmp = new DebugPanelComponent(
-      true,
+      devModeMock as DevModeStore,
       orchestratorMock as SessionOrchestrator,
       storeMock as SessionStore,
     );
@@ -53,9 +58,13 @@ describe("DebugPanelComponent (class-only)", () => {
       debugStartSession: vi.fn(),
       debugRestartSession: vi.fn(),
     };
+    const devModeMock: Pick<DevModeStore, "enabled" | "disableUntilReload"> = {
+      enabled: signal(true).asReadonly(),
+      disableUntilReload: vi.fn(),
+    };
 
     const cmp = new DebugPanelComponent(
-      true, // devMode
+      devModeMock as DevModeStore,
       orchestratorMock as SessionOrchestrator,
       storeMock as SessionStore,
     );
@@ -84,14 +93,47 @@ describe("DebugPanelComponent (class-only)", () => {
       debugStartSession: vi.fn(),
       debugRestartSession: vi.fn(),
     };
+    const devModeMock: Pick<DevModeStore, "enabled" | "disableUntilReload"> = {
+      enabled: signal(true).asReadonly(),
+      disableUntilReload: vi.fn(),
+    };
 
     const cmp = new DebugPanelComponent(
-      true,
+      devModeMock as DevModeStore,
       orchestratorMock as SessionOrchestrator,
       storeMock as SessionStore,
     );
 
     expect(cmp.drawPile()).toEqual(["plane-a", "plane-b"]);
     expect(cmp.discardPile()).toEqual(["plane-x"]);
+  });
+
+  it("disables dev mode until reload when requested", () => {
+    const initial = createNewSessionState({ atMs: 123 });
+    const _state = signal(initial);
+    const disableUntilReload = vi.fn();
+
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch" | "debugStartSession" | "debugRestartSession"> = {
+      dispatch: vi.fn(),
+      debugStartSession: vi.fn(),
+      debugRestartSession: vi.fn(),
+    };
+    const devModeMock: Pick<DevModeStore, "enabled" | "disableUntilReload"> = {
+      enabled: signal(true).asReadonly(),
+      disableUntilReload,
+    };
+
+    const cmp = new DebugPanelComponent(
+      devModeMock as DevModeStore,
+      orchestratorMock as SessionOrchestrator,
+      storeMock as SessionStore,
+    );
+
+    cmp.disableDevMode();
+    expect(disableUntilReload).toHaveBeenCalledTimes(1);
   });
 });

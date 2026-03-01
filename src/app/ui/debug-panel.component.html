@@ -1,0 +1,62 @@
+@if (devMode()) {
+  <div class="debug-panel">
+    <div class="debug-panel__header">
+      <h2 class="debug-panel__title">Debug Panel</h2>
+      <button type="button" class="debug-panel__button" (click)="toggle()">
+        {{ collapsed() ? "Expand" : "Collapse" }}
+      </button>
+    </div>
+
+    @if (!collapsed()) {
+      <div class="debug-panel__actions">
+        <span class="debug-panel__state-chip">Current State: {{ fsmState() }}</span>
+        <button type="button" class="debug-panel__button" (click)="startSession()" [disabled]="fsmState() !== 'SETUP'">
+          Session Start
+        </button>
+        <button type="button" class="debug-panel__button" (click)="restartSession()">Session Restart</button>
+        <button type="button" class="debug-panel__button" (click)="rollRandom()" [disabled]="fsmState() !== 'IDLE'">
+          Roll Dice (Random)
+        </button>
+        <button type="button" class="debug-panel__button" (click)="rollChaos()" [disabled]="fsmState() !== 'IDLE'">
+          Roll Dice (Chaos)
+        </button>
+        <button
+          type="button"
+          class="debug-panel__button"
+          (click)="rollPlaneswalk()"
+          [disabled]="fsmState() !== 'IDLE'"
+        >
+          Roll Dice (Planechase)
+        </button>
+        <button type="button" class="debug-panel__button" (click)="showHiddenCards()" [disabled]="hiddenCount() === 0">
+          Show Hidden Cards ({{ hiddenCount() }})
+        </button>
+        <button
+          type="button"
+          class="debug-panel__button debug-panel__button--danger"
+          (click)="disableDevMode()"
+        >
+          Disable Dev Mode Until Reload
+        </button>
+      </div>
+      <div class="debug-panel__deck">
+        <details class="debug-panel__details">
+          <summary class="debug-panel__summary">Draw Pile ({{ drawPile().length }})</summary>
+          <ol class="debug-panel__list">
+            @for (cardId of drawPile(); track cardId + $index) {
+              <li>{{ cardId }}</li>
+            }
+          </ol>
+        </details>
+        <details class="debug-panel__details">
+          <summary class="debug-panel__summary">Discard Pile ({{ discardPile().length }})</summary>
+          <ol class="debug-panel__list">
+            @for (cardId of discardPile(); track cardId + $index) {
+              <li>{{ cardId }}</li>
+            }
+          </ol>
+        </details>
+      </div>
+    }
+  </div>
+}

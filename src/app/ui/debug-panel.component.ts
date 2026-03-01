@@ -1,141 +1,22 @@
-import { Component, Inject, computed, signal } from "@angular/core";
+﻿import { Component, computed, signal } from "@angular/core";
 
-import { DEV_MODE } from "../core/dev-mode";
+import { DevModeStore } from "../core/dev-mode";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
+import { DOMAIN_INTENT } from "../../state/intents.types";
 
 @Component({
   selector: "app-debug-panel",
   standalone: true,
-  template: `
-    @if (devMode) {
-      <div class="debugPanel" [class.isCollapsed]="collapsed()">
-        <div class="debugHeader">
-          <h2>Debug Panel</h2>
-          <button type="button" class="toggle" (click)="toggle()">
-            {{ collapsed() ? "Expand" : "Collapse" }}
-          </button>
-        </div>
-
-        @if (!collapsed()) {
-          <div class="debugBody">
-            <span class="stateChip">Current State: {{ fsmState() }}</span>
-            <button type="button" (click)="startSession()" [disabled]="fsmState() !== 'SETUP'">
-              Session Start
-            </button>
-            <button type="button" (click)="restartSession()">
-              Session Restart
-            </button>
-            <button type="button" (click)="rollRandom()" [disabled]="fsmState() !== 'IDLE'">
-              Roll Dice (Random)
-            </button>
-            <button type="button" (click)="rollChaos()" [disabled]="fsmState() !== 'IDLE'">
-              Roll Dice (Chaos)
-            </button>
-            <button type="button" (click)="rollPlaneswalk()" [disabled]="fsmState() !== 'IDLE'">
-              Roll Dice (Planechase)
-            </button>
-            <button type="button" (click)="showHiddenCards()" [disabled]="hiddenCount() === 0">
-              Show Hidden Cards ({{ hiddenCount() }})
-            </button>
-          </div>
-          <div class="deckDebug">
-            <details>
-              <summary>Draw Pile ({{ drawPile().length }})</summary>
-              <ol>
-                @for (cardId of drawPile(); track cardId + $index) {
-                  <li>{{ cardId }}</li>
-                }
-              </ol>
-            </details>
-            <details>
-              <summary>Discard Pile ({{ discardPile().length }})</summary>
-              <ol>
-                @for (cardId of discardPile(); track cardId + $index) {
-                  <li>{{ cardId }}</li>
-                }
-              </ol>
-            </details>
-          </div>
-        }
-      </div>
-    }
-  `,
-  styles: [
-    `
-      .debugPanel {
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 12px;
-        padding: 12px;
-        display: grid;
-        gap: 10px;
-      }
-      .debugHeader {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-      h2 {
-        margin: 0;
-        font-size: 14px;
-      }
-      .debugBody {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .deckDebug {
-        width: 100%;
-        display: grid;
-        gap: 8px;
-      }
-      .stateChip {
-        display: inline-flex;
-        align-items: center;
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        background: rgba(0, 0, 0, 0.2);
-        font-size: 12px;
-      }
-      details {
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 8px;
-        padding: 6px 8px;
-      }
-      summary {
-        cursor: pointer;
-        font-size: 12px;
-      }
-      ol {
-        margin: 8px 0 0;
-        padding-left: 18px;
-        max-height: 140px;
-        overflow: auto;
-        font-size: 12px;
-      }
-      .toggle,
-      button {
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        background: rgba(0, 0, 0, 0.18);
-        color: inherit;
-        cursor: pointer;
-      }
-      button[disabled] {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    `,
-  ],
+  templateUrl: "./debug-panel.component.html",
+  styleUrls: ["./debug-panel.component.scss"],
 })
 /**
  * Development-only panel for deterministic/session diagnostics and debug actions.
  */
 export class DebugPanelComponent {
   readonly collapsed = signal(true);
+  readonly devMode;
   readonly state;
   readonly fsmState = computed(() => this.state().fsm.state);
   readonly hiddenCount = computed(
@@ -145,15 +26,17 @@ export class DebugPanelComponent {
   readonly discardPile = computed(() => this.state().deck.discardPile);
 
   constructor(
-    @Inject(DEV_MODE) public readonly devMode: boolean,
+    private readonly devModeStore: DevModeStore,
     private readonly orchestrator: SessionOrchestrator,
     private readonly sessionStore: SessionStore
   ) {
+    this.devMode = this.devModeStore.enabled;
     this.state = this.sessionStore.state;
   }
 
   /**
    * Expands/collapses the panel.
+   * @returns void
    */
   toggle(): void {
     this.collapsed.update((v) => !v);
@@ -161,13 +44,15 @@ export class DebugPanelComponent {
 
   /**
    * Dispatches a standard random die roll.
+   * @returns void
    */
   rollRandom(): void {
-    this.orchestrator.dispatch({ type: "domain/roll_die", atMs: Date.now() });
+    this.orchestrator.dispatch({ type: DOMAIN_INTENT.ROLL_DIE, atMs: Date.now() });
   }
 
   /**
    * Debug shortcut to start session from setup.
+   * @returns void
    */
   startSession(): void {
     this.orchestrator.debugStartSession();
@@ -175,6 +60,7 @@ export class DebugPanelComponent {
 
   /**
    * Debug shortcut to restart and re-bootstrap a session.
+   * @returns void
    */
   restartSession(): void {
     this.orchestrator.debugRestartSession();
@@ -182,6 +68,7 @@ export class DebugPanelComponent {
 
   /**
    * Forces chaos result.
+   * @returns void
    */
   rollChaos(): void {
     this.orchestrator.debugRollForced("chaos");
@@ -189,6 +76,7 @@ export class DebugPanelComponent {
 
   /**
    * Forces planeswalk result.
+   * @returns void
    */
   rollPlaneswalk(): void {
     this.orchestrator.debugRollForced("planeswalk");
@@ -196,8 +84,18 @@ export class DebugPanelComponent {
 
   /**
    * Reveals all hidden cards.
+   * @returns void
    */
   showHiddenCards(): void {
     this.orchestrator.debugRevealAllCards();
   }
+
+  /**
+   * Turns off all dev-mode-only behavior until next page reload.
+   * @returns void
+   */
+  disableDevMode(): void {
+    this.devModeStore.disableUntilReload();
+  }
 }
+

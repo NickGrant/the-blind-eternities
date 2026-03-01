@@ -28,6 +28,7 @@ This file defines project-specific operating instructions for coding agents work
 
 ## Issues Workflow (`ISSUES.md`)
 - Treat `ISSUES.md` as the source of truth for current active bug/feature status tracking.
+- If the user explicitly asks to add an issue, update `ISSUES.md` directly without additional confirmation prompts.
 - When the user asks to work issues:
   - prioritize items with `status: unstarted` or `status: reopened`,
   - then continue `status: in-progress` items.

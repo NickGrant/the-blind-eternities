@@ -1,4 +1,4 @@
-import type { DomainIntent } from "../intents.types";
+import { DOMAIN_INTENT, type DomainIntent } from "../intents.types";
 import type { CoordKey, SessionState } from "../session.types";
 import { neighborsCardinal, parseCoordKey, toCoordKey } from "../map/coord";
 import {
@@ -32,7 +32,7 @@ export function bootstrapSlotToCoordKey(slot: BootstrapSlot): CoordKey {
 
 export function initMapForSession(
   state: SessionState,
-  intent: Extract<DomainIntent, { type: "domain/start_session" }>
+  intent: Extract<DomainIntent, { type: typeof DOMAIN_INTENT.START_SESSION }>
 ): SessionState {
   const centerKey = toCoordKey({ x: 0, y: 0 });
   const deck = intent.initialDeck ?? {

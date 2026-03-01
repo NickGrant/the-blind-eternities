@@ -1,9 +1,9 @@
-import type { DomainIntent } from "../intents.types";
+import { DOMAIN_INTENT, type DomainIntent } from "../intents.types";
 import type { ModalDescriptor, SessionState } from "../session.types";
 import { transition, withLastIntent, type FsmState } from "./fsm-core";
 
 export function toModalDescriptor(
-  modal: Extract<DomainIntent, { type: "domain/open_modal" }>["modal"],
+  modal: Extract<DomainIntent, { type: typeof DOMAIN_INTENT.OPEN_MODAL }>["modal"],
   resumeToState: FsmState
 ): ModalDescriptor {
   return {
@@ -39,7 +39,7 @@ export function enqueueModal(state: SessionState, modal: ModalDescriptor): Sessi
 
 export function closeModal(
   state: SessionState,
-  intent: Extract<DomainIntent, { type: "domain/close_modal" }>
+  intent: Extract<DomainIntent, { type: typeof DOMAIN_INTENT.CLOSE_MODAL }>
 ): SessionState {
   const active = state.modal.active;
   if (!state.modal.isOpen || !active) return state;
@@ -77,4 +77,3 @@ export function closeModal(
 
   return transition(closed, resumeTo, intent);
 }
-

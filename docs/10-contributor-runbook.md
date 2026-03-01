@@ -35,3 +35,14 @@ This runbook defines how to contribute safely and consistently.
 - Avoid introducing undocumented features.
 - Update docs when runtime behavior or operational workflow changes.
 - Treat failing tests/build as blockers unless user explicitly accepts risk.
+
+## Frontend Structure Standards
+
+- Prefer standalone template/style files for Angular components:
+  - component logic in `*.component.ts`
+  - template in `*.component.html`
+  - styles in `*.component.scss`
+- Avoid non-trivial inline template/style blocks in component decorators.
+- Use BEM-style class naming for component-level styles.
+- Use tokenized styling through CSS variables (`--be-*`) instead of repeated hardcoded values.
+- Keep SCSS selectors nested under the component block to preserve readable scope.

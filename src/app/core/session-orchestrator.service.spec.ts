@@ -1,4 +1,4 @@
-import { signal } from "@angular/core";
+﻿import { signal } from "@angular/core";
 import { describe, expect, it } from "vitest";
 
 import { SessionOrchestrator } from "./session-orchestrator.service";
@@ -8,8 +8,13 @@ import { DeckValidationError } from "./deck.service";
 import type { DieService } from "./die.service";
 import type { FatalErrorStore } from "./fatal-error.store";
 import { createNewSessionState } from "../../state/session.factory";
+import type { DevModeStore } from "./dev-mode";
 
 describe("SessionOrchestrator", () => {
+  const createDevModeStore = (enabled: boolean): DevModeStore => ({
+    enabled: signal(enabled).asReadonly(),
+    disableUntilReload: () => void 0,
+  }) as DevModeStore;
   it("injects initial deck from DeckService when starting a session", () => {
     const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
     initial.fsm.state = "SETUP";
@@ -39,7 +44,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      false
+      createDevModeStore(false)
     );
 
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
@@ -89,7 +94,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      false
+      createDevModeStore(false)
     );
 
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100, includedSetCodes: ["OPCA"] });
@@ -128,7 +133,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      false
+      createDevModeStore(false)
     );
 
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
@@ -166,7 +171,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      false
+      createDevModeStore(false)
     );
 
     orchestrator.dispatch({ type: "domain/roll_die", atMs: 100 });
@@ -211,7 +216,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      false
+      createDevModeStore(false)
     );
 
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
@@ -256,7 +261,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      false
+      createDevModeStore(false)
     );
 
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
@@ -308,7 +313,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      false
+      createDevModeStore(false)
     );
 
     orchestrator.dispatch({ type: "domain/confirm_move", atMs: 200 });
@@ -347,7 +352,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      true
+      createDevModeStore(true)
     );
 
     orchestrator.debugRollForced("chaos");
@@ -382,7 +387,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      true
+      createDevModeStore(true)
     );
 
     orchestrator.debugRevealAllCards();
@@ -417,7 +422,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      true
+      createDevModeStore(true)
     );
 
     orchestrator.debugStartSession();
@@ -455,7 +460,7 @@ describe("SessionOrchestrator", () => {
       deckMock as DeckService,
       dieMock as DieService,
       fatalMock as FatalErrorStore,
-      true
+      createDevModeStore(true)
     );
 
     orchestrator.debugRestartSession();
@@ -463,3 +468,7 @@ describe("SessionOrchestrator", () => {
     expect(_state().map.partyCoord).toBe("0,0");
   });
 });
+
+
+
+

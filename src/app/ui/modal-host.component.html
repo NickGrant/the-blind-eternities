@@ -1,0 +1,29 @@
+@if (activeModal()) {
+  <div class="modal-host">
+    <section
+      #modalPanel
+      class="modal-host__panel"
+      role="dialog"
+      aria-modal="false"
+      [attr.aria-labelledby]="'modal-title-' + activeModal()!.id"
+      [attr.aria-describedby]="'modal-body-' + activeModal()!.id"
+      tabindex="-1"
+    >
+      <div class="modal-host__attention" aria-hidden="true"></div>
+      <header class="modal-host__header">
+        <h3 class="modal-host__title" [id]="'modal-title-' + activeModal()!.id">{{ modalTitle() }}</h3>
+        <div class="modal-host__meta">
+          @if (queueCount() > 0) {
+            <span>{{ queueCount() }} queued</span>
+          }
+        </div>
+      </header>
+
+      <p class="modal-host__body" [id]="'modal-body-' + activeModal()!.id">{{ modalBody() }}</p>
+
+      <footer class="modal-host__footer">
+        <button type="button" class="modal-host__button" (click)="closeActiveModal()">Close</button>
+      </footer>
+    </section>
+  </div>
+}

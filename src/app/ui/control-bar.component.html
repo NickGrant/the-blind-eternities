@@ -1,0 +1,65 @@
+<div class="control-bar">
+  @if (fsmState() === "SETUP") {
+    <div class="control-bar__set-picker">
+      <div class="control-bar__set-picker-title">Deck Sets</div>
+      <div class="control-bar__set-options">
+        @for (set of planeSets(); track set.code) {
+          <label class="control-bar__set-option">
+            <input
+              type="checkbox"
+              [checked]="isSetSelected(set.code)"
+              (change)="toggleSet(set.code)"
+            />
+            {{ set.label }} ({{ set.code }}) - {{ set.count }}
+          </label>
+        }
+      </div>
+    </div>
+    <button type="button" class="control-bar__button" (click)="startSession()" [disabled]="!canStartSession()">
+      Start Session
+    </button>
+    <span class="control-bar__hint">
+      Playable planes from selection: {{ selectedPlayableCount() }} (minimum {{ minimumSessionPlanes }}).
+    </span>
+  }
+
+  @if (fsmState() === "IDLE") {
+    <button type="button" class="control-bar__button" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">Roll Die</button>
+  }
+
+  @if (fsmState() === "AWAIT_MOVE") {
+    <button
+      type="button"
+      class="control-bar__button control-bar__button--secondary"
+      (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
+    >
+      Cancel Move
+    </button>
+    <span class="control-bar__hint">Click a highlighted plane to select movement.</span>
+  }
+
+  @if (fsmState() === "CONFIRM_MOVE") {
+    <button type="button" class="control-bar__button" (click)="dispatch(DOMAIN_INTENT.CONFIRM_MOVE)">
+      Confirm Move
+    </button>
+    <button
+      type="button"
+      class="control-bar__button control-bar__button--secondary"
+      (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
+    >
+      Back
+    </button>
+  }
+
+  @if (fsmState() === "ERROR") {
+    <button type="button" class="control-bar__button" (click)="dispatch(DOMAIN_INTENT.RESTART_SESSION)">
+      Restart Session
+    </button>
+  }
+
+  @if (fsmState() !== "SETUP") {
+    <button type="button" class="control-bar__button control-bar__button--secondary" (click)="quitSession()">
+      Quit Session
+    </button>
+  }
+</div>

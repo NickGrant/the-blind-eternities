@@ -1,0 +1,9 @@
+<div class="error-banner" role="alert">
+  @if(error) {
+    <div class="error-banner__title">Error: {{ error.code }}</div>
+    <div class="error-banner__message">{{ error.message }}</div>
+    @if(error.detail) {
+      <div class="error-banner__detail">{{ error.detail }}</div>
+    }
+  }
+</div>

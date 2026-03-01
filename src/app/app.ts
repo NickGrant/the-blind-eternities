@@ -7,6 +7,7 @@ import { ControlBarComponent } from "./ui/control-bar.component";
 import { FatalErrorStore } from "./core/fatal-error.store";
 import { PhaserBootstrapService } from "../phaser/phaser-bootstrap.service";
 import { SessionStore } from "./core/session.store";
+import { DIE_OUTCOME } from "../state/intents.types";
 
 /**
  * Indirection to keep reload testable under Vitest/JSDOM.
@@ -77,7 +78,11 @@ export class AppComponent implements AfterViewInit {
 
   private showRollToast(outcome: "blank" | "chaos" | "planeswalk"): void {
     const message =
-      outcome === "chaos" ? "CHAOS!" : outcome === "planeswalk" ? "PLANESWALK!" : "Blank roll";
+      outcome === DIE_OUTCOME.CHAOS
+        ? "CHAOS!"
+        : outcome === DIE_OUTCOME.PLANESWALK
+          ? "PLANESWALK!"
+          : "Blank roll";
 
     this.rollToast.set({ id: ++this.nextToastId, message });
     if (this.toastTimer) clearTimeout(this.toastTimer);
@@ -86,7 +91,10 @@ export class AppComponent implements AfterViewInit {
 }
 
 function parseDieOutcome(message: string): "blank" | "chaos" | "planeswalk" | null {
-  const match = /^Die roll resolved:\s*(blank|chaos|planeswalk)\./i.exec(message.trim());
+  const match = new RegExp(
+    `^Die roll resolved:\\s*(${DIE_OUTCOME.BLANK}|${DIE_OUTCOME.CHAOS}|${DIE_OUTCOME.PLANESWALK})\\.`,
+    "i"
+  ).exec(message.trim());
   if (!match) return null;
   return match[1].toLowerCase() as "blank" | "chaos" | "planeswalk";
 }

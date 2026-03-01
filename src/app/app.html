@@ -1,51 +1,51 @@
-﻿<main class="layout">
-  <section class="top">
+﻿<main class="app-shell">
+  <section class="app-shell__top">
     @if (fatal()) {
       <app-error-banner [error]="fatal()"></app-error-banner>
     }
-    
-    <header class="header">
-      <h1>Blind Eternities Planechase</h1>
+
+    <header class="app-shell__header">
+      <h1 class="app-shell__title">Blind Eternities Planechase</h1>
 
       @if(hasFatal()) {
-        <button class="reload" (click)="onReload()">
+        <button class="app-shell__reload" (click)="onReload()">
           Reload
         </button>
       }
     </header>
 
-    <section class="controls panel">
+    <section class="app-shell__controls app-shell__panel">
       <h2>Game Controls</h2>
       <app-control-bar></app-control-bar>
     </section>
   </section>
 
-  <section class="content">
-    <div class="left">
-      <div class="panel">
+  <section class="app-shell__content">
+    <div class="app-shell__left">
+      <div class="app-shell__panel">
         <h2>Event Log</h2>
         @if (logEntries().length === 0) {
-          <div class="empty">No events yet. Start a session to generate play logs.</div>
+          <div class="app-shell__empty">No events yet. Start a session to generate play logs.</div>
         } @else {
-          <ul class="eventLog">
+          <ul class="app-shell__event-log">
             @for (entry of logEntries(); track entry.id) {
               <li [class]="'lvl-' + entry.level">
-                <div class="line">{{ entry.message }}</div>
-                <div class="meta">{{ entry.level }} | {{ entry.atMs }}</div>
+                <div class="app-shell__event-line">{{ entry.message }}</div>
+                <div class="app-shell__event-meta">{{ entry.level }} | {{ entry.atMs }}</div>
               </li>
             }
           </ul>
         }
       </div>
 
-      <div class="panel">
+      <div class="app-shell__panel">
         <h2>Debug</h2>
         <app-debug-panel></app-debug-panel>
       </div>
     </div>
 
-    <div class="right">
-      <div class="canvasHost" #phaserHost></div>
+    <div class="app-shell__right">
+      <div class="app-shell__canvas-host" #phaserHost></div>
     </div>
   </section>
 </main>
@@ -53,5 +53,5 @@
 <app-modal-host></app-modal-host>
 
 @if (rollToast(); as toast) {
-  <div class="rollToast" [attr.data-toast-id]="toast.id">{{ toast.message }}</div>
+  <div class="app-shell__roll-toast" [attr.data-toast-id]="toast.id">{{ toast.message }}</div>
 }

@@ -1,112 +1,20 @@
-import { Component, computed, signal } from "@angular/core";
+﻿import { Component, computed, signal } from "@angular/core";
 import { DeckService } from "../core/deck.service";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
+import { DOMAIN_INTENT } from "../../state/intents.types";
 
 @Component({
   selector: "app-control-bar",
   standalone: true,
-  template: `
-    <div class="controlBar">
-      @if (fsmState() === "SETUP") {
-        <div class="setPicker">
-          <div class="setPickerTitle">Deck Sets</div>
-          <div class="setOptions">
-            @for (set of planeSets(); track set.code) {
-              <label>
-                <input
-                  type="checkbox"
-                  [checked]="isSetSelected(set.code)"
-                  (change)="toggleSet(set.code)"
-                />
-                {{ set.label }} ({{ set.code }}) - {{ set.count }}
-              </label>
-            }
-          </div>
-        </div>
-        <button type="button" (click)="startSession()" [disabled]="!canStartSession()">
-          Start Session
-        </button>
-        <span class="hint">Playable planes from selection: {{ selectedPlayableCount() }} (minimum {{ minimumSessionPlanes }}).</span>
-      }
-
-      @if (fsmState() === "IDLE") {
-        <button type="button" (click)="dispatch('domain/roll_die')">Roll Die</button>
-      }
-
-      @if (fsmState() === "AWAIT_MOVE") {
-        <button type="button" class="secondary" (click)="dispatch('domain/cancel_move')">Cancel Move</button>
-        <span class="hint">Click a highlighted plane to select movement.</span>
-      }
-
-      @if (fsmState() === "CONFIRM_MOVE") {
-        <button type="button" (click)="dispatch('domain/confirm_move')">Confirm Move</button>
-        <button type="button" class="secondary" (click)="dispatch('domain/cancel_move')">Back</button>
-      }
-
-      @if (fsmState() === "ERROR") {
-        <button type="button" (click)="dispatch('domain/restart_session')">Restart Session</button>
-      }
-
-      @if (fsmState() !== "SETUP") {
-        <button type="button" class="secondary" (click)="quitSession()">Quit Session</button>
-      }
-    </div>
-  `,
-  styles: [
-    `
-      .controlBar {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-        min-height: 42px;
-      }
-      .hint {
-        font-size: 12px;
-        color: #5f6c84;
-      }
-      .setPicker {
-        display: grid;
-        gap: 6px;
-        padding: 8px;
-        border: 1px solid #dce2ea;
-        border-radius: 8px;
-        background: #f7f9fb;
-      }
-      .setPickerTitle {
-        font-size: 12px;
-        font-weight: 700;
-        color: #354155;
-      }
-      .setOptions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        font-size: 12px;
-      }
-      .setOptions label {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-      }
-      button {
-        padding: 8px 12px;
-        border: 1px solid #c6d0df;
-        border-radius: 8px;
-        background: #fff;
-        cursor: pointer;
-      }
-      button.secondary {
-        background: #f6f8fb;
-      }
-    `,
-  ],
+  templateUrl: "./control-bar.component.html",
+  styleUrls: ["./control-bar.component.scss"],
 })
 /**
  * Renders primary session controls and pre-session set selection.
  */
 export class ControlBarComponent {
+  protected readonly DOMAIN_INTENT = DOMAIN_INTENT;
   readonly state;
   readonly fsmState = computed(() => this.state().fsm.state);
   readonly planeSets;
@@ -136,6 +44,8 @@ export class ControlBarComponent {
 
   /**
    * Toggles a set selection while enforcing at least one selected option.
+   * @param code Plane set code to toggle.
+   * @returns void
    */
   toggleSet(code: string): void {
     this.selectedSets.update((current) => {
@@ -152,11 +62,12 @@ export class ControlBarComponent {
 
   /**
    * Dispatches a filtered start-session intent when selection is valid.
+   * @returns void
    */
   startSession(): void {
     if (!this.canStartSession()) return;
     this.orchestrator.dispatch({
-      type: "domain/start_session",
+      type: DOMAIN_INTENT.START_SESSION,
       atMs: Date.now(),
       includedSetCodes: this.selectedSetCodes(),
     });
@@ -164,18 +75,28 @@ export class ControlBarComponent {
 
   /**
    * Quits current play and returns to setup selection state.
+   * @returns void
    */
   quitSession(): void {
     this.orchestrator.dispatch({
-      type: "domain/restart_session",
+      type: DOMAIN_INTENT.RESTART_SESSION,
       atMs: Date.now(),
     });
   }
 
   /**
    * Dispatches standard control-bar intents.
+   * @param type Domain intent type dispatched by control actions.
+   * @returns void
    */
-  dispatch(type: "domain/roll_die" | "domain/confirm_move" | "domain/cancel_move" | "domain/restart_session"): void {
+  dispatch(
+    type:
+      | typeof DOMAIN_INTENT.ROLL_DIE
+      | typeof DOMAIN_INTENT.CONFIRM_MOVE
+      | typeof DOMAIN_INTENT.CANCEL_MOVE
+      | typeof DOMAIN_INTENT.RESTART_SESSION
+  ): void {
     this.orchestrator.dispatch({ type, atMs: Date.now() });
   }
 }
+

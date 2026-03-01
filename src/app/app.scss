@@ -1,147 +1,186 @@
-.layout {
-    height: 100dvh;
-    padding: 16px;
-    font-family: Arial, sans-serif;
+﻿.app-shell {
+  height: 100dvh;
+  padding: calc(var(--be-space-3) + 4px);
+  font-family: var(--bs-body-font-family, Arial, sans-serif);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--be-space-3);
+  overflow: hidden;
+
+  &__top {
     display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 12px;
-    overflow: hidden;
-}
-.header { 
-    display: flex; align-items: baseline; gap: 12px; 
-    h1 { margin: 0; font-size: 20px; }
-}
-.reload { margin-left: auto; padding: 8px 10px; border-radius: 8px; border: 1px solid #ccc; background: white; cursor: pointer; }
-.top {
-    display: grid;
-    gap: 12px;
-}
-.controls { margin-top: 0; }
-.content {
+    gap: var(--be-space-3);
+  }
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--be-space-3);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 20px;
+    color: var(--be-color-text);
+  }
+
+  &__reload {
+    margin-left: auto;
+    padding: var(--be-space-2) var(--be-space-2);
+    border-radius: var(--be-radius-md);
+    border: 1px solid var(--be-color-border);
+    background: var(--be-color-surface);
+    color: var(--be-color-text);
+    cursor: pointer;
+  }
+
+  &__controls {
+    margin-top: 0;
+  }
+
+  &__content {
     display: grid;
     grid-template-columns: 360px minmax(0, 1fr);
-    gap: 16px;
+    gap: calc(var(--be-space-3) + 4px);
     min-height: 0;
-}
-.left {
+  }
+
+  &__left {
     min-height: 0;
     overflow: auto;
-}
-.right {
+  }
+
+  &__right {
     min-height: 0;
     display: flex;
-}
-.panel { 
-    border: 1px solid #ddd; border-radius: 10px; padding: 12px; margin-bottom: 12px; 
-    h2 { margin: 0 0 8px 0; font-size: 14px; }
-}
-.empty { opacity: 0.7; font-size: 13px; }
-.eventLog {
+  }
+
+  &__panel {
+    border: 1px solid var(--be-color-border-subtle);
+    border-radius: var(--be-radius-lg);
+    padding: var(--be-space-3);
+    margin-bottom: var(--be-space-3);
+
+    h2 {
+      margin: 0 0 var(--be-space-2) 0;
+      font-size: var(--be-font-size-sm);
+      color: var(--be-color-text-strong);
+    }
+  }
+
+  &__empty {
+    opacity: 0.7;
+    font-size: var(--be-font-size-sm);
+  }
+
+  &__event-log {
     list-style: none;
     margin: 0;
     padding: 0;
     max-height: 280px;
     overflow: auto;
     display: grid;
-    gap: 8px;
+    gap: var(--be-space-2);
 
     li {
-        border: 1px solid #e4e7eb;
-        border-radius: 8px;
-        padding: 8px;
-        background: #f7f9fb;
-    }
-
-    .line {
-        font-size: 13px;
-        color: #162032;
-    }
-
-    .meta {
-        margin-top: 4px;
-        font-size: 11px;
-        color: #566178;
+      border: 1px solid var(--be-color-border-subtle);
+      border-radius: var(--be-radius-md);
+      padding: var(--be-space-2);
+      background: var(--be-color-surface-subtle);
     }
 
     .lvl-error {
-        border-color: #edb5b5;
-        background: #fff1f1;
+      border-color: var(--be-color-danger-border);
+      background: var(--be-color-danger-bg);
     }
 
     .lvl-warn {
-        border-color: #f2ddb0;
-        background: #fff8e8;
+      border-color: color-mix(in srgb, var(--be-color-border) 70%, #f2ddb0 30%);
+      background: color-mix(in srgb, var(--be-color-surface) 84%, #fff8e8 16%);
     }
-}
-.canvasHost {
+  }
+
+  &__event-line {
+    font-size: var(--be-font-size-sm);
+    color: var(--be-color-text-strong);
+  }
+
+  &__event-meta {
+    margin-top: var(--be-space-1);
+    font-size: 11px;
+    color: var(--be-color-text-muted);
+  }
+
+  &__canvas-host {
     width: 100%;
     height: 100%;
     min-height: 0;
     max-height: 100%;
-    border-radius: 12px;
+    border-radius: var(--be-radius-lg);
     overflow: hidden;
-    border: 1px solid #ddd;
+    border: 1px solid var(--be-color-border-subtle);
     background: #111;
-}
+  }
 
-.rollToast {
+  &__roll-toast {
     position: fixed;
     left: 50%;
     top: 92px;
     transform: translateX(-50%);
     z-index: 1400;
-    padding: 12px 18px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    background: linear-gradient(180deg, #22324b 0%, #132035 100%);
-    color: #f7f9ff;
+    padding: var(--be-space-3) calc(var(--be-space-3) + 6px);
+    border-radius: var(--be-radius-lg);
+    border: 1px solid var(--be-color-border-contrast-strong);
+    background: var(--be-gradient-modal);
+    color: var(--be-color-text-inverse);
     font-size: 20px;
     font-weight: 800;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.42);
     pointer-events: none;
-    animation: rollToastFade 1.5s ease-out forwards;
+    animation: be-roll-toast-fade 1.5s ease-out forwards;
+  }
 }
 
-@keyframes rollToastFade {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-8px) scale(0.96);
-    }
-    12% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
-    }
-    80% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-6px) scale(0.98);
-    }
+@keyframes be-roll-toast-fade {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px) scale(0.96);
+  }
+  12% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.98);
+  }
 }
 
 @media (max-width: 980px) {
-    .layout {
-        grid-template-rows: auto auto;
+  .app-shell {
+    grid-template-rows: auto auto;
+
+    &__content {
+      grid-template-columns: 1fr;
     }
 
-    .content {
-        grid-template-columns: 1fr;
+    &__left {
+      overflow: visible;
     }
 
-    .left {
-        overflow: visible;
+    &__right {
+      min-height: 50dvh;
     }
 
-    .right {
-        min-height: 50dvh;
+    &__roll-toast {
+      top: 82px;
+      font-size: 16px;
+      padding: var(--be-space-2) var(--be-space-3);
     }
-
-    .rollToast {
-        top: 82px;
-        font-size: 16px;
-        padding: 10px 14px;
-    }
+  }
 }

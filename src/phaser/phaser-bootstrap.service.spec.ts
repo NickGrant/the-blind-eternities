@@ -8,6 +8,7 @@ import type { SessionStore } from "../app/core/session.store";
 import type { SessionOrchestrator } from "../app/core/session-orchestrator.service";
 import type { DeckService } from "../app/core/deck.service";
 import { createNewSessionState } from "../state/session.factory";
+import type { DevModeStore } from "../app/core/dev-mode";
 
 type MockPhaserGameClass = {
   instances: Array<{ config: { scene: unknown } }>;
@@ -23,11 +24,15 @@ describe("PhaserBootstrapService", () => {
     orchestratorMock: Pick<SessionOrchestrator, "dispatch">,
     deckMock: Pick<DeckService, "getPlaneName" | "getPlaneArtUrl">
   ) {
+    const devModeMock: Pick<DevModeStore, "enabled" | "disableUntilReload"> = {
+      enabled: signal(true).asReadonly(),
+      disableUntilReload: () => void 0,
+    };
     TestBed.configureTestingModule({});
     return TestBed.runInInjectionContext(
       () =>
         new PhaserBootstrapService(
-          true,
+          devModeMock as DevModeStore,
           storeMock as SessionStore,
           orchestratorMock as SessionOrchestrator,
           deckMock as DeckService

@@ -14,3 +14,47 @@ body {
 body {
   min-height: 100dvh;
 }
+
+:root {
+  --be-space-1: 6px;
+  --be-space-2: 10px;
+  --be-space-3: 12px;
+  --be-space-4: 14px;
+
+  --be-radius-md: 8px;
+  --be-radius-lg: 12px;
+  --be-radius-pill: 999px;
+  --be-control-min-height: 42px;
+
+  --be-font-size-xs: 12px;
+  --be-font-size-sm: 13px;
+  --be-font-size-lg: 17px;
+  --be-font-size-xl: 22px;
+  --be-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+
+  --be-color-bg: var(--bs-body-bg, #0f172a);
+  --be-color-surface: var(--bs-body-bg, #ffffff);
+  --be-color-surface-subtle: color-mix(in srgb, var(--bs-body-bg, #ffffff) 92%, #d5dfeb 8%);
+  --be-color-text: var(--bs-body-color, #111827);
+  --be-color-text-strong: color-mix(in srgb, var(--bs-body-color, #111827) 88%, #00122c 12%);
+  --be-color-text-muted: color-mix(in srgb, var(--bs-body-color, #111827) 62%, #5f6c84 38%);
+  --be-color-text-inverse: #f5f7fb;
+
+  --be-color-border: color-mix(in srgb, var(--bs-border-color, #ced4da) 88%, #8ea1b8 12%);
+  --be-color-border-subtle: color-mix(in srgb, var(--bs-border-color, #ced4da) 75%, #dce2ea 25%);
+  --be-color-border-contrast: rgba(255, 255, 255, 0.2);
+  --be-color-border-contrast-strong: rgba(255, 255, 255, 0.3);
+
+  --be-color-overlay-soft: rgba(255, 255, 255, 0.08);
+  --be-color-overlay-muted: rgba(0, 0, 0, 0.18);
+
+  --be-color-danger-bg: var(--bs-danger-bg-subtle, #ffebee);
+  --be-color-danger-border: color-mix(in srgb, var(--bs-danger-border-subtle, #f3b8c1) 75%, #ff7878 25%);
+  --be-color-danger-border-strong: color-mix(in srgb, var(--bs-danger, #dc3545) 72%, #7f0e19 28%);
+  --be-color-danger-surface: color-mix(in srgb, var(--bs-danger, #dc3545) 18%, transparent);
+
+  --be-gradient-modal: linear-gradient(180deg, #111c2d 0%, #0a1320 100%);
+  --be-gradient-attention: linear-gradient(90deg, #ffd166 0%, #ff7b54 50%, #ff4d6d 100%);
+  --be-shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.55);
+}

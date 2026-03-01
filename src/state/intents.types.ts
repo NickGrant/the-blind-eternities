@@ -28,9 +28,39 @@ export type PhaserIntent =
 // Domain Intents (Milestone 1+)
 // -------------------------
 
-export type DieOutcome = "blank" | "chaos" | "planeswalk";
+export const DIE_OUTCOME = {
+  BLANK: "blank",
+  CHAOS: "chaos",
+  PLANESWALK: "planeswalk",
+} as const;
 
-export type ModalType = "PLANE" | "PHENOMENON" | "ERROR" | "CONFIRM_MOVE";
+export type DieOutcome = (typeof DIE_OUTCOME)[keyof typeof DIE_OUTCOME];
+
+export const MODAL_TYPE = {
+  PLANE: "PLANE",
+  PHENOMENON: "PHENOMENON",
+  ERROR: "ERROR",
+  CONFIRM_MOVE: "CONFIRM_MOVE",
+} as const;
+
+export type ModalType = (typeof MODAL_TYPE)[keyof typeof MODAL_TYPE];
+
+export const DOMAIN_INTENT = {
+  START_SESSION: "domain/start_session",
+  RESTART_SESSION: "domain/restart_session",
+  DEBUG_FORCE_ROLL: "domain/debug_force_roll",
+  DEBUG_REVEAL_ALL: "domain/debug_reveal_all",
+  BOOTSTRAP_REVEAL_COMPLETE: "domain/bootstrap_reveal_complete",
+  ROLL_DIE: "domain/roll_die",
+  ROLL_RESOLVED: "domain/roll_resolved",
+  SELECT_PLANE: "domain/select_plane",
+  CONFIRM_MOVE: "domain/confirm_move",
+  CANCEL_MOVE: "domain/cancel_move",
+  MOVEMENT_COMPLETE: "domain/movement_complete",
+  OPEN_MODAL: "domain/open_modal",
+  CLOSE_MODAL: "domain/close_modal",
+  FATAL_ERROR: "domain/fatal_error",
+} as const;
 
 /**
  * DomainIntent
@@ -41,7 +71,7 @@ export type ModalType = "PLANE" | "PHENOMENON" | "ERROR" | "CONFIRM_MOVE";
 export type DomainIntent =
   // Session lifecycle
   | {
-      type: "domain/start_session";
+      type: typeof DOMAIN_INTENT.START_SESSION;
       atMs: number;
       includedSetCodes?: string[];
       initialDeck?: {
@@ -49,26 +79,30 @@ export type DomainIntent =
         discardPile: string[];
       };
     }
-  | { type: "domain/restart_session"; atMs: number }
-  | { type: "domain/debug_force_roll"; atMs: number; outcome: Extract<DieOutcome, "chaos" | "planeswalk"> }
-  | { type: "domain/debug_reveal_all"; atMs: number }
+  | { type: typeof DOMAIN_INTENT.RESTART_SESSION; atMs: number }
+  | {
+      type: typeof DOMAIN_INTENT.DEBUG_FORCE_ROLL;
+      atMs: number;
+      outcome: Extract<DieOutcome, typeof DIE_OUTCOME.CHAOS | typeof DIE_OUTCOME.PLANESWALK>;
+    }
+  | { type: typeof DOMAIN_INTENT.DEBUG_REVEAL_ALL; atMs: number }
 
   // Bootstrap sequencing (system-driven; UI should not emit directly)
-  | { type: "domain/bootstrap_reveal_complete"; atMs: number }
+  | { type: typeof DOMAIN_INTENT.BOOTSTRAP_REVEAL_COMPLETE; atMs: number }
 
   // Rolling
-  | { type: "domain/roll_die"; atMs: number }
-  | { type: "domain/roll_resolved"; atMs: number; outcome: DieOutcome }
+  | { type: typeof DOMAIN_INTENT.ROLL_DIE; atMs: number }
+  | { type: typeof DOMAIN_INTENT.ROLL_RESOLVED; atMs: number; outcome: DieOutcome }
 
   // Movement
-  | { type: "domain/select_plane"; atMs: number; toCoord: CoordKey }
-  | { type: "domain/confirm_move"; atMs: number }
-  | { type: "domain/cancel_move"; atMs: number }
-  | { type: "domain/movement_complete"; atMs: number }
+  | { type: typeof DOMAIN_INTENT.SELECT_PLANE; atMs: number; toCoord: CoordKey }
+  | { type: typeof DOMAIN_INTENT.CONFIRM_MOVE; atMs: number }
+  | { type: typeof DOMAIN_INTENT.CANCEL_MOVE; atMs: number }
+  | { type: typeof DOMAIN_INTENT.MOVEMENT_COMPLETE; atMs: number }
 
   // Modals
   | {
-      type: "domain/open_modal";
+      type: typeof DOMAIN_INTENT.OPEN_MODAL;
       atMs: number;
       modal: {
         id: string; // unique id for queue management
@@ -79,10 +113,10 @@ export type DomainIntent =
         resumeToState?: FsmState;
       };
     }
-  | { type: "domain/close_modal"; atMs: number; modalId?: string }
+  | { type: typeof DOMAIN_INTENT.CLOSE_MODAL; atMs: number; modalId?: string }
 
   // Errors
-  | { type: "domain/fatal_error"; atMs: number; code: string; detail?: string };
+  | { type: typeof DOMAIN_INTENT.FATAL_ERROR; atMs: number; code: string; detail?: string };
 
 // -------------------------
 // Optional type guards

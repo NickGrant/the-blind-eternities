@@ -1,0 +1,12 @@
+{
+  "syncSetCodes": ["OPCA", "OPC2", "OHOP", "HOP", "PHOP", "WHO"],
+  "defaultSelectableSetCodes": ["OPCA", "OPC2", "OHOP", "HOP", "PHOP"],
+  "labels": {
+    "OPCA": "Planechase Anthology",
+    "OPC2": "Planechase (2012)",
+    "OHOP": "Planechase",
+    "HOP": "Planechase",
+    "PHOP": "Promotional Planechase",
+    "WHO": "Doctor Who Commander"
+  }
+}

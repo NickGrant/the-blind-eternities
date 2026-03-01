@@ -4,21 +4,14 @@ import path from "node:path";
 
 const root = process.cwd();
 const cardsPath = path.join(root, "src", "assets", "cards.json");
+const planeSetConfigPath = path.join(root, "src", "assets", "plane-set-config.json");
 
 async function run() {
   const cardsRaw = await fs.readFile(cardsPath, "utf8");
   const catalog = JSON.parse(cardsRaw);
   const planes = Array.isArray(catalog.planes) ? catalog.planes : [];
 
-  const setCodes = [
-    "OPCA",
-    "OPC2",
-    "OHOP",
-    "HOP",
-    "PHOP",
-    // Supplemental precon with Plane cards.
-    "WHO",
-  ];
+  const setCodes = await readSyncSetCodes();
   const allCards = [];
   for (const code of setCodes) {
     const cards = await fetchPlaneCardsFromSet(code);
@@ -107,6 +100,24 @@ async function run() {
   );
 }
 
+/**
+ * Reads normalized set codes used for MTGJSON sync.
+ * @returns {Promise<string[]>} Uppercased MTGJSON set codes.
+ */
+async function readSyncSetCodes() {
+  const configRaw = await fs.readFile(planeSetConfigPath, "utf8");
+  const config = JSON.parse(configRaw);
+  const fromConfig = Array.isArray(config?.syncSetCodes) ? config.syncSetCodes : [];
+  return fromConfig
+    .map((code) => String(code).trim().toUpperCase())
+    .filter((code) => code.length > 0);
+}
+
+/**
+ * Fetches a set payload from MTGJSON and returns only Plane cards.
+ * @param {string} setCode MTGJSON set code.
+ * @returns {Promise<object[]>} Plane card records from the set.
+ */
 async function fetchPlaneCardsFromSet(setCode) {
   const url = `https://mtgjson.com/api/v5/${setCode}.json`;
   const response = await fetch(url);
@@ -126,6 +137,11 @@ async function fetchPlaneCardsFromSet(setCode) {
   });
 }
 
+/**
+ * Extracts standardized chaos reminder text from card rules text.
+ * @param {string | undefined} rulesText Full rules text from card source.
+ * @returns {string | undefined} Normalized chaos text prefixed for runtime display.
+ */
 function extractChaosText(rulesText) {
   if (typeof rulesText !== "string" || rulesText.length === 0) return undefined;
   const lines = rulesText
@@ -143,6 +159,11 @@ function extractChaosText(rulesText) {
   return normalized.length > 0 ? `CHAOS - ${normalized}` : undefined;
 }
 
+/**
+ * Converts a plane ID slug into a title-cased display name.
+ * @param {string} id Plane ID slug.
+ * @returns {string} Human-readable name.
+ */
 function humanizePlaneId(id) {
   const base = id.startsWith("plane-") ? id.slice("plane-".length) : id;
   return base
@@ -152,6 +173,11 @@ function humanizePlaneId(id) {
     .join(" ");
 }
 
+/**
+ * Converts a card name into canonical plane ID format.
+ * @param {string | undefined} name Card name.
+ * @returns {string | undefined} Plane ID slug with `plane-` prefix.
+ */
 function toPlaneId(name) {
   if (typeof name !== "string") return undefined;
   const slug = name

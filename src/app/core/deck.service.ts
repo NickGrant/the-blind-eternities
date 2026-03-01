@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import cardsCatalog from "../../assets/cards.json";
 import { createShuffledDeck } from "../../state/deck/deck-model";
+import { DEFAULT_SELECTABLE_PLANE_SET_CODES, PLANE_SET_LABELS } from "./plane-set-config";
 
 export type PlaneCard = {
   id: string;
@@ -31,15 +32,7 @@ export type PlaneSetOption = {
   isPlanechaseDefault: boolean;
 };
 
-const SET_LABELS: Record<string, string> = {
-  OPCA: "Planechase Anthology",
-  OPC2: "Planechase (2012)",
-  OHOP: "Planechase",
-  HOP: "Planechase",
-  PHOP: "Promotional Planechase",
-};
-
-const DEFAULT_PLANECHASE_SET_CODES = new Set(["OPCA", "OPC2", "OHOP", "HOP", "PHOP"]);
+const DEFAULT_PLANECHASE_SET_CODES = new Set(DEFAULT_SELECTABLE_PLANE_SET_CODES);
 const MIN_PLANES_PER_SESSION = 5;
 
 /**
@@ -116,7 +109,7 @@ export class DeckService {
     return [...counts.entries()]
       .map(([code, count]) => ({
         code,
-        label: SET_LABELS[code] ?? code,
+        label: PLANE_SET_LABELS[code] ?? code,
         count,
         isPlanechaseDefault: DEFAULT_PLANECHASE_SET_CODES.has(code),
       }))
