@@ -1,4 +1,5 @@
-import { Component, computed } from "@angular/core";
+import { Component, computed, signal } from "@angular/core";
+import { DeckService } from "../core/deck.service";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
 
@@ -10,7 +11,25 @@ import { SessionStore } from "../core/session.store";
       <div class="status">State: {{ fsmState() }}</div>
 
       @if (fsmState() === "SETUP") {
-        <button type="button" (click)="dispatch('domain/start_session')">Start Session</button>
+        <div class="setPicker">
+          <div class="setPickerTitle">Deck Sets</div>
+          <div class="setOptions">
+            @for (set of planeSets(); track set.code) {
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="isSetSelected(set.code)"
+                  (change)="toggleSet(set.code)"
+                />
+                {{ set.label }} ({{ set.code }}) - {{ set.count }}
+              </label>
+            }
+          </div>
+        </div>
+        <button type="button" (click)="startSession()" [disabled]="!canStartSession()">
+          Start Session
+        </button>
+        <span class="hint">Playable planes from selection: {{ selectedPlayableCount() }} (minimum 5).</span>
       }
 
       @if (fsmState() === "IDLE") {
@@ -29,6 +48,10 @@ import { SessionStore } from "../core/session.store";
 
       @if (fsmState() === "ERROR") {
         <button type="button" (click)="dispatch('domain/restart_session')">Restart Session</button>
+      }
+
+      @if (fsmState() !== "SETUP") {
+        <button type="button" class="secondary" (click)="quitSession()">Quit Session</button>
       }
     </div>
   `,
@@ -53,6 +76,30 @@ import { SessionStore } from "../core/session.store";
         font-size: 12px;
         color: #5f6c84;
       }
+      .setPicker {
+        display: grid;
+        gap: 6px;
+        padding: 8px;
+        border: 1px solid #dce2ea;
+        border-radius: 8px;
+        background: #f7f9fb;
+      }
+      .setPickerTitle {
+        font-size: 12px;
+        font-weight: 700;
+        color: #354155;
+      }
+      .setOptions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 12px;
+      }
+      .setOptions label {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
       button {
         padding: 8px 12px;
         border: 1px solid #c6d0df;
@@ -69,22 +116,59 @@ import { SessionStore } from "../core/session.store";
 export class ControlBarComponent {
   readonly state;
   readonly fsmState = computed(() => this.state().fsm.state);
+  readonly planeSets;
+  readonly selectedSetCodes = computed(() => [...this.selectedSets()].sort());
+  readonly selectedPlayableCount = computed(() => this.deckService.countPlayablePlanesForSets(this.selectedSetCodes()));
+  readonly canStartSession = computed(() => this.selectedPlayableCount() >= 5);
+  private readonly selectedSets = signal<Set<string>>(new Set());
 
   constructor(
     private readonly orchestrator: SessionOrchestrator,
-    private readonly sessionStore: SessionStore
+    private readonly sessionStore: SessionStore,
+    private readonly deckService: DeckService
   ) {
     this.state = this.sessionStore.state;
+    const sets = this.deckService.listPlaneSetOptions();
+    this.planeSets = signal(sets).asReadonly();
+    const defaults = sets.filter((s) => s.isPlanechaseDefault).map((s) => s.code);
+    const initial = defaults.length > 0 ? defaults : sets.map((s) => s.code);
+    this.selectedSets.set(new Set(initial));
   }
 
-  dispatch(
-    type:
-      | "domain/start_session"
-      | "domain/roll_die"
-      | "domain/confirm_move"
-      | "domain/cancel_move"
-      | "domain/restart_session"
-  ): void {
+  isSetSelected(code: string): boolean {
+    return this.selectedSets().has(code);
+  }
+
+  toggleSet(code: string): void {
+    this.selectedSets.update((current) => {
+      const next = new Set(current);
+      if (next.has(code)) {
+        if (next.size <= 1) return current;
+        next.delete(code);
+      } else {
+        next.add(code);
+      }
+      return next;
+    });
+  }
+
+  startSession(): void {
+    if (!this.canStartSession()) return;
+    this.orchestrator.dispatch({
+      type: "domain/start_session",
+      atMs: Date.now(),
+      includedSetCodes: this.selectedSetCodes(),
+    });
+  }
+
+  quitSession(): void {
+    this.orchestrator.dispatch({
+      type: "domain/restart_session",
+      atMs: Date.now(),
+    });
+  }
+
+  dispatch(type: "domain/roll_die" | "domain/confirm_move" | "domain/cancel_move" | "domain/restart_session"): void {
     this.orchestrator.dispatch({ type, atMs: Date.now() });
   }
 }

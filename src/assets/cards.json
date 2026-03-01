@@ -16,7 +16,11 @@
       "setCode": "OPCA",
       "number": "12",
       "mtgjsonId": "b7fe47be-84de-5785-acb0-d404d764c547",
-      "scryfallId": "a1c7f2eb-0654-46f9-ae3d-11efcac837b8"
+      "scryfallId": "a1c7f2eb-0654-46f9-ae3d-11efcac837b8",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     },
     {
       "id": "plane-bant",
@@ -34,7 +38,11 @@
       "setCode": "OPCA",
       "number": "15",
       "mtgjsonId": "8d2b7ddb-cca1-5ee3-9800-5ee6ee1fb5a8",
-      "scryfallId": "434a2d09-5776-4168-b863-f3b0a736d19b"
+      "scryfallId": "434a2d09-5776-4168-b863-f3b0a736d19b",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
     },
     {
       "id": "plane-cliffside-market",
@@ -52,7 +60,11 @@
       "setCode": "OPCA",
       "number": "18",
       "mtgjsonId": "daa9a24c-e4e9-5225-9cc3-97272ac129d5",
-      "scryfallId": "ff65643b-e8bb-49d6-8887-13a146ee5174"
+      "scryfallId": "ff65643b-e8bb-49d6-8887-13a146ee5174",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
     },
     {
       "id": "plane-edge-of-malacol",
@@ -70,7 +82,11 @@
       "setCode": "OPCA",
       "number": "20",
       "mtgjsonId": "884871d9-d78f-5ffd-8681-5b9b50e10e9c",
-      "scryfallId": "ca4c429a-ca40-4656-aea5-86eb450e47b7"
+      "scryfallId": "ca4c429a-ca40-4656-aea5-86eb450e47b7",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     },
     {
       "id": "plane-furnace-layer",
@@ -88,7 +104,11 @@
       "setCode": "OPCA",
       "number": "26",
       "mtgjsonId": "c6780bb7-6090-5110-9d8d-716a214fbcb3",
-      "scryfallId": "d89133d1-06e7-4b8f-8f42-e0551fd93a5b"
+      "scryfallId": "d89133d1-06e7-4b8f-8f42-e0551fd93a5b",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     },
     {
       "id": "plane-glen-elendra",
@@ -106,7 +126,11 @@
       "setCode": "OPCA",
       "number": "28",
       "mtgjsonId": "de2fae7c-6bbf-5f1d-83dc-041f8cea0ba0",
-      "scryfallId": "fdaaef56-0c95-404a-8de5-e8f21e0282d3"
+      "scryfallId": "fdaaef56-0c95-404a-8de5-e8f21e0282d3",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     },
     {
       "id": "plane-immersturm",
@@ -124,7 +148,11 @@
       "setCode": "OPCA",
       "number": "38",
       "mtgjsonId": "43d2ce27-1dd8-5810-8909-3679b955afab",
-      "scryfallId": "d44a959c-7a04-4342-8827-882349f786fc"
+      "scryfallId": "d44a959c-7a04-4342-8827-882349f786fc",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
     },
     {
       "id": "plane-ivy-lane",
@@ -147,7 +175,11 @@
       "setCode": "OPCA",
       "number": "42",
       "mtgjsonId": "368fb6df-be97-5052-9200-d9b2845ec7e7",
-      "scryfallId": "5271d8fd-3657-45a3-8147-00cc1d19425f"
+      "scryfallId": "5271d8fd-3657-45a3-8147-00cc1d19425f",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     },
     {
       "id": "plane-lethe-lake",
@@ -165,7 +197,11 @@
       "setCode": "OPCA",
       "number": "47",
       "mtgjsonId": "8d43a0ac-086d-5f57-9edd-8a33ade5968b",
-      "scryfallId": "7a049235-2fda-48a7-b46e-d150a4893397"
+      "scryfallId": "7a049235-2fda-48a7-b46e-d150a4893397",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
     },
     {
       "id": "plane-minamo",
@@ -183,7 +219,11 @@
       "setCode": "OPCA",
       "number": "50",
       "mtgjsonId": "af66027f-a317-5c3b-998c-ed56c2bf2766",
-      "scryfallId": "9c155a59-afee-4821-9715-10dafb9f9d9a"
+      "scryfallId": "9c155a59-afee-4821-9715-10dafb9f9d9a",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
     },
     {
       "id": "plane-naar-isle",
@@ -201,7 +241,11 @@
       "setCode": "OPCA",
       "number": "54",
       "mtgjsonId": "d6b2196b-2275-54df-b8af-1d8560c6ed15",
-      "scryfallId": "f63b82f9-ebc4-465c-b25e-5ee710525143"
+      "scryfallId": "f63b82f9-ebc4-465c-b25e-5ee710525143",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
     },
     {
       "id": "plane-orochi-colony",
@@ -219,7 +263,11 @@
       "setCode": "OPCA",
       "number": "59",
       "mtgjsonId": "5e6ce502-f2f7-55e2-b4e6-6d0ab591f763",
-      "scryfallId": "f9fc5e0d-e605-468b-98da-34101087b8c4"
+      "scryfallId": "f9fc5e0d-e605-468b-98da-34101087b8c4",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     },
     {
       "id": "plane-pools-of-becoming",
@@ -237,7 +285,11 @@
       "number": "63",
       "mtgjsonId": "72f74b16-8db3-5e14-a12e-3e15e49039e4",
       "scryfallId": "559007a6-c515-413a-8d3c-8ce1df0742ff",
-      "artUrl": "assets/plane-art/plane-pools-of-becoming.jpg"
+      "artUrl": "assets/plane-art/plane-pools-of-becoming.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
     },
     {
       "id": "plane-quicksilver-sea",
@@ -255,7 +307,11 @@
       "number": "65",
       "mtgjsonId": "5862b1a8-60f1-5d8d-8f57-ad29af52c68b",
       "scryfallId": "072c1a59-dbdc-469c-9743-e083e52b0b6d",
-      "artUrl": "assets/plane-art/plane-quicksilver-sea.jpg"
+      "artUrl": "assets/plane-art/plane-quicksilver-sea.jpg",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     },
     {
       "id": "plane-sokenzan",
@@ -273,7 +329,1344 @@
       "number": "72",
       "mtgjsonId": "d17510da-1750-5365-94fe-7d61141c8e87",
       "scryfallId": "fd5cb6c4-2ad7-47db-848b-8f6f157f3529",
-      "artUrl": "assets/plane-art/plane-sokenzan.jpg"
+      "artUrl": "assets/plane-art/plane-sokenzan.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-academy-at-tolaria-west",
+      "name": "Academy at Tolaria West",
+      "rulesText": "At the beginning of your end step, if you have no cards in hand, draw seven cards.\nWhenever chaos ensues, discard your hand.",
+      "chaosText": "CHAOS - discard your hand.",
+      "typeLine": "Plane — Dominaria",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Dominaria"
+      ],
+      "setCode": "OPCA",
+      "number": "9",
+      "mtgjsonId": "2681bced-dd18-5a57-a1c4-985b73ec5164",
+      "scryfallId": "ed4f4210-9871-4cec-9b46-100c80f93cd4",
+      "artUrl": "assets/plane-art/plane-academy-at-tolaria-west.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-the-aether-flues",
+      "name": "The Aether Flues",
+      "rulesText": "When you planeswalk to The Aether Flues and at the beginning of your upkeep, you may sacrifice a creature. If you do, reveal cards from the top of your library until you reveal a creature card, put that card onto the battlefield, then shuffle all other cards revealed this way into your library.\nWhenever chaos ensues, you may put a creature card from your hand onto the battlefield.",
+      "chaosText": "CHAOS - you may put a creature card from your hand onto the battlefield.",
+      "typeLine": "Plane — Iquatana",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Iquatana"
+      ],
+      "setCode": "OPCA",
+      "number": "10",
+      "mtgjsonId": "dc9d2575-fe57-517e-b4b5-77f96c335c10",
+      "scryfallId": "3d8c9d69-be51-4ad4-9c2a-0ec1952e4f72",
+      "artUrl": "assets/plane-art/plane-the-aether-flues.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-agyrem",
+      "name": "Agyrem",
+      "rulesText": "Whenever a white creature dies, return it to the battlefield under its owner's control at the beginning of the next end step.\nWhenever a nonwhite creature dies, return it to its owner's hand at the beginning of the next end step.\nWhenever chaos ensues, creatures can't attack you until a player planeswalks.",
+      "chaosText": "CHAOS - creatures can't attack you until a player planeswalks.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "11",
+      "mtgjsonId": "202e6df5-33d8-5706-afcf-1db90ae22137",
+      "scryfallId": "6caf8b21-1807-442c-a461-c89c7591df70",
+      "artUrl": "assets/plane-art/plane-agyrem.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-aretopolis",
+      "name": "Aretopolis",
+      "rulesText": "When you planeswalk to Aretopolis and at the beginning of your upkeep, put a scroll counter on Aretopolis, then you gain life equal to the number of scroll counters on it.\nWhen Aretopolis has ten or more scroll counters on it, planeswalk.\nWhenever chaos ensues, put a scroll counter on Aretopolis, then draw cards equal to the number of scroll counters on it.",
+      "chaosText": "CHAOS - put a scroll counter on Aretopolis, then draw cards equal to the number of scroll counters on it.",
+      "typeLine": "Plane — Kephalai",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kephalai"
+      ],
+      "setCode": "OPCA",
+      "number": "13",
+      "mtgjsonId": "72d7976e-f180-58ea-9c00-a7672033dd9f",
+      "scryfallId": "d6dc655e-d8ef-443a-bb3e-46c7ca1555ba",
+      "artUrl": "assets/plane-art/plane-aretopolis.jpg",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-astral-arena",
+      "name": "Astral Arena",
+      "rulesText": "No more than one creature can attack each combat.\nNo more than one creature can block each combat.\nWhenever chaos ensues, Astral Arena deals 2 damage to each creature.",
+      "chaosText": "CHAOS - Astral Arena deals 2 damage to each creature.",
+      "typeLine": "Plane — Kolbahan",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kolbahan"
+      ],
+      "setCode": "OPCA",
+      "number": "14",
+      "mtgjsonId": "b5f9fc33-72a5-5027-a7aa-aa56e7bbb9d8",
+      "scryfallId": "56c735c0-9346-431b-869f-3accfa193016",
+      "artUrl": "assets/plane-art/plane-astral-arena.jpg",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-bloodhill-bastion",
+      "name": "Bloodhill Bastion",
+      "rulesText": "Whenever a creature enters, it gains double strike and haste until end of turn.\nWhenever chaos ensues, exile target nontoken creature you control, then return it to the battlefield under your control.",
+      "chaosText": "CHAOS - exile target nontoken creature you control, then return it to the battlefield under your control.",
+      "typeLine": "Plane — Equilor",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Equilor"
+      ],
+      "setCode": "OPCA",
+      "number": "16",
+      "mtgjsonId": "28d43c16-ff6a-5162-ad35-bc2423cf4922",
+      "scryfallId": "27efe0cb-e3b9-4058-8c3e-aad8e693f077",
+      "artUrl": "assets/plane-art/plane-bloodhill-bastion.jpg",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-celestine-reef",
+      "name": "Celestine Reef",
+      "rulesText": "Creatures without flying or islandwalk can't attack.\nWhenever chaos ensues, until a player planeswalks, you can't lose the game and your opponents can't win the game.",
+      "chaosText": "CHAOS - until a player planeswalks, you can't lose the game and your opponents can't win the game.",
+      "typeLine": "Plane — Luvion",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Luvion"
+      ],
+      "setCode": "OPCA",
+      "number": "17",
+      "mtgjsonId": "40230752-d830-55bf-9ddc-fca7a0db3d35",
+      "scryfallId": "0cf339cb-04c0-40e8-a64c-b80229a32cec",
+      "artUrl": "assets/plane-art/plane-celestine-reef.jpg",
+      "setCodes": [
+        "OPCA"
+      ]
+    },
+    {
+      "id": "plane-the-dark-barony",
+      "name": "The Dark Barony",
+      "rulesText": "Whenever a nonblack card is put into a player's graveyard from anywhere, that player loses 1 life.\nWhenever chaos ensues, each opponent discards a card.",
+      "chaosText": "CHAOS - each opponent discards a card.",
+      "typeLine": "Plane — Ulgrotha",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ulgrotha"
+      ],
+      "setCode": "OPCA",
+      "number": "19",
+      "mtgjsonId": "ceed3259-9b73-536a-88ee-259845a1199e",
+      "scryfallId": "0b8a0cad-92df-45a1-a3cc-561be2f06778",
+      "artUrl": "assets/plane-art/plane-the-dark-barony.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-eloren-wilds",
+      "name": "Eloren Wilds",
+      "rulesText": "Whenever a player taps a permanent for mana, that player adds one mana of any type that permanent produced.\nWhenever chaos ensues, target player can't cast spells until a player planeswalks.",
+      "chaosText": "CHAOS - target player can't cast spells until a player planeswalks.",
+      "typeLine": "Plane — Shandalar",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Shandalar"
+      ],
+      "setCode": "OPCA",
+      "number": "21",
+      "mtgjsonId": "daee13c3-5b15-51f9-9b63-dc148f0e060f",
+      "scryfallId": "bec61f7a-cf02-4150-aff9-9465fa14c779",
+      "artUrl": "assets/plane-art/plane-eloren-wilds.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-the-eon-fog",
+      "name": "The Eon Fog",
+      "rulesText": "Players skip their untap steps.\nWhenever chaos ensues, untap all permanents you control.",
+      "chaosText": "CHAOS - untap all permanents you control.",
+      "typeLine": "Plane — Equilor",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Equilor"
+      ],
+      "setCode": "OPCA",
+      "number": "22",
+      "mtgjsonId": "2b7cd546-7002-5a2f-941b-584ccee0f2cb",
+      "scryfallId": "501268b6-878b-4725-be1f-a64c90f79b87",
+      "artUrl": "assets/plane-art/plane-the-eon-fog.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-feeding-grounds",
+      "name": "Feeding Grounds",
+      "rulesText": "Red spells cost {1} less to cast.\nGreen spells cost {1} less to cast.\nWhenever chaos ensues, put X +1/+1 counters on target creature, where X is that creature's mana value.",
+      "chaosText": "CHAOS - put X +1/+1 counters on target creature, where X is that creature's mana value.",
+      "typeLine": "Plane — Muraganda",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Muraganda"
+      ],
+      "setCode": "OPCA",
+      "number": "23",
+      "mtgjsonId": "4e869711-2357-5ff7-adaa-f2aa118d6051",
+      "scryfallId": "1dde33fa-f748-43c9-9ead-9461332e9e67",
+      "artUrl": "assets/plane-art/plane-feeding-grounds.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-fields-of-summer",
+      "name": "Fields of Summer",
+      "rulesText": "Whenever a player casts a spell, that player may gain 2 life.\nWhenever chaos ensues, you may gain 10 life.",
+      "chaosText": "CHAOS - you may gain 10 life.",
+      "typeLine": "Plane — Moag",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Moag"
+      ],
+      "setCode": "OPCA",
+      "number": "24",
+      "mtgjsonId": "b677b029-653a-56c2-a155-ef7e7e7fe100",
+      "scryfallId": "b52a233b-cc51-4f3e-94d0-a4b75ecb248e",
+      "artUrl": "assets/plane-art/plane-fields-of-summer.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-the-fourth-sphere",
+      "name": "The Fourth Sphere",
+      "rulesText": "At the beginning of your upkeep, sacrifice a nonblack creature.\nWhenever chaos ensues, create a 2/2 black Zombie creature token.",
+      "chaosText": "CHAOS - create a 2/2 black Zombie creature token.",
+      "typeLine": "Plane — Phyrexia",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Phyrexia"
+      ],
+      "setCode": "OPCA",
+      "number": "25",
+      "mtgjsonId": "1b416d87-d145-5342-adfd-4bf367242a47",
+      "scryfallId": "decef464-d1d3-4459-a1c4-fbad684d5d02",
+      "artUrl": "assets/plane-art/plane-the-fourth-sphere.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-gavony",
+      "name": "Gavony",
+      "rulesText": "All creatures have vigilance.\nWhenever chaos ensues, creatures you control gain indestructible until end of turn.",
+      "chaosText": "CHAOS - creatures you control gain indestructible until end of turn.",
+      "typeLine": "Plane — Innistrad",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Innistrad"
+      ],
+      "setCode": "OPCA",
+      "number": "27",
+      "mtgjsonId": "0bfee974-6871-57cc-b4ed-78cf647b78b2",
+      "scryfallId": "99ee3cd9-321e-4dfa-a144-65854d914d84",
+      "artUrl": "assets/plane-art/plane-gavony.jpg",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-glimmervoid-basin",
+      "name": "Glimmervoid Basin",
+      "rulesText": "Whenever a player casts an instant or sorcery spell with a single target, that player copies that spell for each other spell, permanent, card not on the battlefield, and/or player the spell could target. Each copy targets a different one of them.\nWhenever chaos ensues, choose target creature. Each player except that creature's controller creates a token that's a copy of that creature.",
+      "chaosText": "CHAOS - choose target creature. Each player except that creature's controller creates a token that's a copy of that creature.",
+      "typeLine": "Plane — Mirrodin",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Mirrodin"
+      ],
+      "setCode": "OPCA",
+      "number": "29",
+      "mtgjsonId": "12c9d170-a5e2-5775-bb36-8eaaaf8db827",
+      "scryfallId": "56a1afab-782c-4f31-96f5-17b676852fea",
+      "artUrl": "assets/plane-art/plane-glimmervoid-basin.jpg",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-goldmeadow",
+      "name": "Goldmeadow",
+      "rulesText": "Whenever a land enters, that land's controller creates three 0/1 white Goat creature tokens.\nWhenever chaos ensues, create a 0/1 white Goat creature token.",
+      "chaosText": "CHAOS - create a 0/1 white Goat creature token.",
+      "typeLine": "Plane — Lorwyn",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Lorwyn"
+      ],
+      "setCode": "OPCA",
+      "number": "30",
+      "mtgjsonId": "a106b6b4-68d5-56b6-826a-0eb55a69ce1f",
+      "scryfallId": "830c7c81-335e-4f0b-81b9-209732408093",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-grand-ossuary",
+      "name": "Grand Ossuary",
+      "rulesText": "Whenever a creature dies, its controller distributes a number of +1/+1 counters equal to its power among any number of target creatures they control.\nWhenever chaos ensues, each player exiles all creatures they control and creates X 1/1 green Saproling creature tokens, where X is the total power of the creatures they exiled this way. Then planeswalk.",
+      "chaosText": "CHAOS - each player exiles all creatures they control and creates X 1/1 green Saproling creature tokens, where X is the total power of the creatures they exiled this way. Then planeswalk.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "31",
+      "mtgjsonId": "223c380e-6b16-5ec2-a841-4818d1f9d1f2",
+      "scryfallId": "3dfccef2-4d55-423f-8375-4e349bbf615e",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-the-great-forest",
+      "name": "The Great Forest",
+      "rulesText": "Each creature assigns combat damage equal to its toughness rather than its power.\nWhenever chaos ensues, creatures you control get +0/+2 and gain trample until end of turn.",
+      "chaosText": "CHAOS - creatures you control get +0/+2 and gain trample until end of turn.",
+      "typeLine": "Plane — Lorwyn",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Lorwyn"
+      ],
+      "setCode": "OPCA",
+      "number": "32",
+      "mtgjsonId": "e984c59e-b306-52a7-b56f-e2419bd538b0",
+      "scryfallId": "8c08ca87-a485-4e4e-8f19-0da6a351142e",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-grixis",
+      "name": "Grixis",
+      "rulesText": "Blue, black, and/or red creature cards in your graveyard have unearth. The unearth cost is equal to the card's mana cost. (Pay the card's mana cost: Return it to the battlefield. The creature gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)\nWhenever chaos ensues, put target creature card from a graveyard onto the battlefield under your control.",
+      "chaosText": "CHAOS - put target creature card from a graveyard onto the battlefield under your control.",
+      "typeLine": "Plane — Alara",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Alara"
+      ],
+      "setCode": "OPCA",
+      "number": "33",
+      "mtgjsonId": "b16364f1-72b5-5752-9b68-aff85e02a94c",
+      "scryfallId": "ecbe3339-2cd1-45e2-bac1-8ea995238c30",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-grove-of-the-dreampods",
+      "name": "Grove of the Dreampods",
+      "rulesText": "When you planeswalk to Grove of the Dreampods and at the beginning of your upkeep, reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.\nWhenever chaos ensues, return target creature card from your graveyard to the battlefield.",
+      "chaosText": "CHAOS - return target creature card from your graveyard to the battlefield.",
+      "typeLine": "Plane — Fabacin",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Fabacin"
+      ],
+      "setCode": "OPCA",
+      "number": "34",
+      "mtgjsonId": "f17ae059-b658-55a1-b193-75852a81365b",
+      "scryfallId": "7e1e76f3-4a95-4bb1-bc21-22614b070711",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-hedron-fields-of-agadeem",
+      "name": "Hedron Fields of Agadeem",
+      "rulesText": "Creatures with power 7 or greater can't attack or block.\nWhenever chaos ensues, create a 7/7 colorless Eldrazi creature token with annihilator 1. (Whenever it attacks, defending player sacrifices a permanent of their choice.)",
+      "chaosText": "CHAOS - create a 7/7 colorless Eldrazi creature token with annihilator 1. (Whenever it attacks, defending player sacrifices a permanent of their choice.)",
+      "typeLine": "Plane — Zendikar",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Zendikar"
+      ],
+      "setCode": "OPCA",
+      "number": "35",
+      "mtgjsonId": "34d96fdf-a4af-5c16-9888-0fb0bfa9905c",
+      "scryfallId": "5d87893f-36e0-4621-a139-fedbc74ed4c5",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-the-hippodrome",
+      "name": "The Hippodrome",
+      "rulesText": "All creatures get -5/-0.\nWhenever chaos ensues, you may destroy target creature if its power is 0 or less.",
+      "chaosText": "CHAOS - you may destroy target creature if its power is 0 or less.",
+      "typeLine": "Plane — Segovia",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Segovia"
+      ],
+      "setCode": "OPCA",
+      "number": "36",
+      "mtgjsonId": "4ea15cf1-ade3-562f-8d14-1ce2ac1a681c",
+      "scryfallId": "4ba7ce8f-e11d-4e06-8cb6-668de2a43a4e",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-horizon-boughs",
+      "name": "Horizon Boughs",
+      "rulesText": "All permanents untap during each player's untap step.\nWhenever chaos ensues, you may search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "chaosText": "CHAOS - you may search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "typeLine": "Plane — Pyrulea",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Pyrulea"
+      ],
+      "setCode": "OPCA",
+      "number": "37",
+      "mtgjsonId": "387b00c1-369f-5d9c-a602-232bae7acd0c",
+      "scryfallId": "61471ab4-749a-40e4-b06b-153edec80daa",
+      "setCodes": [
+        "OPCA"
+      ]
+    },
+    {
+      "id": "plane-isle-of-vesuva",
+      "name": "Isle of Vesuva",
+      "rulesText": "Whenever a nontoken creature enters, its controller creates a token that's a copy of that creature.\nWhenever chaos ensues, destroy target creature and all other creatures with the same name as that creature.",
+      "chaosText": "CHAOS - destroy target creature and all other creatures with the same name as that creature.",
+      "typeLine": "Plane — Dominaria",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Dominaria"
+      ],
+      "setCode": "OPCA",
+      "number": "39",
+      "mtgjsonId": "b9404e01-ef25-5dc0-b51e-996c7a12309a",
+      "scryfallId": "51bbbfd8-795f-4223-86f3-b3b3111d38c3",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-izzet-steam-maze",
+      "name": "Izzet Steam Maze",
+      "rulesText": "Whenever a player casts an instant or sorcery spell, that player copies it. The player may choose new targets for the copy.\nWhenever chaos ensues, instant and sorcery spells you cast this turn cost {3} less to cast.",
+      "chaosText": "CHAOS - instant and sorcery spells you cast this turn cost {3} less to cast.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "40",
+      "mtgjsonId": "2b91bc68-b964-5f2c-9552-80c83744d1a8",
+      "scryfallId": "d01d1b4f-5ac5-40b0-b4ad-34ac70aeb488",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-jund",
+      "name": "Jund",
+      "rulesText": "Whenever a player casts a creature spell that's black, red, or green, it gains devour 5. (As that creature enters, you may sacrifice any number of creatures. It enters with five times that many +1/+1 counters on it.)\nWhenever chaos ensues, create two 1/1 red Goblin creature tokens.",
+      "chaosText": "CHAOS - create two 1/1 red Goblin creature tokens.",
+      "typeLine": "Plane — Alara",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Alara"
+      ],
+      "setCode": "OPCA",
+      "number": "41",
+      "mtgjsonId": "74e2a5b0-6c19-5c0a-8a18-ee467615f207",
+      "scryfallId": "dc91f536-b3e5-48d2-a306-003e1bdfe8ba",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-kharasha-foothills",
+      "name": "Kharasha Foothills",
+      "rulesText": "Whenever a creature you control attacks a player, for each other opponent, you may create a token that's a copy of that creature, tapped and attacking that opponent. Exile those tokens at the beginning of the next end step.\nWhenever chaos ensues, you may sacrifice any number of creatures. If you do, Kharasha Foothills deals that much damage to target creature.",
+      "chaosText": "CHAOS - you may sacrifice any number of creatures. If you do, Kharasha Foothills deals that much damage to target creature.",
+      "typeLine": "Plane — Mongseng",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Mongseng"
+      ],
+      "setCode": "OPCA",
+      "number": "43",
+      "mtgjsonId": "26fa2bdd-6ead-5b64-8970-f1d2fd43a58c",
+      "scryfallId": "0f05d1ae-d70b-474c-93fc-a5d2e3ac6b64",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-kilnspire-district",
+      "name": "Kilnspire District",
+      "rulesText": "When you planeswalk to Kilnspire District and at the beginning of your first main phase, put a charge counter on Kilnspire District, then add {R} for each charge counter on it.\nWhenever chaos ensues, you may pay {X}. If you do, Kilnspire District deals X damage to any target.",
+      "chaosText": "CHAOS - you may pay {X}. If you do, Kilnspire District deals X damage to any target.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "44",
+      "mtgjsonId": "69bab65c-301e-5d06-a804-03ca27df361b",
+      "scryfallId": "93f386a5-08ce-4f76-944f-f38620a41027",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-krosa",
+      "name": "Krosa",
+      "rulesText": "All creatures get +2/+2.\nWhenever chaos ensues, you may add {W}{U}{B}{R}{G}.",
+      "chaosText": "CHAOS - you may add {W}{U}{B}{R}{G}.",
+      "typeLine": "Plane — Dominaria",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Dominaria"
+      ],
+      "setCode": "OPCA",
+      "number": "45",
+      "mtgjsonId": "b7bc149d-c81b-5d39-b7c9-36d2b7dc5e07",
+      "scryfallId": "95d5c842-5768-49f8-8711-fdb7850b480d",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-lair-of-the-ashen-idol",
+      "name": "Lair of the Ashen Idol",
+      "rulesText": "At the beginning of your upkeep, sacrifice a creature. If you can't, planeswalk.\nWhenever chaos ensues, any number of target players each create a 2/2 black Zombie creature token.",
+      "chaosText": "CHAOS - any number of target players each create a 2/2 black Zombie creature token.",
+      "typeLine": "Plane — Azgol",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Azgol"
+      ],
+      "setCode": "OPCA",
+      "number": "46",
+      "mtgjsonId": "bfbf04d5-ee4d-5d05-bf78-1c34581f3d8b",
+      "scryfallId": "b6078774-f681-46dd-a68e-1cefa8261d16",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-llanowar",
+      "name": "Llanowar",
+      "rulesText": "All creatures have \"{T}: Add {G}{G}.\"\nWhenever chaos ensues, untap all creatures you control.",
+      "chaosText": "CHAOS - untap all creatures you control.",
+      "typeLine": "Plane — Dominaria",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Dominaria"
+      ],
+      "setCode": "OPCA",
+      "number": "48",
+      "mtgjsonId": "07fb06af-4fca-5f24-9f0b-38c2d6b8a9b6",
+      "scryfallId": "00832a47-dec8-411e-9708-b3ebbd3a2dfc",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-the-maelstrom",
+      "name": "The Maelstrom",
+      "rulesText": "When you planeswalk to The Maelstrom and at the beginning of your upkeep, you may reveal the top card of your library. If it's a permanent card, you may put it onto the battlefield. If you revealed a card but didn't put it onto the battlefield, put it on the bottom of your library.\nWhenever chaos ensues, return target permanent card from your graveyard to the battlefield.",
+      "chaosText": "CHAOS - return target permanent card from your graveyard to the battlefield.",
+      "typeLine": "Plane — Alara",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Alara"
+      ],
+      "setCode": "OPCA",
+      "number": "49",
+      "mtgjsonId": "b2cefb5e-05d9-55cd-9d4c-f10d5dcfbb41",
+      "scryfallId": "6223caca-e993-4834-a673-3eee65b8afe1",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-mirrored-depths",
+      "name": "Mirrored Depths",
+      "rulesText": "Whenever a player casts a spell, that player flips a coin. If the player loses the flip, counter that spell.\nWhenever chaos ensues, target player reveals the top card of their library. If it's a nonland card, you may cast it without paying its mana cost.",
+      "chaosText": "CHAOS - target player reveals the top card of their library. If it's a nonland card, you may cast it without paying its mana cost.",
+      "typeLine": "Plane — Karsus",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Karsus"
+      ],
+      "setCode": "OPCA",
+      "number": "51",
+      "mtgjsonId": "4308f0e6-8147-5e15-b0c9-861dd245891e",
+      "scryfallId": "d7a2b02e-3ff2-4c71-9022-b08472f53664",
+      "setCodes": [
+        "OPCA"
+      ]
+    },
+    {
+      "id": "plane-mount-keralia",
+      "name": "Mount Keralia",
+      "rulesText": "At the beginning of your end step, put a pressure counter on Mount Keralia.\nWhen you planeswalk away from Mount Keralia, it deals damage equal to the number of pressure counters on it to each creature and each planeswalker.\nWhenever chaos ensues, prevent all damage that planes named Mount Keralia would deal this game to permanents you control.",
+      "chaosText": "CHAOS - prevent all damage that planes named Mount Keralia would deal this game to permanents you control.",
+      "typeLine": "Plane — Regatha",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Regatha"
+      ],
+      "setCode": "OPCA",
+      "number": "52",
+      "mtgjsonId": "8425cda4-8679-5ec4-97a4-e390b137b54e",
+      "scryfallId": "a4d3edeb-4a78-4de3-a167-4565c494ba23",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-murasa",
+      "name": "Murasa",
+      "rulesText": "Whenever a nontoken creature enters, its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle.\nWhenever chaos ensues, target land becomes a 4/4 creature that's still a land.",
+      "chaosText": "CHAOS - target land becomes a 4/4 creature that's still a land.",
+      "typeLine": "Plane — Zendikar",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Zendikar"
+      ],
+      "setCode": "OPCA",
+      "number": "53",
+      "mtgjsonId": "98ed1511-7286-5e6b-8518-a17fb1ad96e5",
+      "scryfallId": "46daa243-7c4e-4b0c-8ec2-e70cba8e72c3",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-naya",
+      "name": "Naya",
+      "rulesText": "You may play any number of lands on each of your turns.\nWhenever chaos ensues, target red, green, or white creature you control gets +1/+1 until end of turn for each land you control.",
+      "chaosText": "CHAOS - target red, green, or white creature you control gets +1/+1 until end of turn for each land you control.",
+      "typeLine": "Plane — Alara",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Alara"
+      ],
+      "setCode": "OPCA",
+      "number": "55",
+      "mtgjsonId": "05140d22-7822-573f-8cdb-773a1c3776cc",
+      "scryfallId": "15611e29-6f96-4c5c-a919-c8fe590581b0",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-nephalia",
+      "name": "Nephalia",
+      "rulesText": "At the beginning of your end step, mill seven cards. Then return a card at random from your graveyard to your hand.\nWhenever chaos ensues, return target card from your graveyard to your hand.",
+      "chaosText": "CHAOS - return target card from your graveyard to your hand.",
+      "typeLine": "Plane — Innistrad",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Innistrad"
+      ],
+      "setCode": "OPCA",
+      "number": "56",
+      "mtgjsonId": "5e4d88b3-f24d-5096-9677-8f09ee7a5997",
+      "scryfallId": "9f4b51ac-3e56-494f-aad7-ff5b0c3ed6ed",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-norn-s-dominion",
+      "name": "Norn's Dominion",
+      "rulesText": "When you planeswalk away from Norn's Dominion, destroy each nonland permanent without a fate counter on it, then remove all fate counters from all permanents.\nWhenever chaos ensues, you may put a fate counter on target permanent.",
+      "chaosText": "CHAOS - you may put a fate counter on target permanent.",
+      "typeLine": "Plane — New Phyrexia",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "New Phyrexia"
+      ],
+      "setCode": "OPCA",
+      "number": "57",
+      "mtgjsonId": "35d9aac8-00c7-5fb1-a0f4-0aeca6e7de7d",
+      "scryfallId": "20d23638-74fb-481d-a3c4-d7f5fd666211",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-onakke-catacomb",
+      "name": "Onakke Catacomb",
+      "rulesText": "All creatures are black and have deathtouch.\nWhenever chaos ensues, creatures you control get +1/+0 and gain first strike until end of turn.",
+      "chaosText": "CHAOS - creatures you control get +1/+0 and gain first strike until end of turn.",
+      "typeLine": "Plane — Shandalar",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Shandalar"
+      ],
+      "setCode": "OPCA",
+      "number": "58",
+      "mtgjsonId": "d604d0ca-d88d-577e-99cd-50e6bc436769",
+      "scryfallId": "2eef332f-d47f-4bc3-b39d-572dce4997b2",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-orzhova",
+      "name": "Orzhova",
+      "rulesText": "When you planeswalk away from Orzhova, each player returns all creature cards from their graveyard to the battlefield.\nWhenever chaos ensues, for each opponent, exile up to one target creature card from that player's graveyard.",
+      "chaosText": "CHAOS - for each opponent, exile up to one target creature card from that player's graveyard.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "60",
+      "mtgjsonId": "168dad80-30af-549c-a0c0-a94c4b490e08",
+      "scryfallId": "be92be0a-e10d-478b-bc09-9cd09bfb269e",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-otaria",
+      "name": "Otaria",
+      "rulesText": "Instant and sorcery cards in graveyards have flashback. The flashback cost is equal to the card's mana cost. (Its owner may cast the card from their graveyard for its mana cost. Then they exile it.)\nWhenever chaos ensues, take an extra turn after this one.",
+      "chaosText": "CHAOS - take an extra turn after this one.",
+      "typeLine": "Plane — Dominaria",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Dominaria"
+      ],
+      "setCode": "OPCA",
+      "number": "61",
+      "mtgjsonId": "539fb88a-a80e-591d-9cff-f35fb1893ec3",
+      "scryfallId": "35add85f-a70a-497d-9a11-593325a1a4ef",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-panopticon",
+      "name": "Panopticon",
+      "rulesText": "When you planeswalk to Panopticon, draw a card.\nAt the beginning of your draw step, draw an additional card.\nWhenever chaos ensues, draw a card.",
+      "chaosText": "CHAOS - draw a card.",
+      "typeLine": "Plane — Mirrodin",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Mirrodin"
+      ],
+      "setCode": "OPCA",
+      "number": "62",
+      "mtgjsonId": "59a0fb22-daaa-56b4-aaaf-1d4094f4aa50",
+      "scryfallId": "74242a9e-4add-4140-847e-a296e46e6f94",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-prahv",
+      "name": "Prahv",
+      "rulesText": "If you cast a spell this turn, you can't attack with creatures.\nIf you attacked with creatures this turn, you can't cast spells.\nWhenever chaos ensues, you gain life equal to the number of cards in your hand.",
+      "chaosText": "CHAOS - you gain life equal to the number of cards in your hand.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "64",
+      "mtgjsonId": "b118fa17-2f1f-5f61-942f-19e031b0c22f",
+      "scryfallId": "86ff49dd-9845-459e-baaf-f65126ccb648",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-raven-s-run",
+      "name": "Raven's Run",
+      "rulesText": "All creatures have wither. (They deal damage to creatures in the form of -1/-1 counters.)\nWhenever chaos ensues, put a -1/-1 counter on target creature, two -1/-1 counters on another target creature, and three -1/-1 counters on a third target creature.",
+      "chaosText": "CHAOS - put a -1/-1 counter on target creature, two -1/-1 counters on another target creature, and three -1/-1 counters on a third target creature.",
+      "typeLine": "Plane — Shadowmoor",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Shadowmoor"
+      ],
+      "setCode": "OPCA",
+      "number": "66",
+      "mtgjsonId": "2f0eb4c7-7994-5f54-ab28-4f16746ab580",
+      "scryfallId": "de770524-9afc-4971-842a-6ee0b81176fb",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-sanctum-of-serra",
+      "name": "Sanctum of Serra",
+      "rulesText": "When you planeswalk away from Sanctum of Serra, destroy all nonland permanents.\nWhenever chaos ensues, you may have your life total become 20.",
+      "chaosText": "CHAOS - you may have your life total become 20.",
+      "typeLine": "Plane — Serra's Realm",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Serra's Realm"
+      ],
+      "setCode": "OPCA",
+      "number": "67",
+      "mtgjsonId": "af727b24-d4e0-5793-9326-7c2847e921da",
+      "scryfallId": "4c20e1cd-c541-4b44-8e20-adaa45a989a2",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-sea-of-sand",
+      "name": "Sea of Sand",
+      "rulesText": "Players reveal each card they draw.\nWhenever a player draws a land card, that player gains 3 life.\nWhenever a player draws a nonland card, that player loses 3 life.\nWhenever chaos ensues, put target permanent on top of its owner's library.",
+      "chaosText": "CHAOS - put target permanent on top of its owner's library.",
+      "typeLine": "Plane — Rabiah",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Rabiah"
+      ],
+      "setCode": "OPCA",
+      "number": "68",
+      "mtgjsonId": "f7698798-2767-5de9-9d6f-75511384e755",
+      "scryfallId": "0693024b-7eed-4aa5-a890-66c947db6b73",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-selesnya-loft-gardens",
+      "name": "Selesnya Loft Gardens",
+      "rulesText": "If an effect would create one or more tokens, it creates twice that many of those tokens instead.\nIf an effect would put one or more counters on a permanent, it puts twice that many of those counters on that permanent instead.\nWhenever chaos ensues, until end of turn, whenever you tap a land for mana, add one mana of any type that land produced.",
+      "chaosText": "CHAOS - until end of turn, whenever you tap a land for mana, add one mana of any type that land produced.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "69",
+      "mtgjsonId": "dce47bd7-5ac0-531b-b5a0-df36f10a026f",
+      "scryfallId": "94be33ca-0615-424a-9c4d-0fc91606af40",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-shiv",
+      "name": "Shiv",
+      "rulesText": "All creatures have \"{R}: This creature gets +1/+0 until end of turn.\"\nWhenever chaos ensues, create a 5/5 red Dragon creature token with flying.",
+      "chaosText": "CHAOS - create a 5/5 red Dragon creature token with flying.",
+      "typeLine": "Plane — Dominaria",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Dominaria"
+      ],
+      "setCode": "OPCA",
+      "number": "70",
+      "mtgjsonId": "85b39a58-7e37-5817-9551-613ed19652ac",
+      "scryfallId": "8ce18193-76d6-4357-80e3-67ab453f47ac",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-skybreen",
+      "name": "Skybreen",
+      "rulesText": "Players play with the top card of their libraries revealed.\nSpells that share a card type with the top card of a library can't be cast.\nWhenever chaos ensues, target player loses life equal to the number of cards in their hand.",
+      "chaosText": "CHAOS - target player loses life equal to the number of cards in their hand.",
+      "typeLine": "Plane — Kaldheim",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kaldheim"
+      ],
+      "setCode": "OPCA",
+      "number": "71",
+      "mtgjsonId": "c5783205-0ae2-5fd0-97bc-21ae59e1bc67",
+      "scryfallId": "24ad1b98-17ef-4c58-a947-384ef39f1193",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-stairs-to-infinity",
+      "name": "Stairs to Infinity",
+      "rulesText": "Players have no maximum hand size.\nWhenever you roll the planar die, draw a card.\nWhenever chaos ensues, reveal the top card of your planar deck. You may put it on the bottom of your planar deck.",
+      "chaosText": "CHAOS - reveal the top card of your planar deck. You may put it on the bottom of your planar deck.",
+      "typeLine": "Plane — Xerex",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Xerex"
+      ],
+      "setCode": "OPCA",
+      "number": "73",
+      "mtgjsonId": "01e0abd3-2235-510f-a46d-e4b1b8e9eafe",
+      "scryfallId": "eceba6df-8821-499b-b3c2-4d54c6eab257",
+      "setCodes": [
+        "OPCA",
+        "PHOP"
+      ]
+    },
+    {
+      "id": "plane-stensia",
+      "name": "Stensia",
+      "rulesText": "Whenever a creature deals damage to one or more players for the first time each turn, put a +1/+1 counter on it.\nWhenever chaos ensues, each creature you control gains \"{T}: This creature deals 1 damage to target player or planeswalker\" until end of turn.",
+      "chaosText": "CHAOS - each creature you control gains \"{T}: This creature deals 1 damage to target player or planeswalker\" until end of turn.",
+      "typeLine": "Plane — Innistrad",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Innistrad"
+      ],
+      "setCode": "OPCA",
+      "number": "74",
+      "mtgjsonId": "5cd36b72-5aa9-5633-9ef7-ce5f8d858af6",
+      "scryfallId": "52906665-4acb-47d4-a443-b337503060d2",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-stronghold-furnace",
+      "name": "Stronghold Furnace",
+      "rulesText": "If a source would deal damage to a permanent or player, it deals double that damage instead.\nWhenever chaos ensues, Stronghold Furnace deals 1 damage to any target.",
+      "chaosText": "CHAOS - Stronghold Furnace deals 1 damage to any target.",
+      "typeLine": "Plane — Rath",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Rath"
+      ],
+      "setCode": "OPCA",
+      "number": "75",
+      "mtgjsonId": "256ab904-9bb5-5750-9eb2-32f6f6ac3642",
+      "scryfallId": "d5b7baf7-3d9a-4acf-8985-126cbee14248",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-takenuma",
+      "name": "Takenuma",
+      "rulesText": "Whenever a creature leaves the battlefield, its controller draws a card.\nWhenever chaos ensues, return target creature you control to its owner's hand.",
+      "chaosText": "CHAOS - return target creature you control to its owner's hand.",
+      "typeLine": "Plane — Kamigawa",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kamigawa"
+      ],
+      "setCode": "OPCA",
+      "number": "76",
+      "mtgjsonId": "eb7b5be2-35a8-56c7-86f7-ead3159ddad5",
+      "scryfallId": "0dadba2e-1d9a-4f04-b9d5-a3edff017662",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-talon-gates",
+      "name": "Talon Gates",
+      "rulesText": "Any time you could cast a sorcery, you may exile a nonland card from your hand with X time counters on it, where X is its mana value. If the exiled card doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, the player may cast it without paying its mana cost. If it's a creature, it has haste.)\nWhenever chaos ensues, remove two time counters from each suspended card you own.",
+      "chaosText": "CHAOS - remove two time counters from each suspended card you own.",
+      "typeLine": "Plane — Dominaria",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Dominaria"
+      ],
+      "setCode": "OPCA",
+      "number": "77",
+      "mtgjsonId": "93664923-6823-5706-9f1e-dcdd9f3352fb",
+      "scryfallId": "09feed09-96de-4208-b6b9-cac0ec150e70",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-tazeem",
+      "name": "Tazeem",
+      "rulesText": "Creatures can't block.\nWhenever chaos ensues, draw a card for each land you control.",
+      "chaosText": "CHAOS - draw a card for each land you control.",
+      "typeLine": "Plane — Zendikar",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Zendikar"
+      ],
+      "setCode": "OPCA",
+      "number": "78",
+      "mtgjsonId": "ce1c4d00-1d0a-563b-8ea9-26f29f086b7e",
+      "scryfallId": "18c94ada-d864-4e94-9d95-e796ab0d0cff",
+      "setCodes": [
+        "OPCA"
+      ]
+    },
+    {
+      "id": "plane-tember-city",
+      "name": "Tember City",
+      "rulesText": "Whenever a player taps a land for mana, Tember City deals 1 damage to that player.\nWhenever chaos ensues, each other player sacrifices a nonland permanent of their choice.",
+      "chaosText": "CHAOS - each other player sacrifices a nonland permanent of their choice.",
+      "typeLine": "Plane — Kinshala",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kinshala"
+      ],
+      "setCode": "OPCA",
+      "number": "79",
+      "mtgjsonId": "27b75459-875e-5370-b798-a920c418c5f3",
+      "scryfallId": "ec65904f-c0dd-45ab-a85a-af4a6a631e11",
+      "setCodes": [
+        "OPCA"
+      ]
+    },
+    {
+      "id": "plane-trail-of-the-mage-rings",
+      "name": "Trail of the Mage-Rings",
+      "rulesText": "Instant and sorcery spells have rebound. (The spell's controller exiles the spell as it resolves if they cast it from their hand. At the beginning of that player's next upkeep, they may cast that card from exile without paying its mana cost.)\nWhenever chaos ensues, you may search your library for an instant or sorcery card, reveal it, put it into your hand, then shuffle.",
+      "chaosText": "CHAOS - you may search your library for an instant or sorcery card, reveal it, put it into your hand, then shuffle.",
+      "typeLine": "Plane — Vryn",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Vryn"
+      ],
+      "setCode": "OPCA",
+      "number": "80",
+      "mtgjsonId": "912e8a7e-e510-5fe7-ab34-e01c66d5fb49",
+      "scryfallId": "f5f307bf-80ac-46cb-9003-3e70a0703e71",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-truga-jungle",
+      "name": "Truga Jungle",
+      "rulesText": "All lands have \"{T}: Add one mana of any color.\"\nWhenever chaos ensues, reveal the top three cards of your library. Put all land cards revealed this way into your hand and the rest on the bottom of your library in any order.",
+      "chaosText": "CHAOS - reveal the top three cards of your library. Put all land cards revealed this way into your hand and the rest on the bottom of your library in any order.",
+      "typeLine": "Plane — Ergamon",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ergamon"
+      ],
+      "setCode": "OPCA",
+      "number": "81",
+      "mtgjsonId": "11b5393e-37d3-53f5-a55c-4db6b20cd3c9",
+      "scryfallId": "93f94fb5-abf6-46f8-860c-e93446b8236a",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-turri-island",
+      "name": "Turri Island",
+      "rulesText": "Creature spells cost {2} less to cast.\nWhenever chaos ensues, reveal the top three cards of your library. Put all creature cards revealed this way into your hand and the rest into your graveyard.",
+      "chaosText": "CHAOS - reveal the top three cards of your library. Put all creature cards revealed this way into your hand and the rest into your graveyard.",
+      "typeLine": "Plane — Ir",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ir"
+      ],
+      "setCode": "OPCA",
+      "number": "82",
+      "mtgjsonId": "0a355e4f-a501-5b59-8279-f692820d98af",
+      "scryfallId": "d212c626-3557-465a-bc1f-65faf3811755",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-undercity-reaches",
+      "name": "Undercity Reaches",
+      "rulesText": "Whenever a creature deals combat damage to a player, its controller may draw a card.\nWhenever chaos ensues, you have no maximum hand size for the rest of the game.",
+      "chaosText": "CHAOS - you have no maximum hand size for the rest of the game.",
+      "typeLine": "Plane — Ravnica",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Ravnica"
+      ],
+      "setCode": "OPCA",
+      "number": "83",
+      "mtgjsonId": "ab5838c3-a062-5909-b101-10a44336f589",
+      "scryfallId": "6a1b27bc-bb7e-47e1-add5-a9d3e1bfda8b",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-velis-vel",
+      "name": "Velis Vel",
+      "rulesText": "Each creature gets +1/+1 for each other creature on the battlefield that shares at least one creature type with it. (For example, if two Elemental Shamans and an Elemental Spirit are on the battlefield, each gets +2/+2.)\nWhenever chaos ensues, target creature gains all creature types until end of turn.",
+      "chaosText": "CHAOS - target creature gains all creature types until end of turn.",
+      "typeLine": "Plane — Lorwyn",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Lorwyn"
+      ],
+      "setCode": "OPCA",
+      "number": "84",
+      "mtgjsonId": "56bec539-9def-5f8b-9d87-71b89035dbc1",
+      "scryfallId": "621a8224-7ea2-4ca4-be74-e460d05ad12b",
+      "setCodes": [
+        "OPCA",
+        "OHOP"
+      ]
+    },
+    {
+      "id": "plane-windriddle-palaces",
+      "name": "Windriddle Palaces",
+      "rulesText": "Players play with the top card of their libraries revealed.\nYou may play lands and cast spells from the top of any player's library.\nWhenever chaos ensues, each player mills a card.",
+      "chaosText": "CHAOS - each player mills a card.",
+      "typeLine": "Plane — Belenon",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Belenon"
+      ],
+      "setCode": "OPCA",
+      "number": "85",
+      "mtgjsonId": "56f3cef7-62c3-50e9-aff3-982caa61b445",
+      "scryfallId": "27f3c16a-34f9-497d-835c-5942e395ded8",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
+    },
+    {
+      "id": "plane-the-zephyr-maze",
+      "name": "The Zephyr Maze",
+      "rulesText": "Creatures with flying get +2/+0.\nCreatures without flying get -2/-0.\nWhenever chaos ensues, target creature gains flying until end of turn.",
+      "chaosText": "CHAOS - target creature gains flying until end of turn.",
+      "typeLine": "Plane — Kyneth",
+      "types": [
+        "Plane"
+      ],
+      "subtypes": [
+        "Kyneth"
+      ],
+      "setCode": "OPCA",
+      "number": "86",
+      "mtgjsonId": "4cd165a2-e58a-54b2-a2d6-02acd796d63c",
+      "scryfallId": "4c9dc306-92e9-46e1-a67c-d4f2a65ce339",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ]
     }
   ]
 }

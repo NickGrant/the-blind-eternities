@@ -74,4 +74,37 @@ describe("ModalHostComponent (class-only)", () => {
     expect(cmp.modalTitle()).toBe("Akoum");
     expect(cmp.modalBody()).toContain("Whenever chaos ensues");
   });
+
+  it("closes modal on Escape key", () => {
+    const initial = createNewSessionState({ atMs: 10 });
+    initial.modal.active = {
+      id: "m3",
+      type: "PLANE",
+      planeId: "plane-akoum",
+      resumeToState: "IDLE",
+    };
+    initial.modal.isOpen = true;
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: dispatchMock,
+    };
+
+    const cmp = new ModalHostComponent(
+      storeMock as SessionStore,
+      orchestratorMock as SessionOrchestrator,
+      new DeckService()
+    );
+
+    cmp.onDocumentKeydown(new KeyboardEvent("keydown", { key: "Escape" }));
+
+    expect(dispatchMock).toHaveBeenCalledTimes(1);
+    expect(dispatchMock.mock.calls[0][0].type).toBe("domain/close_modal");
+    expect(dispatchMock.mock.calls[0][0].modalId).toBe("m3");
+  });
 });

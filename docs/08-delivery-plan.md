@@ -287,6 +287,124 @@ Then outcomes are reproducible
 
 ---
 
+# Milestone 7 - UAT Corrections and Flow Integrity
+
+## Status
+
+Ready to start
+
+## Goal
+Resolve UAT-discovered behavior gaps in debug controls and bootstrap reveal behavior.
+
+---
+
+## Feature 7.1 - Debug Session Lifecycle Controls
+
+### Task 7.1.1 - Add debug start-session action
+Given development mode is enabled  
+When the session is in SETUP  
+Then the debug panel provides a Start Session action  
+And it dispatches the correct session start intent
+
+### Task 7.1.2 - Add debug restart-session action
+Given development mode is enabled  
+When the session is in ERROR  
+Then the debug panel provides a Restart Session action  
+And it dispatches the correct restart intent
+
+---
+
+## Feature 7.2 - Bootstrap Reveal Strictness
+
+### Task 7.2.1 - Keep adjacent bootstrap tiles face-down at session start
+Given a new session is initialized  
+When bootstrap setup completes  
+Then only the center tile is face-up  
+And adjacent bootstrap tiles remain face-down until normal gameplay reveal
+
+### Task 7.2.2 - Validate bootstrap visibility behavior in tests
+Given bootstrap reveal logic is updated  
+When unit tests run  
+Then coverage verifies center-only initial face-up behavior  
+And prevents regression to multi-tile initial reveal
+
+---
+
+# Milestone 8 - Phenomenon Card Support
+
+## Status
+
+Ready to start
+
+## Goal
+Introduce Phenomenon cards with explicit play pattern, deterministic backend flow, and facilitator-friendly UX.
+
+---
+
+## Feature 8.1 - Play Pattern and Data Model
+
+### Task 8.1.1 - Define phenomenon play pattern in runtime flow
+Given a reveal draw returns a PHENOMENON card  
+When the card is revealed  
+Then it is treated as a transient resolution event  
+And not persisted as the long-term active plane
+
+### Task 8.1.2 - Extend card schema for plane vs phenomenon typing
+Given cards are loaded from local data  
+When card metadata is parsed  
+Then each card includes canonical type metadata (PLANE or PHENOMENON)  
+And backward compatibility for existing plane data is preserved
+
+---
+
+## Feature 8.2 - Backend Flow and FSM Integration
+
+### Task 8.2.1 - Route phenomenon reveals into dedicated resolution flow
+Given a phenomenon card is drawn  
+When reveal processing occurs  
+Then FSM transitions into phenomenon resolution handling  
+And conflicting actions are blocked until completion
+
+### Task 8.2.2 - Resume deterministic flow after phenomenon resolution
+Given phenomenon resolution completes  
+When continuation logic runs  
+Then play returns to the correct follow-up state  
+And deterministic reveal sequencing is preserved
+
+---
+
+## Feature 8.3 - UX Flow for Phenomenon Resolution
+
+### Task 8.3.1 - Show dedicated phenomenon modal with full rules text
+Given a phenomenon triggers  
+When the modal opens  
+Then title uses the phenomenon name  
+And modal body displays full rules text
+
+### Task 8.3.2 - Define post-resolution continuation behavior
+Given a phenomenon modal is resolved  
+When user closes or confirms resolution  
+Then the application continues to the correct next gameplay step  
+And user feedback/logging clearly communicates the transition
+
+---
+
+## Feature 8.4 - Testing, Logging, and Safety
+
+### Task 8.4.1 - Log phenomenon reveal and resolution events
+Given a phenomenon is encountered  
+When reveal and resolution events occur  
+Then player-readable log entries are recorded  
+And event ordering reflects actual runtime sequence
+
+### Task 8.4.2 - Add coverage for phenomenon transitions and fallback paths
+Given phenomenon flow is implemented  
+When automated tests run  
+Then valid transitions and invalid transition rejection are covered  
+And missing-data fallback behavior is verified
+
+---
+
 ## Completion Criteria
 
 - All milestones completed in order

@@ -17,16 +17,27 @@ async function run() {
     allCards.push(...cards);
   }
 
-  const deduped = [];
-  const seenNames = new Set();
+  const byName = new Map();
   for (const card of allCards) {
     const key = String(card.name || "").toLowerCase();
-    if (!key || seenNames.has(key)) continue;
-    seenNames.add(key);
-    deduped.push(card);
+    if (!key) continue;
+    const existing = byName.get(key);
+    if (!existing) {
+      byName.set(key, {
+        ...card,
+        setCodes: new Set(card.setCode ? [card.setCode] : []),
+      });
+      continue;
+    }
+    if (card.setCode) existing.setCodes.add(card.setCode);
+    if (!existing.text && card.text) existing.text = card.text;
+    if (!existing.type && card.type) existing.type = card.type;
+    if (!existing.number && card.number) existing.number = card.number;
+    if (!existing.uuid && card.uuid) existing.uuid = card.uuid;
+    if (!existing.identifiers?.scryfallId && card.identifiers?.scryfallId) {
+      existing.identifiers = { ...(existing.identifiers || {}), scryfallId: card.identifiers.scryfallId };
+    }
   }
-
-  const byName = new Map(deduped.map((card) => [card.name.toLowerCase(), card]));
 
   let matched = 0;
   for (const plane of planes) {
@@ -42,6 +53,7 @@ async function run() {
     plane.types = Array.isArray(card.types) ? card.types : plane.types;
     plane.subtypes = Array.isArray(card.subtypes) ? card.subtypes : plane.subtypes;
     plane.setCode = card.setCode || plane.setCode || "OPCA";
+    plane.setCodes = Array.from(card.setCodes || []);
     plane.number = card.number || plane.number;
     plane.mtgjsonId = card.uuid || plane.mtgjsonId;
 
@@ -52,9 +64,38 @@ async function run() {
     matched += 1;
   }
 
+  let added = 0;
+  const existingIds = new Set(
+    planes
+      .filter((plane) => plane && typeof plane.id === "string")
+      .map((plane) => plane.id)
+  );
+  for (const card of byName.values()) {
+    const id = toPlaneId(card.name);
+    if (!id || existingIds.has(id)) continue;
+    planes.push({
+      id,
+      name: card.name,
+      rulesText: card.text || undefined,
+      chaosText: extractChaosText(card.text) || undefined,
+      typeLine: card.type || undefined,
+      types: Array.isArray(card.types) ? card.types : undefined,
+      subtypes: Array.isArray(card.subtypes) ? card.subtypes : undefined,
+      setCode: card.setCode || undefined,
+      setCodes: Array.from(card.setCodes || []),
+      number: card.number || undefined,
+      mtgjsonId: card.uuid || undefined,
+      scryfallId: card.identifiers?.scryfallId || undefined,
+    });
+    existingIds.add(id);
+    added += 1;
+  }
+
+  catalog.planes = planes;
+
   await fs.writeFile(cardsPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   console.log(
-    `[cards-sync] Updated ${matched}/${planes.length} plane entries from MTGJSON (${setCodes.join(", ")}).`
+    `[cards-sync] Updated ${matched} existing and added ${added} new plane entries from MTGJSON (${setCodes.join(", ")}).`
   );
 }
 
@@ -101,6 +142,16 @@ function humanizePlaneId(id) {
     .filter((chunk) => chunk.length > 0)
     .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
     .join(" ");
+}
+
+function toPlaneId(name) {
+  if (typeof name !== "string") return undefined;
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  if (!slug) return undefined;
+  return `plane-${slug}`;
 }
 
 run().catch((error) => {

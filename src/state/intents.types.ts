@@ -43,12 +43,15 @@ export type DomainIntent =
   | {
       type: "domain/start_session";
       atMs: number;
+      includedSetCodes?: string[];
       initialDeck?: {
         drawPile: string[];
         discardPile: string[];
       };
     }
   | { type: "domain/restart_session"; atMs: number }
+  | { type: "domain/debug_force_roll"; atMs: number; outcome: Extract<DieOutcome, "chaos" | "planeswalk"> }
+  | { type: "domain/debug_reveal_all"; atMs: number }
 
   // Bootstrap sequencing (system-driven; UI should not emit directly)
   | { type: "domain/bootstrap_reveal_complete"; atMs: number }

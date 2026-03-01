@@ -29,3 +29,13 @@ export function isConfirmSelectionTile(state: SessionState, coordKey: CoordKey):
   if (state.fsm.state !== "CONFIRM_MOVE") return false;
   return state.ui.selections?.selectedCoord === coordKey;
 }
+
+export function canInspectTiles(state: SessionState): boolean {
+  return state.fsm.state !== "AWAIT_MOVE" && state.fsm.state !== "CONFIRM_MOVE" && state.fsm.state !== "MOVING";
+}
+
+export function isInteractiveTile(state: SessionState, coordKey: CoordKey, isFaceUp: boolean): boolean {
+  if (isSelectableTile(state, coordKey) || isConfirmSelectionTile(state, coordKey)) return true;
+  if (!isFaceUp) return false;
+  return canInspectTiles(state);
+}

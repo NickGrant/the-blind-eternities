@@ -105,6 +105,55 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     const adjacentCreated = ["2,0", "1,-1", "1,1"].map((k) => next.map.tilesByCoord[k]?.planeId);
     expect(adjacentCreated.every((id) => typeof id === "string" && !id?.startsWith("plane@"))).toBe(true);
   });
+
+  it("recycles discard pile into draw pile when assignment draw would run out", () => {
+    const moving = buildState("MOVING");
+    moving.map.partyCoord = "0,0";
+    moving.config.ensurePlusEnabled = false;
+    moving.deck.drawPile = [];
+    moving.deck.discardPile = ["plane-recycled-1", "plane-recycled-2"];
+    moving.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "1,0": mkTile("1,0", false),
+      "0,1": { ...mkTile("0,1", false), planeId: "plane@0,1" },
+    };
+    moving.fsm.context = {
+      pendingMove: { fromCoord: "0,0", toCoord: "1,0" },
+    };
+
+    const next = reduceSessionState(moving, {
+      type: "domain/movement_complete",
+      atMs: 50,
+    });
+
+    expect(next.map.tilesByCoord["0,1"].planeId.startsWith("plane@")).toBe(false);
+    expect(next.deck.discardPile).toEqual([]);
+  });
+
+  it("assigns placeholders in deterministic coord order", () => {
+    const moving = buildState("MOVING");
+    moving.map.partyCoord = "0,0";
+    moving.config.ensurePlusEnabled = false;
+    moving.deck.drawPile = ["plane-a", "plane-b", "plane-c"];
+    moving.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "0,-1": { ...mkTile("0,-1", false), planeId: "plane@0,-1" },
+      "-1,0": { ...mkTile("-1,0", false), planeId: "plane@-1,0" },
+      "1,1": { ...mkTile("1,1", false), planeId: "plane@1,1" },
+    };
+    moving.fsm.context = {
+      pendingMove: { fromCoord: "0,0", toCoord: "0,0" },
+    };
+
+    const next = reduceSessionState(moving, {
+      type: "domain/movement_complete",
+      atMs: 60,
+    });
+
+    expect(next.map.tilesByCoord["0,-1"].planeId).toBe("plane-a");
+    expect(next.map.tilesByCoord["-1,0"].planeId).toBe("plane-b");
+    expect(next.map.tilesByCoord["1,1"].planeId).toBe("plane-c");
+  });
 });
 
 function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {

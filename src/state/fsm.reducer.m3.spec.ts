@@ -3,7 +3,7 @@ import { reduceSessionState } from "./fsm.reducer";
 import type { SessionState } from "./session.types";
 
 describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
-  it("initializes a shuffled deck on start_session and reveals C/N/E/S/W on bootstrap_reveal_complete", () => {
+  it("initializes a shuffled deck on start_session and reveals center on bootstrap_reveal_complete", () => {
     const setup = buildState("SETUP");
 
     const boot = reduceSessionState(setup, {
@@ -36,16 +36,16 @@ describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
 
     expect(revealed.fsm.state).toBe("IDLE");
     expect(revealed.map.tilesByCoord["0,0"].isFaceUp).toBe(true);
-    expect(revealed.map.tilesByCoord["0,-1"].isFaceUp).toBe(true);
-    expect(revealed.map.tilesByCoord["1,0"].isFaceUp).toBe(true);
-    expect(revealed.map.tilesByCoord["0,1"].isFaceUp).toBe(true);
-    expect(revealed.map.tilesByCoord["-1,0"].isFaceUp).toBe(true);
+    expect(revealed.map.tilesByCoord["0,-1"].isFaceUp).toBe(false);
+    expect(revealed.map.tilesByCoord["1,0"].isFaceUp).toBe(false);
+    expect(revealed.map.tilesByCoord["0,1"].isFaceUp).toBe(false);
+    expect(revealed.map.tilesByCoord["-1,0"].isFaceUp).toBe(false);
 
     expect(revealed.map.tilesByCoord["0,0"].revealedAtMs).toBe(500);
-    expect(revealed.map.tilesByCoord["0,-1"].revealedAtMs).toBe(501);
-    expect(revealed.map.tilesByCoord["1,0"].revealedAtMs).toBe(502);
-    expect(revealed.map.tilesByCoord["0,1"].revealedAtMs).toBe(503);
-    expect(revealed.map.tilesByCoord["-1,0"].revealedAtMs).toBe(504);
+    expect(revealed.map.tilesByCoord["0,-1"].revealedAtMs).toBe(100);
+    expect(revealed.map.tilesByCoord["1,0"].revealedAtMs).toBe(100);
+    expect(revealed.map.tilesByCoord["0,1"].revealedAtMs).toBe(100);
+    expect(revealed.map.tilesByCoord["-1,0"].revealedAtMs).toBe(100);
 
     expect(revealed.deck.currentPlaneId).toBe(revealed.map.tilesByCoord["0,0"].planeId);
   });

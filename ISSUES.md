@@ -27,9 +27,10 @@ Resolution: Removed the canvas legend and coordinate overlay text, and added a g
 ---
 
 title: Card backgrounds should be actual card art
-status: in-progress
+status: complete
 description: The card on the canvas should display the actual card art
 Resolution: Added support for `artUrl` in the card catalog and Phaser card-face rendering now loads and displays card art when an image URL is provided; fallback rendering remains active until art files/URLs are supplied. Added a throttled caching script and expanded the local archive to 15 cards; only `plane-ivy-lane` is still missing an image.
+Resolution: Updated deck creation to include only planes with both `artUrl` and full `rulesText`, which removes incomplete entries from playable draws so in-session cards consistently render real cached art.
 
 ---
 
@@ -55,9 +56,10 @@ Resolution: Updated the debug panel default collapsed signal to `true` so the pa
 ---
 
 title: More info in plane modal
-status: in-progress
+status: complete
 description: When the plane modal is opened, the full text for the plane card should be in the modal body
 Resolution: Modal body now prefers full `rulesText` from plane metadata (with `chaosText` fallback), and data sync now populates modal rules from MTGJSON card text. 15 of 16 planes now have full modal text, with `plane-ivy-lane` still missing from MTGJSON plane files.
+Resolution: Updated playable deck filtering so cards missing full rules text are excluded from session draws, ensuring plane modals always show complete card rules for active gameplay cards.
 
 ---
 
@@ -78,6 +80,33 @@ reason-reopened: console full of 404 errors for image assets /assets/plane-art/{
 Resolution: Changed art URL resolution to prefer relative `assets/...` paths first and added subpath-aware fallback candidates before root paths, so cached art loads correctly when the app is served from a nested path.
 reason-reopened: Still no art, does that directory need to be moved to /public/ I do not see it in the dist files either. Are we possibly misconfigured in our compiler configuration? hitting the URL directly doesn't work. If it matters I am running the application locally through `npm run start`
 Resolution: Updated Angular build assets configuration to publish `src/assets/**` to `/assets` (in addition to `public/**`), which restores runtime serving for cached plane art files and fixes the `/assets/plane-art/*.jpg` 404s.
+
+---
+
+title: Art doesn't show at the right time
+status: complete
+description: The art for a plane does not show until AFTER you move away from the plane, it should show right away.
+Resolution: Updated tile render signatures to include art-load state, so tiles re-render immediately when art textures finish loading and art appears on the active plane without requiring additional movement.
+
+---
+
+title: No way to zoom in/out
+status: complete
+description: As a user, I may need to zoom in/out to show the planes closer. lets set the current view as all the way zoomed out and allow the players to zoom in to the point where the planes are 300% size
+Resolution: Added Phaser camera zoom controls with mouse wheel and keyboard shortcuts (`+`, `-`, `0`), using a 1.0 to 3.0 zoom range so the default view starts fully zoomed out and players can zoom up to 300%.
+reopen-reason: Zooming causes text to get blurry, instead lets resize the actual assets and start at a 50% zoom-out with a max of 150%. In order to make this work please also increase the font size of the title. Additionally, users should be able to pinch for zooming as well as having a UI element that they can interact with via mouse to zoom in/out
+Resolution: Replaced camera zoom with asset-scale zoom (viewport/card resizing) to avoid blur, set default zoom to 50% with a 150% max, increased title font sizing at larger zoom levels, and added pinch plus on-canvas +/- controls for mouse/touch zoom interaction.
+reopen-reason: initial plane doesn't zoom the same as the rest of the planes. scroll wheel zoom only allowing between 90 & 110%. Starting percentage decision earlier was wrong, should start at 100% and double the size of the rendered cards at 100%
+Resolution: Fixed wheel zoom to use UI zoom state (not camera zoom), included zoom factor in tile render signatures so the centered starting plane re-renders consistently with zoom changes, set default zoom to 100%, and doubled base rendered card dimensions at 100% scale.
+
+---
+
+title: Name gets lost in image
+status: complete
+description: On some imaes, the name gets lost in the image. Make the text a little bolder and add some kind of backdrop or shadow behind it to separate from the imae behind it
+Resolution: Improved plane title readability by rendering labels in bold with text shadow and adding a semi-opaque backdrop panel behind card names.
+
+
 
 ### Functional
 
@@ -156,14 +185,88 @@ Resolution: Replaced the debug panel controls with only the requested actions an
 ---
 
 title: Debug panel missing session start and restart controls
-status: unstarted
+status: complete
 description: The debug panel needs explicit Session Start and Session Restart actions for facilitator testing flows.
+Resolution: Added `Session Start` and `Session Restart` actions to the debug panel and wired them through orchestrator debug helpers for facilitator testing workflows.
 
 ---
 
 title: Initial reveal should only flip center tile
-status: unstarted
+status: complete
 description: On initial session start, only the center tile should be face-up. Adjacent bootstrap tiles should remain face-down until revealed by gameplay.
+Resolution: Bootstrap reveal reducer flow now flips only center tile (`C`) and leaves N/E/S/W hidden; unit tests were updated to enforce center-only reveal behavior.
+
+---
+
+title: Map scene re-renders full board on every state update
+status: complete
+description: The Phaser map scene currently destroys and recreates all rendered tile objects on each state update. This should be optimized to incremental updates to improve scalability and reduce rendering overhead as board size grows.
+Resolution: Refactored `MapScene` rendering to tile-level diff updates keyed by coordinate/signature so only changed/added/removed tiles are re-rendered instead of rebuilding the full board each update.
+
+---
+
+title: All tiles are always interactive in Phaser scene
+status: complete
+description: The map scene currently sets all tile frames as interactive regardless of current FSM interaction needs. Restrict interactivity to relevant tiles/states to reduce unnecessary input handlers and improve performance.
+Resolution: Added explicit interactivity gating helpers and updated `MapScene` to enable pointer interaction only for selectable/confirm tiles and inspect-eligible face-up tiles.
+
+---
+
+title: Deck lifecycle missing discard and recycle behavior
+status: complete
+description: Revealed/decayed cards should be moved to discard pile, and when draw pile runs out the discard pile should be recycled into draw pile so play can continue without placeholder fallback.
+Resolution: Added discard accumulation for decayed planes plus deterministic discard-to-draw recycle logic during placeholder assignment; added reducer tests covering recycle behavior.
+
+---
+
+title: Placeholder card assignment order should be explicitly deterministic
+status: complete
+description: Assignment of newly created placeholder tiles currently depends on object entry iteration order. Sort/define a canonical coordinate ordering before consuming draw pile to guarantee deterministic replay behavior.
+Resolution: Placeholder assignment now sorts coordinates canonically (Y then X) before consuming deck draws, with reducer tests verifying deterministic mapping order.
+
+---
+
+title: Modal accessibility and keyboard behavior hardening
+status: complete
+description: Modal host lacks accessibility semantics and keyboard/focus handling. Add dialog semantics, focus trap, and escape/keyboard behavior so modal interactions are accessible and predictable.
+Resolution: Added dialog ARIA semantics, focus targeting/trapping (`Tab`/`Shift+Tab`), and `Escape` close handling to `ModalHostComponent`, with coverage added in modal host tests.
+
+---
+
+title: Debug actions should use reducer/intents consistently
+status: complete
+description: Debug helpers currently include direct state mutation paths outside reducer-driven intent flow. Route debug actions through explicit intents/reducer handling (with logging where appropriate) to preserve traceability and consistency.
+Resolution: Introduced explicit `domain/debug_force_roll` and `domain/debug_reveal_all` intents and routed debug orchestrator methods through standard `dispatch` reducer flow.
+
+---
+
+title: Allow user to select which sets to pull planes cards from
+status: complete
+description: Currently we load a slim subset of available planes, we should add an option that is available before the user hits start session that shows all the sets that do contain planes and all the players to check or uncheck the ones they want included. The planechase sets should be checked by default. We will need to reseed our cards file with way more card information. This should also cover phenomenon if they are implemented, if not the documentation for their implementation should be updated to include future support for this. 
+Resolution: Added pre-session set selection controls in the control bar, defaulting Planechase-family sets when available, and wired selected set codes into `start_session` deck creation filtering. Expanded MTGJSON sync script logic to append newly discovered planes so `cards.json` can be reseeded with broader set coverage, and updated phenomenon spec to include set-filter compatibility considerations.
+reason-reopened: Only seeing Planechase anthology (OPCA) as an option to select for starting a session. We also need to enforce that at least one option is selected. Please fix this so I can select each available option
+Resolution: Set selection now always lists all Planechase-family set options (`OPCA`, `OPC2`, `OHOP`, `HOP`, `PHOP`) and the control logic prevents deselecting the final remaining set so at least one option is always selected.
+
+---
+
+title: Enforce minimum deck size before session start
+status: complete
+description: Starting a session with too few planes creates unstable gameplay. Require at least 5 playable planes in the selected set combination before allowing start.
+Resolution: Added minimum deck-size enforcement (5 planes) in `DeckService` deck creation and disabled start action in the control bar when selected sets do not meet the threshold.
+
+---
+
+title: Show draw/discard order in debug panel
+status: complete
+description: Facilitators need visibility into remaining draw pile order and discard pile order for deterministic validation and troubleshooting.
+Resolution: Added ordered draw-pile and discard-pile debug sections to the debug panel, bound directly to session state deck slices.
+
+---
+
+title: Add quit session action to return to set selection
+status: complete
+description: Users need a direct way to leave an active session and return to setup to pick a new set combination.
+Resolution: Added a `Quit Session` control that dispatches `domain/restart_session`, returning the app to `SETUP` and enabling immediate set reselection.
 
 ### Documentation
 
@@ -224,5 +327,6 @@ Resolution: Rewrote `docs/README.md` with normalized ASCII-safe content and upda
 ---
 
 title: Define phenomenon card support specification
-status: unstarted
+status: complete
 description: Create a documentation spec for phenomenon support that defines play pattern, backend/state flow, and UX flow before implementation starts.
+Resolution: Added `docs/15-phenomenon-support-spec.md` defining proposed phenomenon play pattern, state/FSM behavior, UX flow, and implementation readiness criteria.

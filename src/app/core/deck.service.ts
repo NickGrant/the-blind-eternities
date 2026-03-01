@@ -5,6 +5,8 @@ import { createShuffledDeck } from "../../state/deck/deck-model";
 export type PlaneCard = {
   id: string;
   name: string;
+  setCode?: string;
+  setCodes?: string[];
   rulesText?: string;
   chaosText?: string;
   artUrl?: string;
@@ -17,8 +19,28 @@ type CardsCatalog = {
     rulesText?: string;
     chaosText?: string;
     artUrl?: string;
+    setCode?: string;
+    setCodes?: string[];
   }>;
 };
+
+export type PlaneSetOption = {
+  code: string;
+  label: string;
+  count: number;
+  isPlanechaseDefault: boolean;
+};
+
+const SET_LABELS: Record<string, string> = {
+  OPCA: "Planechase Anthology",
+  OPC2: "Planechase (2012)",
+  OHOP: "Planechase",
+  HOP: "Planechase",
+  PHOP: "Promotional Planechase",
+};
+
+const DEFAULT_PLANECHASE_SET_CODES = new Set(["OPCA", "OPC2", "OHOP", "HOP", "PHOP"]);
+const MIN_PLANES_PER_SESSION = 5;
 
 @Injectable({ providedIn: "root" })
 export class DeckService {
@@ -27,15 +49,59 @@ export class DeckService {
     .map((p) => ({
       id: p.id,
       name: p.name?.trim() || this.humanizePlaneId(p.id),
+      setCode: p.setCode?.trim() || undefined,
+      setCodes: Array.isArray(p.setCodes)
+        ? p.setCodes.map((code) => String(code).trim()).filter((code) => code.length > 0)
+        : p.setCode?.trim()
+          ? [p.setCode.trim()]
+          : [],
       rulesText: p.rulesText?.trim() || undefined,
       chaosText: p.chaosText?.trim() || undefined,
       artUrl: p.artUrl?.trim() || undefined,
     }));
 
   private readonly planesById = new Map(this.planes.map((p) => [p.id, p] as const));
+  private readonly playablePlanes = this.planes.filter(
+    (p) => typeof p.rulesText === "string" && p.rulesText.length > 0
+  );
 
   listPlanes(): readonly PlaneCard[] {
     return this.planes;
+  }
+
+  countPlayablePlanesForSets(includedSetCodes: readonly string[]): number {
+    const include = new Set(includedSetCodes.map((code) => code.trim()).filter((code) => code.length > 0));
+    if (include.size === 0) return this.playablePlanes.length;
+
+    return this.playablePlanes.filter((plane) => {
+      const codes =
+        (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+      return codes.some((code) => include.has(code));
+    }).length;
+  }
+
+  listPlaneSetOptions(): readonly PlaneSetOption[] {
+    const counts = new Map<string, number>();
+    this.playablePlanes.forEach((plane) => {
+      const codes = (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+      const uniqueCodes = [...new Set(codes)];
+      uniqueCodes.forEach((code) => {
+        counts.set(code, (counts.get(code) ?? 0) + 1);
+      });
+    });
+
+    for (const code of DEFAULT_PLANECHASE_SET_CODES) {
+      if (!counts.has(code)) counts.set(code, 0);
+    }
+
+    return [...counts.entries()]
+      .map(([code, count]) => ({
+        code,
+        label: SET_LABELS[code] ?? code,
+        count,
+        isPlanechaseDefault: DEFAULT_PLANECHASE_SET_CODES.has(code),
+      }))
+      .sort((a, b) => a.code.localeCompare(b.code));
   }
 
   getPlane(id: string | undefined): PlaneCard | undefined {
@@ -66,13 +132,34 @@ export class DeckService {
     return art?.trim() || undefined;
   }
 
-  createInitialDeck(args: { atMs: number; seed?: string }): { drawPile: string[]; discardPile: string[] } {
-    if (this.planes.length === 0) {
-      throw new Error("No plane cards available in cards catalog.");
+  createInitialDeck(args: {
+    atMs: number;
+    seed?: string;
+    includedSetCodes?: readonly string[];
+  }): { drawPile: string[]; discardPile: string[] } {
+    const include = new Set((args.includedSetCodes ?? []).map((code) => code.trim()).filter((code) => code.length > 0));
+    const sourcePlanes =
+      include.size > 0
+        ? this.playablePlanes.filter((plane) => {
+            const codes =
+              (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+            return codes.some((code) => include.has(code));
+          })
+        : this.playablePlanes;
+
+    if (include.size > 0 && sourcePlanes.length === 0) {
+      throw new Error("No playable cards matched the selected set filters.");
+    }
+    if (sourcePlanes.length < MIN_PLANES_PER_SESSION) {
+      throw new Error(`At least ${MIN_PLANES_PER_SESSION} playable planes are required to start a session.`);
+    }
+
+    if (this.playablePlanes.length === 0) {
+      throw new Error("No playable plane cards available in cards catalog.");
     }
 
     return createShuffledDeck({
-      planeIds: this.planes.map((p) => p.id),
+      planeIds: sourcePlanes.map((p) => p.id),
       atMs: args.atMs,
       seed: args.seed,
     });

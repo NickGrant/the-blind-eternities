@@ -44,6 +44,7 @@ It is a planning/specification artifact and does not imply implementation is com
 ### 2.3 Determinism and Logging
 
 - All draws remain deterministic under seed.
+- Set-filter configuration (pre-session selected set codes) must be preserved in session metadata or event log context so phenomenon-capable deck composition is reproducible.
 - Log entries must include:
   - phenomenon revealed
   - phenomenon resolved
@@ -83,3 +84,4 @@ Before coding begins:
 - Exact card data source precedence for phenomenon text (MTGJSON vs Scryfall fallback).
 - Whether phenomenon resolution ever requires multi-step confirmation.
 - How to represent chained phenomenon events, if supported.
+- Whether phenomenon-enabled set selection should be a distinct toggle or inferred from selected card sets.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { coordToWorld, isSelectableTile } from "./map-rendering";
+import { coordToWorld, isInteractiveTile, isSelectableTile } from "./map-rendering";
 import type { SessionState } from "../../state/session.types";
 
 describe("map-rendering helpers", () => {
@@ -22,6 +22,17 @@ describe("map-rendering helpers", () => {
     state.fsm.state = "IDLE";
     expect(isSelectableTile(state, "1,0")).toBe(false);
   });
+
+  it("marks only relevant tiles as interactive", () => {
+    const state = buildState("IDLE");
+    expect(isInteractiveTile(state, "1,0", true)).toBe(true);
+    expect(isInteractiveTile(state, "1,0", false)).toBe(false);
+
+    state.fsm.state = "AWAIT_MOVE";
+    state.map.highlights = { eligibleMoveCoords: ["1,0"] };
+    expect(isInteractiveTile(state, "1,0", false)).toBe(true);
+    expect(isInteractiveTile(state, "2,0", true)).toBe(false);
+  });
 });
 
 function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
@@ -41,4 +52,3 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
     ui: {},
   };
 }
-

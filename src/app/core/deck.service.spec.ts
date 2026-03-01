@@ -39,5 +39,36 @@ describe("DeckService", () => {
 
     expect(a.drawPile.length).toBeGreaterThanOrEqual(10);
     expect(a).toEqual(b);
+    expect(a.drawPile).not.toContain("plane-ivy-lane");
+  });
+
+  it("lists available set options from playable cards", () => {
+    const service = new DeckService();
+    const sets = service.listPlaneSetOptions();
+
+    expect(sets.length).toBeGreaterThan(0);
+    expect(sets[0].code.length).toBeGreaterThan(0);
+  });
+
+  it("filters deck creation by selected set codes", () => {
+    const service = new DeckService();
+    const sets = service.listPlaneSetOptions();
+    const selected = sets.map((s) => s.code);
+    const deck = service.createInitialDeck({ atMs: 1, seed: "seed-1", includedSetCodes: selected });
+
+    expect(deck.drawPile.length).toBeGreaterThan(0);
+  });
+
+  it("counts playable planes for selected sets", () => {
+    const service = new DeckService();
+    const count = service.countPlayablePlanesForSets(["OPCA"]);
+    expect(count).toBeGreaterThanOrEqual(5);
+  });
+
+  it("enforces minimum deck size for selected sets", () => {
+    const service = new DeckService();
+    expect(() =>
+      service.createInitialDeck({ atMs: 1, seed: "seed-1", includedSetCodes: ["PHOP"] })
+    ).toThrowError(/At least 5 playable planes/);
   });
 });

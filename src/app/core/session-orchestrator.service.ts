@@ -31,6 +31,7 @@ export class SessionOrchestrator {
       initialDeck: this.deckService.createInitialDeck({
         atMs: intent.atMs,
         seed: current.rng.seed,
+        includedSetCodes: intent.includedSetCodes,
       }),
     };
   }
@@ -118,54 +119,33 @@ export class SessionOrchestrator {
 
   debugRollForced(outcome: "chaos" | "planeswalk"): void {
     if (!this.devMode) return;
-
-    const current = this.store.state();
-    if (current.fsm.state !== "IDLE") return;
-
-    const atMs = Date.now();
-    const rolling = reduceSessionState(current, {
-      type: "domain/roll_die",
-      atMs,
-    });
-    if (rolling.fsm.state !== "ROLLING") return;
-
-    const resolved = reduceSessionState(rolling, {
-      type: "domain/roll_resolved",
-      atMs: atMs + 1,
+    this.dispatch({
+      type: "domain/debug_force_roll",
+      atMs: Date.now(),
       outcome,
     });
-
-    if (resolved !== current) {
-      this.store.setState(resolved);
-    }
   }
 
   debugRevealAllCards(): void {
     if (!this.devMode) return;
+    this.dispatch({
+      type: "domain/debug_reveal_all",
+      atMs: Date.now(),
+    });
+  }
 
-    const current = this.store.state();
-    const tilesByCoord = { ...current.map.tilesByCoord };
-    let changed = false;
+  debugStartSession(): void {
+    if (!this.devMode) return;
+    if (this.store.state().fsm.state !== "SETUP") return;
+
+    this.dispatch({ type: "domain/start_session", atMs: Date.now() });
+  }
+
+  debugRestartSession(): void {
+    if (!this.devMode) return;
     const atMs = Date.now();
 
-    for (const [coordKey, tile] of Object.entries(current.map.tilesByCoord)) {
-      if (tile.isFaceUp) continue;
-      tilesByCoord[coordKey] = {
-        ...tile,
-        isFaceUp: true,
-        revealedAtMs: atMs,
-      };
-      changed = true;
-    }
-
-    if (!changed) return;
-
-    this.store.setState({
-      ...current,
-      map: {
-        ...current.map,
-        tilesByCoord,
-      },
-    });
+    this.dispatch({ type: "domain/restart_session", atMs });
+    this.dispatch({ type: "domain/start_session", atMs: atMs + 1 });
   }
 }

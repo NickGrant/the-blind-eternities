@@ -1,6 +1,7 @@
 import type { DomainIntent } from "./intents.types";
 import type { SessionState } from "./session.types";
 import { isAdjacentCardinal, parseCoordKey } from "./map/coord";
+import { createNewSessionState } from "./session.factory";
 import { transition, withLastIntent, withRollCountIncremented } from "./reducer/fsm-core";
 import { appendLog } from "./reducer/logging";
 import { applyBootstrapReveal, applyMapPostMove, initMapForSession, setEligibleMoves } from "./reducer/map-flow";
@@ -24,6 +25,58 @@ function withRollOutcomeLogged(
 }
 
 export function reduceSessionState(state: SessionState, intent: DomainIntent): SessionState {
+  if (intent.type === "domain/restart_session") {
+    const reset = createNewSessionState({
+      atMs: intent.atMs,
+      seed: state.rng.seed,
+    });
+    return transition(
+      {
+        ...reset,
+        config: { ...state.config },
+      },
+      "SETUP",
+      intent
+    );
+  }
+
+  if (intent.type === "domain/debug_force_roll") {
+    if (state.fsm.state !== "IDLE") return state;
+    const rolling = reduceSessionState(state, { type: "domain/roll_die", atMs: intent.atMs });
+    if (rolling === state) return state;
+    return reduceSessionState(rolling, {
+      type: "domain/roll_resolved",
+      atMs: intent.atMs + 1,
+      outcome: intent.outcome,
+    });
+  }
+
+  if (intent.type === "domain/debug_reveal_all") {
+    const hidden = Object.entries(state.map.tilesByCoord).filter(([, tile]) => !tile.isFaceUp);
+    if (hidden.length === 0) return state;
+
+    const tilesByCoord = { ...state.map.tilesByCoord };
+    hidden.forEach(([coordKey, tile], idx) => {
+      tilesByCoord[coordKey] = { ...tile, isFaceUp: true, revealedAtMs: intent.atMs + idx };
+    });
+
+    return appendLog(
+      {
+        ...state,
+        map: {
+          ...state.map,
+          tilesByCoord,
+        },
+      },
+      {
+        atMs: intent.atMs,
+        level: "info",
+        message: `Debug reveal all applied (${hidden.length} tiles).`,
+        meta: { revealedCount: hidden.length },
+      }
+    );
+  }
+
   if (intent.type === "domain/fatal_error") {
     const errored = appendLog(state, {
       atMs: intent.atMs,
@@ -170,9 +223,6 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     }
 
     case "ERROR": {
-      if (intent.type === "domain/restart_session") {
-        return transition(state, "SETUP", intent);
-      }
       return state;
     }
 

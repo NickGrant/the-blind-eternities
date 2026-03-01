@@ -19,6 +19,12 @@ import { SessionStore } from "../core/session.store";
 
         @if (!collapsed()) {
           <div class="debugBody">
+            <button type="button" (click)="startSession()" [disabled]="fsmState() !== 'SETUP'">
+              Session Start
+            </button>
+            <button type="button" (click)="restartSession()">
+              Session Restart
+            </button>
             <button type="button" (click)="rollRandom()" [disabled]="fsmState() !== 'IDLE'">
               Roll Dice (Random)
             </button>
@@ -31,6 +37,24 @@ import { SessionStore } from "../core/session.store";
             <button type="button" (click)="showHiddenCards()" [disabled]="hiddenCount() === 0">
               Show Hidden Cards ({{ hiddenCount() }})
             </button>
+          </div>
+          <div class="deckDebug">
+            <details>
+              <summary>Draw Pile ({{ drawPile().length }})</summary>
+              <ol>
+                @for (cardId of drawPile(); track cardId + $index) {
+                  <li>{{ cardId }}</li>
+                }
+              </ol>
+            </details>
+            <details>
+              <summary>Discard Pile ({{ discardPile().length }})</summary>
+              <ol>
+                @for (cardId of discardPile(); track cardId + $index) {
+                  <li>{{ cardId }}</li>
+                }
+              </ol>
+            </details>
           </div>
         }
       </div>
@@ -60,6 +84,27 @@ import { SessionStore } from "../core/session.store";
         flex-wrap: wrap;
         gap: 8px;
       }
+      .deckDebug {
+        width: 100%;
+        display: grid;
+        gap: 8px;
+      }
+      details {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        padding: 6px 8px;
+      }
+      summary {
+        cursor: pointer;
+        font-size: 12px;
+      }
+      ol {
+        margin: 8px 0 0;
+        padding-left: 18px;
+        max-height: 140px;
+        overflow: auto;
+        font-size: 12px;
+      }
       .toggle,
       button {
         padding: 8px 10px;
@@ -83,6 +128,8 @@ export class DebugPanelComponent {
   readonly hiddenCount = computed(
     () => Object.values(this.state().map.tilesByCoord).filter((tile) => !tile.isFaceUp).length
   );
+  readonly drawPile = computed(() => this.state().deck.drawPile);
+  readonly discardPile = computed(() => this.state().deck.discardPile);
 
   constructor(
     @Inject(DEV_MODE) public readonly devMode: boolean,
@@ -98,6 +145,14 @@ export class DebugPanelComponent {
 
   rollRandom(): void {
     this.orchestrator.dispatch({ type: "domain/roll_die", atMs: Date.now() });
+  }
+
+  startSession(): void {
+    this.orchestrator.debugStartSession();
+  }
+
+  restartSession(): void {
+    this.orchestrator.debugRestartSession();
   }
 
   rollChaos(): void {

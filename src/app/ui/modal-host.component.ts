@@ -1,4 +1,4 @@
-import { Component, computed } from "@angular/core";
+import { AfterViewChecked, Component, ElementRef, HostListener, ViewChild, computed } from "@angular/core";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
 import { DeckService } from "../core/deck.service";
@@ -9,9 +9,17 @@ import { DeckService } from "../core/deck.service";
   template: `
     @if (activeModal()) {
       <div class="backdrop">
-        <section class="modal">
+        <section
+          #modalPanel
+          class="modal"
+          role="dialog"
+          aria-modal="false"
+          [attr.aria-labelledby]="'modal-title-' + activeModal()!.id"
+          [attr.aria-describedby]="'modal-body-' + activeModal()!.id"
+          tabindex="-1"
+        >
           <header>
-            <h3>{{ modalTitle() }}</h3>
+            <h3 [id]="'modal-title-' + activeModal()!.id">{{ modalTitle() }}</h3>
             <div class="meta">
               @if (queueCount() > 0) {
                 <span>{{ queueCount() }} queued</span>
@@ -19,7 +27,7 @@ import { DeckService } from "../core/deck.service";
             </div>
           </header>
 
-          <p>{{ modalBody() }}</p>
+          <p [id]="'modal-body-' + activeModal()!.id">{{ modalBody() }}</p>
 
           <footer>
             <button type="button" (click)="closeActiveModal()">Close</button>
@@ -84,7 +92,10 @@ import { DeckService } from "../core/deck.service";
     `,
   ],
 })
-export class ModalHostComponent {
+export class ModalHostComponent implements AfterViewChecked {
+  @ViewChild("modalPanel") private modalPanel?: ElementRef<HTMLElement>;
+  private focusedModalId?: string;
+
   readonly state;
   readonly activeModal = computed(() => this.state().modal.active);
   readonly queueCount = computed(() => this.state().modal.queue.length);
@@ -114,6 +125,17 @@ export class ModalHostComponent {
     this.state = this.sessionStore.state;
   }
 
+  ngAfterViewChecked(): void {
+    const active = this.activeModal();
+    if (!active) {
+      this.focusedModalId = undefined;
+      return;
+    }
+    if (this.focusedModalId === active.id) return;
+    this.focusedModalId = active.id;
+    queueMicrotask(() => this.focusModalPanel());
+  }
+
   closeActiveModal(): void {
     const active = this.activeModal();
     if (!active) return;
@@ -123,5 +145,65 @@ export class ModalHostComponent {
       atMs: Date.now(),
       modalId: active.id,
     });
+  }
+
+  @HostListener("document:keydown", ["$event"])
+  onDocumentKeydown(event: KeyboardEvent): void {
+    if (!this.activeModal()) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      this.closeActiveModal();
+      return;
+    }
+    if (event.key === "Tab") {
+      this.handleTabFocus(event);
+    }
+  }
+
+  private focusModalPanel(): void {
+    const panel = this.modalPanel?.nativeElement;
+    if (!panel) return;
+
+    const first = this.getFocusable(panel)[0];
+    (first ?? panel).focus();
+  }
+
+  private handleTabFocus(event: KeyboardEvent): void {
+    const panel = this.modalPanel?.nativeElement;
+    if (!panel) return;
+
+    const focusable = this.getFocusable(panel);
+    if (focusable.length === 0) {
+      event.preventDefault();
+      panel.focus();
+      return;
+    }
+
+    const current = document.activeElement as HTMLElement | null;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!current || !panel.contains(current)) {
+      event.preventDefault();
+      first.focus();
+      return;
+    }
+
+    if (event.shiftKey && current === first) {
+      event.preventDefault();
+      last.focus();
+      return;
+    }
+    if (!event.shiftKey && current === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  private getFocusable(root: HTMLElement): HTMLElement[] {
+    return Array.from(
+      root.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => !el.hasAttribute("disabled"));
   }
 }

@@ -8,7 +8,7 @@ import {
   stubPlaneIdForCoord,
   withDistancesFromParty,
 } from "../map/map-model";
-import { drawPlanes } from "../deck/deck-model";
+import { drawPlanes, shuffleDeterministic } from "../deck/deck-model";
 import { appendLog } from "./logging";
 
 type BootstrapSlot = SessionState["config"]["bootstrapRevealOrder"][number];
@@ -97,17 +97,14 @@ export function applyBootstrapReveal(state: SessionState, atMs: number): Session
   const centerKey = bootstrapSlotToCoordKey("C");
   const revealedTiles = { ...state.map.tilesByCoord };
 
-  state.config.bootstrapRevealOrder.forEach((slot, idx) => {
-    const coordKey = bootstrapSlotToCoordKey(slot);
-    const tile = revealedTiles[coordKey];
-    if (!tile) return;
-
-    revealedTiles[coordKey] = {
-      ...tile,
+  const center = revealedTiles[centerKey];
+  if (center) {
+    revealedTiles[centerKey] = {
+      ...center,
       isFaceUp: true,
-      revealedAtMs: atMs + idx,
+      revealedAtMs: atMs,
     };
-  });
+  }
 
   const withDistances = withDistancesFromParty(revealedTiles, centerKey);
 
@@ -128,7 +125,7 @@ export function applyBootstrapReveal(state: SessionState, atMs: number): Session
   return appendLog(revealed, {
     atMs,
     level: "info",
-    message: "Bootstrap reveal complete (C/N/E/S/W).",
+    message: "Bootstrap reveal complete (center tile only).",
     meta: { currentPlaneId: withDistances[centerKey]?.planeId ?? null },
   });
 }
@@ -191,8 +188,15 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
 
   const placeholders = Object.entries(revealedDestination)
     .filter(([, tile]) => tile.planeId.startsWith("plane@"))
-    .map(([coordKey]) => coordKey);
-  const dealt = drawPlanes(state.deck.drawPile, placeholders.length);
+    .map(([coordKey]) => coordKey)
+    .sort(compareCoordKeys);
+  const dealt = drawPlanesWithRecycle({
+    drawPile: state.deck.drawPile,
+    discardPile: state.deck.discardPile,
+    count: placeholders.length,
+    atMs,
+    seed: state.rng.seed,
+  });
   const withAssignedPlanes = { ...revealedDestination };
   placeholders.forEach((coordKey, index) => {
     const tile = withAssignedPlanes[coordKey];
@@ -206,12 +210,16 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
 
   const withDistances = withDistancesFromParty(withAssignedPlanes, partyCoord);
   const currentPlaneId = withDistances[partyCoord]?.planeId;
+  const discardedByDecay = decayed.removed
+    .map((coordKey) => state.map.tilesByCoord[coordKey]?.planeId)
+    .filter((planeId): planeId is string => typeof planeId === "string" && planeId.length > 0);
 
   const mapped = {
     ...state,
     deck: {
       ...state.deck,
       drawPile: [...dealt.drawPile],
+      discardPile: [...dealt.discardPile, ...discardedByDecay],
       currentPlaneId,
     },
     map: {
@@ -238,4 +246,40 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       decayRemoved: decayed.removed.length,
     },
   });
+}
+
+function compareCoordKeys(a: CoordKey, b: CoordKey): number {
+  const ca = parseCoordKey(a);
+  const cb = parseCoordKey(b);
+  if (ca.y !== cb.y) return ca.y - cb.y;
+  return ca.x - cb.x;
+}
+
+function drawPlanesWithRecycle(args: {
+  drawPile: readonly string[];
+  discardPile: readonly string[];
+  count: number;
+  atMs: number;
+  seed?: string;
+}): { drawn: string[]; drawPile: string[]; discardPile: string[] } {
+  const needed = Math.max(0, args.count);
+  let drawPile = [...args.drawPile];
+  let discardPile = [...args.discardPile];
+  const drawn: string[] = [];
+
+  while (drawn.length < needed) {
+    const take = drawPlanes(drawPile, needed - drawn.length);
+    drawn.push(...take.drawn);
+    drawPile = [...take.drawPile];
+    if (drawn.length >= needed) break;
+    if (discardPile.length === 0) break;
+
+    drawPile = shuffleDeterministic(
+      discardPile,
+      `${args.seed ?? ""}|recycle|${args.atMs}|${drawn.length}`
+    );
+    discardPile = [];
+  }
+
+  return { drawn, drawPile, discardPile };
 }

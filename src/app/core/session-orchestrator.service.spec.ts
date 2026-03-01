@@ -51,7 +51,46 @@ describe("SessionOrchestrator", () => {
     expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-4");
     expect(next.map.tilesByCoord["-1,0"].planeId).toBe("plane-5");
     expect(next.map.tilesByCoord["0,0"].isFaceUp).toBe(true);
-    expect(next.map.tilesByCoord["0,-1"].isFaceUp).toBe(true);
+    expect(next.map.tilesByCoord["0,-1"].isFaceUp).toBe(false);
+  });
+
+  it("passes selected set codes into deck initialization", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "SETUP";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+
+    let receivedSets: readonly string[] | undefined;
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: (args) => {
+        receivedSets = args.includedSetCodes;
+        return {
+          drawPile: ["plane-1", "plane-2", "plane-3", "plane-4", "plane-5", "plane-6"],
+          discardPile: [],
+        };
+      },
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      false
+    );
+
+    orchestrator.dispatch({ type: "domain/start_session", atMs: 100, includedSetCodes: ["OPCA"] });
+    expect(receivedSets).toEqual(["OPCA"]);
   });
 
   it("auto-resolves roll_die using DieService", () => {
@@ -257,5 +296,77 @@ describe("SessionOrchestrator", () => {
 
     orchestrator.debugRevealAllCards();
     expect(_state().map.tilesByCoord["1,0"].isFaceUp).toBe(true);
+  });
+
+  it("debugStartSession starts only from SETUP", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "SETUP";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({
+        drawPile: ["p1", "p2", "p3", "p4", "p5", "p6"],
+        discardPile: [],
+      }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      true
+    );
+
+    orchestrator.debugStartSession();
+    expect(_state().fsm.state).toBe("IDLE");
+  });
+
+  it("debugRestartSession resets and auto-starts a new session", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "IDLE";
+    initial.map.tilesByCoord = {
+      "0,0": { coord: { x: 0, y: 0 }, planeId: "plane-x", revealedAtMs: 0, isFaceUp: true },
+    };
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({
+        drawPile: ["p1", "p2", "p3", "p4", "p5", "p6"],
+        discardPile: [],
+      }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+    const fatalMock: Pick<FatalErrorStore, "set"> = {
+      set: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      true
+    );
+
+    orchestrator.debugRestartSession();
+    expect(_state().fsm.state).toBe("IDLE");
+    expect(_state().map.partyCoord).toBe("0,0");
   });
 });
