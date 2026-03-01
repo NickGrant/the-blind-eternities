@@ -51,12 +51,12 @@ describe("SessionOrchestrator", () => {
 
     const next = _state();
     expect(next.fsm.state).toBe("MODAL_OPEN");
-    expect(next.deck.drawPile).toEqual(["plane-6"]);
+    expect(next.deck.drawPile).toEqual(["plane-2", "plane-3", "plane-4", "plane-5", "plane-6"]);
     expect(next.map.tilesByCoord["0,0"].planeId).toBe("plane-1");
-    expect(next.map.tilesByCoord["0,-1"].planeId).toBe("plane-2");
-    expect(next.map.tilesByCoord["1,0"].planeId).toBe("plane-3");
-    expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-4");
-    expect(next.map.tilesByCoord["-1,0"].planeId).toBe("plane-5");
+    expect(next.map.tilesByCoord["0,-1"].planeId).toBe("plane@0,-1");
+    expect(next.map.tilesByCoord["1,0"].planeId).toBe("plane@1,0");
+    expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane@0,1");
+    expect(next.map.tilesByCoord["-1,0"].planeId).toBe("plane@-1,0");
     expect(next.map.tilesByCoord["0,0"].isFaceUp).toBe(true);
     expect(next.map.tilesByCoord["0,-1"].isFaceUp).toBe(false);
   });

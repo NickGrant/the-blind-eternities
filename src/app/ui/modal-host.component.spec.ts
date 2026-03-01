@@ -72,7 +72,36 @@ describe("ModalHostComponent (class-only)", () => {
     );
 
     expect(cmp.modalTitle()).toBe("Akoum");
-    expect(cmp.modalBody()).toContain("Whenever chaos ensues");
+    expect(cmp.modalBodyHtml()).toContain("Whenever chaos ensues");
+  });
+
+  it("normalizes carriage-return line breaks in modal text with stronger spacing", () => {
+    const initial = createNewSessionState({ atMs: 10 });
+    initial.modal.active = {
+      id: "m2b",
+      type: "PLANE",
+      planeId: "plane-akoum",
+      body: "Line one\r\nLine two\rLine three",
+      resumeToState: "IDLE",
+    };
+    initial.modal.isOpen = true;
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: vi.fn(),
+    };
+
+    const cmp = new ModalHostComponent(
+      storeMock as SessionStore,
+      orchestratorMock as SessionOrchestrator,
+      new DeckService()
+    );
+
+    expect(cmp.modalBodyHtml()).toBe("Line one<br /><br />Line two<br /><br />Line three");
   });
 
   it("closes modal on Escape key", () => {
@@ -108,7 +137,7 @@ describe("ModalHostComponent (class-only)", () => {
     expect(dispatchMock.mock.calls[0][0].modalId).toBe("m3");
   });
 
-  it("updates modal offset while dragging header handle", () => {
+  it("updates modal offset while dragging non-button modal surface", () => {
     const initial = createNewSessionState({ atMs: 10 });
     initial.modal.active = {
       id: "m4",
@@ -133,13 +162,15 @@ describe("ModalHostComponent (class-only)", () => {
       new DeckService()
     );
 
-    cmp.onDragHandleDown({
+    cmp.onModalPointerDown({
       button: 0,
       pointerId: 11,
       clientX: 100,
       clientY: 100,
+      target: { closest: () => null },
       preventDefault: vi.fn(),
     } as unknown as PointerEvent);
+    expect(cmp.isDragging()).toBe(true);
 
     cmp.onPointerMove({
       pointerId: 11,
@@ -148,9 +179,54 @@ describe("ModalHostComponent (class-only)", () => {
     } as PointerEvent);
     cmp.onPointerUp({ pointerId: 11 } as PointerEvent);
 
+    expect(cmp.isDragging()).toBe(false);
     expect(cmp.modalOffset()).toEqual({ x: 30, y: 20 });
     expect(cmp.modalOffsetX()).toBe("30px");
     expect(cmp.modalOffsetY()).toBe("20px");
+  });
+
+  it("does not start drag when pointerdown originates from button", () => {
+    const initial = createNewSessionState({ atMs: 10 });
+    initial.modal.active = {
+      id: "m4b",
+      type: "PLANE",
+      planeId: "plane-akoum",
+      resumeToState: "IDLE",
+    };
+    initial.modal.isOpen = true;
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: vi.fn(),
+    };
+
+    const cmp = new ModalHostComponent(
+      storeMock as SessionStore,
+      orchestratorMock as SessionOrchestrator,
+      new DeckService()
+    );
+
+    cmp.onModalPointerDown({
+      button: 0,
+      pointerId: 21,
+      clientX: 100,
+      clientY: 100,
+      target: { closest: () => ({}) },
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent);
+    expect(cmp.isDragging()).toBe(false);
+
+    cmp.onPointerMove({
+      pointerId: 21,
+      clientX: 140,
+      clientY: 120,
+    } as PointerEvent);
+
+    expect(cmp.modalOffset()).toEqual({ x: 0, y: 0 });
   });
 
   it("clamps modal drag to viewport bounds", () => {
@@ -190,11 +266,12 @@ describe("ModalHostComponent (class-only)", () => {
       } as HTMLElement,
     };
 
-    cmp.onDragHandleDown({
+    cmp.onModalPointerDown({
       button: 0,
       pointerId: 12,
       clientX: 100,
       clientY: 100,
+      target: { closest: () => null },
       preventDefault: vi.fn(),
     } as unknown as PointerEvent);
 

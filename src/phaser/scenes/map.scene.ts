@@ -442,6 +442,7 @@ export class MapScene extends Phaser.Scene {
 
       if (!pointer.isDown) return;
       if (this.dragPointerId !== pointer.id) return;
+      if (!this.canPanCanvas()) return;
 
       const dx = pointer.x - this.dragLast.x;
       const dy = pointer.y - this.dragLast.y;
@@ -498,7 +499,9 @@ export class MapScene extends Phaser.Scene {
     if (!partyTile) return;
 
     const world = coordToWorld(partyTile.coord, this.viewport);
-    this.cameras.main.centerOn(world.x + this.cameraOffset.x, world.y + this.cameraOffset.y);
+    const offsetX = this.canPanCanvas() ? this.cameraOffset.x : 0;
+    const offsetY = this.canPanCanvas() ? this.cameraOffset.y : 0;
+    this.cameras.main.centerOn(world.x + offsetX, world.y + offsetY);
     this.updateBackgroundScroll();
   }
 
@@ -760,6 +763,10 @@ export class MapScene extends Phaser.Scene {
     const p2 = this.input.pointer2;
     if (!p1 || !p2) return 0;
     return Phaser.Math.Distance.Between(p1.x, p1.y, p2.x, p2.y);
+  }
+
+  private canPanCanvas(): boolean {
+    return this.lastState?.config.gameMode !== "REGULAR_PLANECHASE";
   }
 
 }

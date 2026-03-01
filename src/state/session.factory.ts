@@ -28,9 +28,10 @@ export const createNewSessionState = (args: {
     config: {
       // Reasonable v1 default; can be tuned in Milestone 2 (decay doc).
       decayDistance: 3,
-      bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
+      bootstrapRevealOrder: ["C"],
       ensurePlusEnabled: true,
       gameMode: "BLIND_ETERNITIES",
+      rulesProfile: "BLIND_FOG_OF_WAR",
     },
 
     rng: {

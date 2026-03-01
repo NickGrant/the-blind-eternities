@@ -61,4 +61,37 @@
       color: #fee2e2;
     }
   }
+
+  &__help {
+    width: 100%;
+    border: 1px solid var(--be-color-border-subtle);
+    border-radius: var(--be-radius-md);
+    background: var(--be-color-surface-subtle);
+    padding: var(--be-space-2);
+  }
+
+  &__help-summary {
+    cursor: pointer;
+    font-size: var(--be-font-size-sm);
+    font-weight: 700;
+    color: var(--be-color-text-strong);
+  }
+
+  &__help-content {
+    margin-top: var(--be-space-2);
+    font-size: var(--be-font-size-sm);
+    color: var(--be-color-text);
+  }
+
+  &__help-title {
+    margin: 0 0 var(--be-space-1) 0;
+  }
+
+  kbd {
+    border: 1px solid var(--be-color-border-subtle);
+    border-radius: var(--be-radius-sm);
+    padding: 0 4px;
+    font-size: 0.9em;
+    background: var(--be-color-surface);
+  }
 }

@@ -20,8 +20,13 @@
     display: grid;
     gap: var(--be-space-3);
     pointer-events: auto;
+    cursor: grab;
     transform: translate(var(--be-modal-offset-x), var(--be-modal-offset-y));
     animation: be-modal-pop 220ms ease-out;
+
+    &--dragging {
+      cursor: grabbing;
+    }
   }
 
   &__attention {
@@ -35,7 +40,6 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--be-space-2);
-    cursor: move;
     user-select: none;
   }
 

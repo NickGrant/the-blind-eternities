@@ -15,6 +15,15 @@ import { closeModal, enqueueModal, toModalDescriptor } from "./reducer/modal-flo
 
 type FsmState = SessionState["fsm"]["state"];
 
+function getRevealProfileCode(state: SessionState): string {
+  if (state.config.rulesProfile) return state.config.rulesProfile;
+  const classic: SessionState["config"]["bootstrapRevealOrder"] = ["C", "N", "E", "S", "W"];
+  return state.config.bootstrapRevealOrder.length === classic.length &&
+      classic.every((slot, idx) => state.config.bootstrapRevealOrder[idx] === slot)
+    ? "BLIND_CLASSIC_PLUS"
+    : "BLIND_FOG_OF_WAR";
+}
+
 /**
  * Appends a standard die-resolution log entry with current roll context.
  */
@@ -29,6 +38,10 @@ function withRollOutcomeLogged(
     meta: {
       rollCount: state.rng.rollCount,
       currentPlaneId: state.deck.currentPlaneId ?? null,
+      gameMode: state.config.gameMode,
+      rulesProfile: getRevealProfileCode(state),
+      hellrideUsed: false,
+      phenomenonReplaceCount: 0,
     },
   });
 }

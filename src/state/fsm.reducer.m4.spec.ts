@@ -81,6 +81,13 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     expect(next.ui.selections?.selectedCoord).toBeUndefined();
     expect(next.map.tilesByCoord["1,0"].isFaceUp).toBe(true);
     expect(next.modal.active?.planeId).toBe(next.map.tilesByCoord["1,0"].planeId);
+    const phaseMessages = next.log.entries.slice(-4).map((entry) => entry.message);
+    expect(phaseMessages).toEqual([
+      "Phase: move",
+      "Phase: board_fill",
+      "Phase: phenomenon_resolve",
+      "Movement completed.",
+    ]);
   });
 
   it("expands only one-step adjacency around moved party tile", () => {

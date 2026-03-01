@@ -21,24 +21,6 @@
 
 ### Functional
 
-title: Add player-facing "How to Use" help section
-status: unstarted
-description: Add an accessible in-app help section explaining controls and flow (starting a session, rolling, moving/planeswalking behavior per mode, modal usage, and debug-mode visibility notes). Content should be visible to non-dev users.
-
----
-
-title: Modal should be draggable from all non-button regions
-status: unstarted
-description: Modal dragging should be available from anywhere on the modal surface except interactive buttons, so users are not limited to header-only drag behavior while preserving button click intent.
-
----
-
-title: Add Blind Eternities classic reveal profile (center + four adjacent face-up at start)
-status: unstarted
-description: Add a rules-profile option for Blind Eternities that follows the article-aligned startup reveal pattern (center plus N/E/S/W face-up on session start) while preserving deterministic deck usage and modal flow.
-
----
-
 title: Add optional Hellride movement (diagonal into unrevealed void only)
 status: unstarted
 description: Implement Hellride movement as an optional rules toggle/profile behavior: allow diagonal movement only when target diagonal space is currently unoccupied/unrevealed; block if a revealed plane already exists there.
@@ -51,33 +33,9 @@ description: During board fill after movement, if a phenomenon is drawn, resolve
 
 ---
 
-title: Enforce ordered reveal pipeline phases for Blind Eternities turn resolution
-status: unstarted
-description: Refactor movement/reveal sequencing into explicit ordered phases (move -> land/enter effects -> board fill -> phenomenon resolve/replace -> finalize) and add deterministic log markers for each phase.
-
----
-
-title: Add variant rules profile system across modes
-status: unstarted
-description: Introduce a first-class rules profile model (for example Blind Eternities Article, Blind Eternities Fog-of-War, Regular Planechase) to keep behavior differences explicit, testable, and selectable at session start.
-
----
-
 title: Add movement UI affordances for Hellride candidates
 status: unstarted
 description: When Hellride is enabled, distinguish diagonal Hellride movement options visually from standard adjacent movement options so users can understand available path types.
-
----
-
-title: Expand in-app rules/help content with mode and variant-specific behavior
-status: unstarted
-description: Extend the planned How-to-Use surface to include mode/profile-specific rules (startup reveal pattern, planeswalk behavior, Hellride eligibility, and phenomenon replacement handling).
-
----
-
-title: Add runtime telemetry/log context for mode and variant outcomes
-status: unstarted
-description: Include game mode/rules profile and key variant outcomes (hellride used, phenomenon replacement chain count, reveal phase markers) in event logs to improve UAT diagnosis and reproducibility.
 
 ---
 
@@ -87,7 +45,20 @@ description: Assess and optionally add a configurable anti-stall movement constr
 
 ---
 
-title: Newlines in card text are not rendered in modal/body display
+title: Add Google Analytics tracking for GitHub Pages deployment
 status: unstarted
-description: Card rules text newline characters are currently flattened in HTML rendering. Improve text parsing/rendering so intended line breaks and paragraph spacing are preserved for readability.
+description: Integrate Google Analytics (GA4) in production/GitHub Pages builds to track usage metrics (sessions, page views, key interactions) with environment-based configuration so local/dev builds remain unaffected.
 
+---
+
+title: Hide Rules Profile picker when only one profile option is available
+status: unstarted
+description: The rules profile selector should not be displayed when there is only one valid profile choice for the selected game mode (for example Regular Planechase). Show the picker only when users can meaningfully choose between multiple profiles.
+
+---
+
+title: Improve "How to Use" copy for player-friendly readability
+status: unstarted
+description: Current "How to Use" language is too technical and not easy to scan for typical players. Rewrite the section with simpler phrasing, clearer step-by-step guidance, and more concise wording oriented around player actions.
+
+---

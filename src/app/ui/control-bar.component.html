@@ -39,6 +39,28 @@
         </label>
       </div>
     </div>
+    <div class="control-bar__set-picker">
+      <div class="control-bar__set-picker-title">Rules Profile</div>
+      <div class="control-bar__set-options">
+        @for (profile of availableRulesProfiles(); track profile) {
+          <label class="control-bar__set-option">
+            <input
+              type="radio"
+              name="rules-profile"
+              [checked]="selectedRulesProfile() === profile"
+              (change)="setRulesProfile(profile)"
+            />
+            @if (profile === RULES_PROFILE.BLIND_FOG_OF_WAR) {
+              Blind Eternities - Fog of War (center-only reveal)
+            } @else if (profile === RULES_PROFILE.BLIND_CLASSIC_PLUS) {
+              Blind Eternities - Classic Plus (center + N/E/S/W reveal)
+            } @else {
+              Regular Planechase - Standard
+            }
+          </label>
+        }
+      </div>
+    </div>
     <button type="button" class="control-bar__button" (click)="startSession()" [disabled]="!canStartSession()">
       Start Session
     </button>
@@ -97,4 +119,35 @@
       </button>
     }
   }
+
+  <details class="control-bar__help">
+    <summary class="control-bar__help-summary">How to Use</summary>
+    <div class="control-bar__help-content">
+      <p class="control-bar__help-title">
+        Current mode: <strong>{{ helpModeLabel() }}</strong> | Reveal profile: <strong>{{ revealProfile() }}</strong>
+      </p>
+      @if (activeGameMode() === GAME_MODE.BLIND_ETERNITIES) {
+        <p>
+          In Blind Eternities mode, planeswalking enters movement flow. Roll the die, select an eligible adjacent plane,
+          confirm movement, then resolve the destination plane.
+        </p>
+      } @else {
+        <p>
+          In Regular Planechase mode, planeswalking replaces the current center plane directly with the next deck card.
+          The board stays centered on the active plane.
+        </p>
+      }
+      <p>
+        Roll results: blank does nothing, chaos opens the current plane modal, and planeswalk triggers movement or plane
+        replacement based on mode.
+      </p>
+      <p>
+        Modals are draggable from non-button regions and can be closed with the close button or the <kbd>Esc</kbd> key.
+      </p>
+      <p>
+        Variant notes: Hellride, strict phenomenon replacement, and additional reveal profiles are tracked as upcoming
+        rules options and are not fully enabled yet.
+      </p>
+    </div>
+  </details>
 </div>

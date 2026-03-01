@@ -52,6 +52,14 @@ export const GAME_MODE = {
 
 export type GameMode = (typeof GAME_MODE)[keyof typeof GAME_MODE];
 
+export const RULES_PROFILE = {
+  BLIND_FOG_OF_WAR: "BLIND_FOG_OF_WAR",
+  BLIND_CLASSIC_PLUS: "BLIND_CLASSIC_PLUS",
+  REGULAR_STANDARD: "REGULAR_STANDARD",
+} as const;
+
+export type RulesProfile = (typeof RULES_PROFILE)[keyof typeof RULES_PROFILE];
+
 export const DOMAIN_INTENT = {
   START_SESSION: "domain/start_session",
   RESTART_SESSION: "domain/restart_session",
@@ -82,6 +90,7 @@ export type DomainIntent =
       atMs: number;
       includedSetCodes?: string[];
       gameMode?: GameMode;
+      rulesProfile?: RulesProfile;
       initialDeck?: {
         drawPile: string[];
         discardPile: string[];

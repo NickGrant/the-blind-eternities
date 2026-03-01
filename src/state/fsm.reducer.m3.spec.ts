@@ -15,7 +15,7 @@ describe("reduceSessionState (Milestone 3 deck/reveal/modal)", () => {
       },
     });
     expect(boot.fsm.state).toBe("BOOTSTRAP_REVEAL");
-    expect(boot.deck.drawPile).toEqual(["p6"]);
+    expect(boot.deck.drawPile).toEqual(["p2", "p3", "p4", "p5", "p6"]);
 
     const center = boot.map.tilesByCoord["0,0"];
     const north = boot.map.tilesByCoord["0,-1"];

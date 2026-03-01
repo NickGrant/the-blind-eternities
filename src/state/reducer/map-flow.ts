@@ -12,6 +12,32 @@ import { drawPlanes, shuffleDeterministic } from "../deck/deck-model";
 import { appendLog } from "./logging";
 
 type BootstrapSlot = SessionState["config"]["bootstrapRevealOrder"][number];
+type RulesProfile = NonNullable<SessionState["config"]["rulesProfile"]>;
+
+function getRevealProfileCode(state: SessionState): RulesProfile {
+  if (state.config.rulesProfile) return state.config.rulesProfile;
+  const classic: SessionState["config"]["bootstrapRevealOrder"] = ["C", "N", "E", "S", "W"];
+  return state.config.bootstrapRevealOrder.length === classic.length &&
+      classic.every((slot, idx) => state.config.bootstrapRevealOrder[idx] === slot)
+    ? "BLIND_CLASSIC_PLUS"
+    : "BLIND_FOG_OF_WAR";
+}
+
+function resolveRulesProfile(args: {
+  gameMode: SessionState["config"]["gameMode"];
+  requested: SessionState["config"]["rulesProfile"] | undefined;
+  current: SessionState["config"]["rulesProfile"] | undefined;
+}): RulesProfile {
+  if (args.gameMode === "REGULAR_PLANECHASE") return "REGULAR_STANDARD";
+  if (args.requested === "BLIND_CLASSIC_PLUS" || args.requested === "BLIND_FOG_OF_WAR") return args.requested;
+  if (args.current === "BLIND_CLASSIC_PLUS" || args.current === "BLIND_FOG_OF_WAR") return args.current;
+  return "BLIND_FOG_OF_WAR";
+}
+
+function revealOrderForProfile(profile: RulesProfile): SessionState["config"]["bootstrapRevealOrder"] {
+  if (profile === "BLIND_CLASSIC_PLUS") return ["C", "N", "E", "S", "W"];
+  return ["C"];
+}
 
 export function bootstrapSlotToCoordKey(slot: BootstrapSlot): CoordKey {
   switch (slot) {
@@ -59,11 +85,17 @@ export function initMapForSession(
       }).tilesByCoord
     : tilesSeeded;
 
-  const bootstrapCount = state.config.bootstrapRevealOrder.length;
+  const rulesProfile = resolveRulesProfile({
+    gameMode,
+    requested: intent.rulesProfile,
+    current: state.config.rulesProfile,
+  });
+  const bootstrapRevealOrder = revealOrderForProfile(rulesProfile);
+  const bootstrapCount = bootstrapRevealOrder.length;
   const dealt = drawPlanes(deck.drawPile, bootstrapCount);
   const withAssignedPlanes = { ...ensured };
 
-  state.config.bootstrapRevealOrder.forEach((slot, index) => {
+  bootstrapRevealOrder.forEach((slot, index) => {
     const coordKey = bootstrapSlotToCoordKey(slot);
     const tile = withAssignedPlanes[coordKey];
     if (!tile) return;
@@ -77,11 +109,13 @@ export function initMapForSession(
 
   const withDistances = withDistancesFromParty(withAssignedPlanes, centerKey);
 
-  return {
+  const mapped = {
     ...state,
     config: {
       ...state.config,
       gameMode,
+      rulesProfile,
+      bootstrapRevealOrder,
     },
     deck: {
       ...state.deck,
@@ -96,20 +130,34 @@ export function initMapForSession(
       highlights: { eligibleMoveCoords: [] },
     },
   };
+
+  return appendLog(mapped, {
+    atMs: intent.atMs,
+    level: "info",
+    message: "Session setup complete.",
+    meta: {
+      gameMode,
+      rulesProfile,
+      selectedSetCount: intent.includedSetCodes?.length ?? 0,
+      selectedSetCodes: intent.includedSetCodes?.join(",") ?? null,
+    },
+  });
 }
 
 export function applyBootstrapReveal(state: SessionState, atMs: number): SessionState {
   const centerKey = bootstrapSlotToCoordKey("C");
   const revealedTiles = { ...state.map.tilesByCoord };
 
-  const center = revealedTiles[centerKey];
-  if (center) {
-    revealedTiles[centerKey] = {
-      ...center,
+  state.config.bootstrapRevealOrder.forEach((slot, idx) => {
+    const coordKey = bootstrapSlotToCoordKey(slot);
+    const tile = revealedTiles[coordKey];
+    if (!tile) return;
+    revealedTiles[coordKey] = {
+      ...tile,
       isFaceUp: true,
-      revealedAtMs: atMs,
+      revealedAtMs: atMs + idx,
     };
-  }
+  });
 
   const withDistances = withDistancesFromParty(revealedTiles, centerKey);
 
@@ -130,8 +178,13 @@ export function applyBootstrapReveal(state: SessionState, atMs: number): Session
   return appendLog(revealed, {
     atMs,
     level: "info",
-    message: "Bootstrap reveal complete (center tile only).",
-    meta: { currentPlaneId: withDistances[centerKey]?.planeId ?? null },
+    message: "Bootstrap reveal complete.",
+    meta: {
+      currentPlaneId: withDistances[centerKey]?.planeId ?? null,
+      gameMode: state.config.gameMode,
+      rulesProfile: getRevealProfileCode(state),
+      revealedCount: state.config.bootstrapRevealOrder.length,
+    },
   });
 }
 
@@ -242,13 +295,55 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     },
   };
 
-  return appendLog(mapped, {
+  let logged = appendLog(mapped, {
+    atMs,
+    level: "info",
+    message: "Phase: move",
+    meta: {
+      phase: "move",
+      phaseIndex: 1,
+      toCoord: partyCoord,
+      gameMode: state.config.gameMode,
+      rulesProfile: getRevealProfileCode(state),
+    },
+  });
+  logged = appendLog(logged, {
+    atMs: atMs + 1,
+    level: "info",
+    message: "Phase: board_fill",
+    meta: {
+      phase: "board_fill",
+      phaseIndex: 2,
+      assignedCount: placeholders.length,
+      gameMode: state.config.gameMode,
+      rulesProfile: getRevealProfileCode(state),
+    },
+  });
+  logged = appendLog(logged, {
+    atMs: atMs + 2,
+    level: "info",
+    message: "Phase: phenomenon_resolve",
+    meta: {
+      phase: "phenomenon_resolve",
+      phaseIndex: 3,
+      phenomenonReplaceCount: 0,
+      gameMode: state.config.gameMode,
+      rulesProfile: getRevealProfileCode(state),
+    },
+  });
+  return appendLog(logged, {
     atMs,
     level: "info",
     message: "Movement completed.",
     meta: {
       toCoord: partyCoord,
       decayRemoved: decayed.removed.length,
+      gameMode: state.config.gameMode,
+      rulesProfile: getRevealProfileCode(state),
+      hellrideUsed: false,
+      phenomenonReplaceCount: 0,
+      phase: "finalize",
+      phaseIndex: 4,
     },
   });
 }
@@ -311,6 +406,10 @@ export function applyRegularPlaneswalk(state: SessionState, atMs: number): Sessi
     message: "Regular Planechase planeswalk resolved.",
     meta: {
       currentPlaneId: nextPlaneId,
+      gameMode: state.config.gameMode,
+      rulesProfile: getRevealProfileCode(state),
+      hellrideUsed: false,
+      phenomenonReplaceCount: 0,
     },
   });
 }

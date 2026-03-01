@@ -705,3 +705,87 @@ status: complete
 description: Before starting a session, players should choose mode. Blind Eternities keeps current map-based implementation. Regular Planechase should show only one active plane at a time; when planeswalking resolves, replace the current plane with the next deck card instead of map movement flow.
 Resolution: Added setup-time game mode selection in control bar and threaded mode through start-session intent/state config; implemented regular-mode planeswalk flow to replace the active plane directly (single face-up center tile) while preserving existing Blind Eternities adjacency flow.
 
+---
+
+title: Modal should be draggable from all non-button regions
+status: complete
+description: Modal dragging should be available from anywhere on the modal surface except interactive buttons, so users are not limited to header-only drag behavior while preserving button click intent.
+Resolution: Expanded modal drag start handling to the full modal panel and excluded button-origin pointer events so users can drag from any non-button region without breaking click behavior.
+
+---
+
+title: Newlines in card text are not rendered in modal/body display
+status: complete
+description: Card rules text newline characters are currently flattened in HTML rendering. Improve text parsing/rendering so intended line breaks and paragraph spacing are preserved for readability.
+Resolution: Added modal text newline normalization (`CRLF`/`CR` to `LF`) and switched modal body rendering to `white-space: pre-line`, so card text line breaks render as authored.
+Resolution: Updated modal body formatting to emit escaped HTML with `<br /><br />` per newline for stronger vertical separation and improved readability.
+
+---
+
+title: Theme selector not updated when theme is applied on page load
+status: complete
+description: The theme dropdown should reflect the persisted theme immediately on initial load so UI control state matches the active visual theme.
+Resolution: Bound option selected state to `selectedTheme()` so the picker now visibly matches the applied persisted theme on first render.
+
+---
+
+title: Cursor over modal does not indicate draggable state
+status: complete
+description: Modal can be dragged from non-button regions, but cursor feedback is inconsistent. Update cursor states (for example grab/grabbing) on draggable modal regions so users understand drag affordance and active drag state.
+Resolution: Added modal panel drag cursors (`grab` idle, `grabbing` during pointer drag) and bound active dragging state to the panel class so cursor feedback now reflects drag affordance and active drag state.
+
+---
+
+title: Modal newlines need stronger vertical separation for readability
+status: complete
+description: Current newline rendering in modal body is too compact. Increase separation by parsing logical line breaks into paragraph blocks (`<p>`) or by rendering double breaks (`<br /><br />`) to improve scannability of card text.
+Resolution: Updated modal text formatting to render each newline as `<br /><br />` (after newline normalization and HTML escaping), increasing vertical separation for faster rules-text scanning.
+
+---
+
+title: Disable canvas panning in Regular Planechase mode
+status: complete
+description: In Regular Planechase mode, camera/canvas movement should be disabled so the single active plane remains centered and in focus at all times. Prevent drag/pan interactions while this mode is active.
+Resolution: Added mode-aware camera gating in `MapScene` so drag-based panning is disabled in `REGULAR_PLANECHASE`, and center-camera logic ignores pan offsets to keep the active plane fixed in focus.
+
+---
+
+title: Add player-facing "How to Use" help section
+status: complete
+description: Add an accessible in-app help section explaining controls and flow (starting a session, rolling, moving/planeswalking behavior per mode, modal usage, and debug-mode visibility notes). Content should be visible to non-dev users.
+Resolution: Added a persistent in-app `How to Use` section to the control bar with non-dev-facing guidance on controls, roll outcomes, movement flow, modal behavior, and mode-specific play expectations.
+
+---
+
+title: Expand in-app rules/help content with mode and variant-specific behavior
+status: complete
+description: Extend the planned How-to-Use surface to include mode/profile-specific rules (startup reveal pattern, planeswalk behavior, Hellride eligibility, and phenomenon replacement handling).
+Resolution: Expanded the help content with dynamic mode-specific guidance (`Blind Eternities` vs `Regular Planechase`) and reveal profile context, plus explicit variant-status notes for Hellride and phenomenon replacement work-in-progress.
+
+---
+
+title: Add runtime telemetry/log context for mode and variant outcomes
+status: complete
+description: Include game mode/rules profile and key variant outcomes (hellride used, phenomenon replacement chain count, reveal phase markers) in event logs to improve UAT diagnosis and reproducibility.
+Resolution: Enriched reducer log metadata across setup, bootstrap, roll resolution, movement, and regular planeswalk events with `gameMode`, derived `rulesProfile`, and placeholder variant telemetry fields (`hellrideUsed`, `phenomenonReplaceCount`) for consistent UAT diagnostics.
+
+---
+
+title: Add Blind Eternities classic reveal profile (center + four adjacent face-up at start)
+status: complete
+description: Add a rules-profile option for Blind Eternities that follows the article-aligned startup reveal pattern (center plus N/E/S/W face-up on session start) while preserving deterministic deck usage and modal flow.
+Resolution: Added selectable rules profiles and wired `BLIND_CLASSIC_PLUS` bootstrap behavior to reveal center plus N/E/S/W on bootstrap completion with deterministic assignment/reveal ordering.
+
+---
+
+title: Enforce ordered reveal pipeline phases for Blind Eternities turn resolution
+status: complete
+description: Refactor movement/reveal sequencing into explicit ordered phases (move -> land/enter effects -> board fill -> phenomenon resolve/replace -> finalize) and add deterministic log markers for each phase.
+Resolution: Added deterministic phase markers in movement resolution logs (`move`, `board_fill`, `phenomenon_resolve`, `finalize`) with stable phase indexes and contextual metadata for reproducible diagnostics.
+
+---
+
+title: Add variant rules profile system across modes
+status: complete
+description: Introduce a first-class rules profile model (for example Blind Eternities Article, Blind Eternities Fog-of-War, Regular Planechase) to keep behavior differences explicit, testable, and selectable at session start.
+Resolution: Introduced first-class rules profile values in intent/state flow, added setup-time profile selection UI, and connected profile-to-bootstrap mapping across Blind Eternities and Regular Planechase starts.

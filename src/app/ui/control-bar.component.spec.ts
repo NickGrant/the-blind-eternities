@@ -40,6 +40,7 @@ describe("ControlBarComponent (class-only)", () => {
     if (intent.type === "domain/start_session") {
       expect(intent.includedSetCodes).toEqual(["OPCA"]);
       expect(intent.gameMode).toBe("BLIND_ETERNITIES");
+      expect(intent.rulesProfile).toBe("BLIND_FOG_OF_WAR");
     }
   });
 
@@ -56,6 +57,23 @@ describe("ControlBarComponent (class-only)", () => {
     expect(intent.type).toBe("domain/start_session");
     if (intent.type === "domain/start_session") {
       expect(intent.gameMode).toBe("REGULAR_PLANECHASE");
+      expect(intent.rulesProfile).toBe("REGULAR_STANDARD");
+    }
+  });
+
+  it("allows selecting classic blind profile before session start", () => {
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.setRulesProfile("BLIND_CLASSIC_PLUS");
+    cmp.startSession();
+
+    const intent = dispatchMock.mock.calls[0][0];
+    expect(intent.type).toBe("domain/start_session");
+    if (intent.type === "domain/start_session") {
+      expect(intent.rulesProfile).toBe("BLIND_CLASSIC_PLUS");
     }
   });
 

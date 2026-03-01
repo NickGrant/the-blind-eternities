@@ -14,7 +14,7 @@
           (change)="onThemeChange(($any($event.target)).value)"
         >
           @for (theme of themeOptions; track theme.id) {
-            <option [value]="theme.id">{{ theme.label }}</option>
+            <option [value]="theme.id" [selected]="selectedTheme() === theme.id">{{ theme.label }}</option>
           }
         </select>
       </label>

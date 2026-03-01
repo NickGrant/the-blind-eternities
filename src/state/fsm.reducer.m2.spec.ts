@@ -51,6 +51,45 @@ describe("reduceSessionState (Milestone 2 map invariants)", () => {
     expect(accepted.fsm.context?.pendingMove?.fromCoord).toBe("0,0");
     expect(accepted.fsm.context?.pendingMove?.toCoord).toBe("1,0");
   });
+
+  it("reveals tiles according to configured bootstrap reveal profile", () => {
+    const classic = buildState("BOOTSTRAP_REVEAL");
+    classic.config.bootstrapRevealOrder = ["C", "N", "E", "S", "W"];
+    classic.config.rulesProfile = "BLIND_CLASSIC_PLUS";
+    classic.map.partyCoord = "0,0";
+    classic.map.tilesByCoord = {
+      "0,0": { ...mkTile("0,0"), isFaceUp: false },
+      "0,-1": { ...mkTile("0,-1"), isFaceUp: false },
+      "1,0": { ...mkTile("1,0"), isFaceUp: false },
+      "0,1": { ...mkTile("0,1"), isFaceUp: false },
+      "-1,0": { ...mkTile("-1,0"), isFaceUp: false },
+    };
+
+    const classicNext = reduceSessionState(classic, {
+      type: "domain/bootstrap_reveal_complete",
+      atMs: 10,
+    });
+    expect(Object.values(classicNext.map.tilesByCoord).every((t) => t.isFaceUp)).toBe(true);
+
+    const fog = buildState("BOOTSTRAP_REVEAL");
+    fog.config.bootstrapRevealOrder = ["C"];
+    fog.config.rulesProfile = "BLIND_FOG_OF_WAR";
+    fog.map.partyCoord = "0,0";
+    fog.map.tilesByCoord = {
+      "0,0": { ...mkTile("0,0"), isFaceUp: false },
+      "0,-1": { ...mkTile("0,-1"), isFaceUp: false },
+      "1,0": { ...mkTile("1,0"), isFaceUp: false },
+      "0,1": { ...mkTile("0,1"), isFaceUp: false },
+      "-1,0": { ...mkTile("-1,0"), isFaceUp: false },
+    };
+    const fogNext = reduceSessionState(fog, {
+      type: "domain/bootstrap_reveal_complete",
+      atMs: 11,
+    });
+    expect(fogNext.map.tilesByCoord["0,0"].isFaceUp).toBe(true);
+    expect(fogNext.map.tilesByCoord["0,-1"].isFaceUp).toBe(false);
+    expect(fogNext.map.tilesByCoord["1,0"].isFaceUp).toBe(false);
+  });
 });
 
 function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
