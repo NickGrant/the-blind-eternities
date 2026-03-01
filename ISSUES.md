@@ -1,4 +1,4 @@
-# ISSUES FILE
+﻿# ISSUES FILE
 ----
 
 ## Purpose

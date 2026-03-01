@@ -8,8 +8,6 @@ import { SessionStore } from "../core/session.store";
   standalone: true,
   template: `
     <div class="controlBar">
-      <div class="status">State: {{ fsmState() }}</div>
-
       @if (fsmState() === "SETUP") {
         <div class="setPicker">
           <div class="setPickerTitle">Deck Sets</div>
@@ -63,14 +61,6 @@ import { SessionStore } from "../core/session.store";
         flex-wrap: wrap;
         gap: 10px;
         min-height: 42px;
-      }
-      .status {
-        font-size: 12px;
-        color: #4a556b;
-        padding: 4px 8px;
-        border: 1px solid #dce2ea;
-        border-radius: 999px;
-        background: #f7f9fb;
       }
       .hint {
         font-size: 12px;

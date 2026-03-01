@@ -19,6 +19,7 @@ import { SessionStore } from "../core/session.store";
 
         @if (!collapsed()) {
           <div class="debugBody">
+            <span class="stateChip">Current State: {{ fsmState() }}</span>
             <button type="button" (click)="startSession()" [disabled]="fsmState() !== 'SETUP'">
               Session Start
             </button>
@@ -88,6 +89,15 @@ import { SessionStore } from "../core/session.store";
         width: 100%;
         display: grid;
         gap: 8px;
+      }
+      .stateChip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.2);
+        font-size: 12px;
       }
       details {
         border: 1px solid rgba(255, 255, 255, 0.12);

@@ -41,4 +41,4 @@ This document defines how card metadata and art are maintained.
 
 ## Known Gap
 
-- `plane-ivy-lane` may remain partially populated depending on source coverage.
+- Some source entries may have incomplete metadata or no image match; review script failure details after each fetch/sync run.

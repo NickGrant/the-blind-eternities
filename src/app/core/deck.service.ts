@@ -113,10 +113,6 @@ export class DeckService {
       });
     });
 
-    for (const code of DEFAULT_PLANECHASE_SET_CODES) {
-      if (!counts.has(code)) counts.set(code, 0);
-    }
-
     return [...counts.entries()]
       .map(([code, count]) => ({
         code,

@@ -333,3 +333,59 @@ status: complete
 description: Create a documentation spec for phenomenon support that defines play pattern, backend/state flow, and UX flow before implementation starts.
 Resolution: Added `docs/15-phenomenon-support-spec.md` defining proposed phenomenon play pattern, state/FSM behavior, UX flow, and implementation readiness criteria.
 
+
+---
+
+title: Art cache script failure details are opaque
+status: complete
+description: Image fetching script consistently reports failure counts but does not identify which card/image failed or why.
+Resolution: Updated the cache script to capture per-card failures and print a structured failure detail list with plane ID, resolved name, and error reason at the end of each run.
+
+---
+
+title: Hide sets with zero cards
+status: complete
+description: Set selection should not display sets that currently resolve to zero playable cards.
+Resolution: Set option generation now derives only from playable cards and no longer injects zero-count defaults, so setup only shows sets that can produce playable planes.
+
+---
+
+title: Remove milestone/development progress UI from player-facing surfaces
+status: complete
+description: Any UI element showing current milestone or development progress should be moved out of the user-facing gameplay interface.
+Resolution: Removed the milestone subtitle from the main app header so player-facing UI no longer shows internal development progress text.
+
+---
+
+title: Move current state indicator out of Game Controls
+status: complete
+description: Current state indicator should not appear in the main Game Controls row; move it into the debug panel for now.
+Resolution: Removed the state chip from Game Controls and moved the current FSM state indicator into the debug panel body.
+
+---
+
+title: Add AGENTS guidance for "add new feature" documentation workflow
+status: complete
+description: AGENTS instructions should define how to handle "add new feature" requests: capture feature details, evaluate and surface gaps to the user, complete a clarification loop, then update docs in `docs/` when requirements are sufficiently defined.
+Resolution: Added a dedicated Feature Intake Workflow section to AGENTS.md covering requirement capture, gap analysis, clarification loop, and docs updates when feature details are implementation-ready.
+
+---
+
+title: Missing planes from Doctor Who and supplemental sets
+status: complete
+description: Plane cards from the Doctor Who set are missing, and there may be additional gaps across other supplemental plane sets that need ingestion/validation.
+Resolution: Expanded MTGJSON sync scope to include the `WHO` set and ran a reseed; `cards.json` now contains 36 Doctor Who planes (`who_planes=36`) and updated metadata for existing entries.
+
+---
+
+title: Improve modal rule readability and visual emphasis
+status: complete
+description: Modal does not convey rules information clearly at a glance; increase text size and redesign the modal experience to be more attention-grabbing while remaining readable.
+Resolution: Updated modal visuals with larger typography, stronger contrast, animated entry, and an attention bar to make rules content easier to scan and more visually prominent.
+
+---
+
+title: Add immediate dice roll feedback in UI
+status: complete
+description: Users need visible feedback when rolling the die beyond the event log, such as a transient popup/toast message that fades.
+Resolution: Added a transient roll-result toast (`CHAOS`, `PLANESWALK`, `BLANK`) that appears on die-resolution log events and fades automatically.

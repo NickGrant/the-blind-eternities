@@ -10,7 +10,15 @@ async function run() {
   const catalog = JSON.parse(cardsRaw);
   const planes = Array.isArray(catalog.planes) ? catalog.planes : [];
 
-  const setCodes = ["OPCA", "OPC2", "OHOP", "HOP", "PHOP"];
+  const setCodes = [
+    "OPCA",
+    "OPC2",
+    "OHOP",
+    "HOP",
+    "PHOP",
+    // Supplemental precon with Plane cards.
+    "WHO",
+  ];
   const allCards = [];
   for (const code of setCodes) {
     const cards = await fetchPlaneCardsFromSet(code);

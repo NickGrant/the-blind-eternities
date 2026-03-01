@@ -6,7 +6,6 @@
     
     <header class="header">
       <h1>Blind Eternities Planechase</h1>
-      <div class="subtitle">Milestone 6 - Hardening, Logging, and Error Paths</div>
 
       @if(hasFatal()) {
         <button class="reload" (click)="onReload()">
@@ -52,3 +51,7 @@
 </main>
 
 <app-modal-host></app-modal-host>
+
+@if (rollToast(); as toast) {
+  <div class="rollToast" [attr.data-toast-id]="toast.id">{{ toast.message }}</div>
+}

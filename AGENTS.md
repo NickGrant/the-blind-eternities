@@ -65,6 +65,12 @@ This file defines project-specific operating instructions for coding agents work
 - Move historical or superseded detail to archive docs.
 - When issue or milestone status changes, update only the minimum relevant active docs plus archive movement.
 
+## Feature Intake Workflow
+- If the user asks to "add new feature" (or equivalent), first capture the requested behavior, constraints, and success criteria.
+- Evaluate the request for gaps (rules, state flow, UX, data, error paths, and testability) and present concise clarification questions.
+- Complete the clarification loop until requirements are implementation-ready, or document that details are unknown.
+- When requirements are sufficiently defined, update the appropriate files in `docs/` to reflect the new feature scope, behavior, and delivery impact.
+
 ## Verification Matrix
 - UI behavior changes: run relevant unit tests and perform a brief manual UX sanity check.
 - Data/script pipeline changes: validate script output and verify expected artifact files exist.

@@ -18,6 +18,7 @@ import { DeckService } from "../core/deck.service";
           [attr.aria-describedby]="'modal-body-' + activeModal()!.id"
           tabindex="-1"
         >
+          <div class="attentionBar" aria-hidden="true"></div>
           <header>
             <h3 [id]="'modal-title-' + activeModal()!.id">{{ modalTitle() }}</h3>
             <div class="meta">
@@ -49,15 +50,21 @@ import { DeckService } from "../core/deck.service";
       }
       .modal {
         width: min(560px, 100%);
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        background: #0d1420;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background: linear-gradient(180deg, #111c2d 0%, #0a1320 100%);
         color: #f5f7fb;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-        padding: 16px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+        padding: 18px;
         display: grid;
-        gap: 12px;
+        gap: 14px;
         pointer-events: auto;
+        animation: modalPop 220ms ease-out;
+      }
+      .attentionBar {
+        height: 6px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #ffd166 0%, #ff7b54 50%, #ff4d6d 100%);
       }
       header {
         display: flex;
@@ -67,27 +74,40 @@ import { DeckService } from "../core/deck.service";
       }
       h3 {
         margin: 0;
-        font-size: 18px;
+        font-size: 22px;
+        letter-spacing: 0.01em;
       }
       .meta {
-        font-size: 12px;
+        font-size: 13px;
         opacity: 0.8;
       }
       p {
         margin: 0;
-        font-size: 14px;
+        font-size: 17px;
+        line-height: 1.5;
+        letter-spacing: 0.005em;
       }
       footer {
         display: flex;
         justify-content: flex-end;
       }
       button {
-        padding: 8px 12px;
+        padding: 9px 14px;
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.18);
         background: rgba(255, 255, 255, 0.08);
         color: inherit;
         cursor: pointer;
+      }
+      @keyframes modalPop {
+        from {
+          opacity: 0;
+          transform: translateY(-8px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
     `,
   ],

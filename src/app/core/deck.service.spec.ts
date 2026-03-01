@@ -39,7 +39,6 @@ describe("DeckService", () => {
 
     expect(a.drawPile.length).toBe(service.countPlayablePlanesForSets([]));
     expect(a).toEqual(b);
-    expect(a.drawPile).not.toContain("plane-ivy-lane");
   });
 
   it("lists available set options from playable cards", () => {
@@ -80,13 +79,20 @@ describe("DeckService", () => {
     ).toThrowError(/At least 5 playable planes/);
   });
 
-  it("always exposes planechase-family set options for setup UI", () => {
+  it("excludes set options that have zero playable cards", () => {
     const service = new DeckService();
-    const codes = new Set(service.listPlaneSetOptions().map((set) => set.code));
-    expect(codes.has("OPCA")).toBe(true);
-    expect(codes.has("OPC2")).toBe(true);
-    expect(codes.has("OHOP")).toBe(true);
-    expect(codes.has("HOP")).toBe(true);
-    expect(codes.has("PHOP")).toBe(true);
+    const sets = service.listPlaneSetOptions();
+
+    expect(sets.length).toBeGreaterThan(0);
+    expect(sets.every((set) => set.count > 0)).toBe(true);
+  });
+
+  it("includes Doctor Who set options when plane data exists", () => {
+    const service = new DeckService();
+    const sets = service.listPlaneSetOptions();
+
+    const who = sets.find((set) => set.code === "WHO");
+    expect(who).toBeDefined();
+    expect(who!.count).toBeGreaterThan(0);
   });
 });

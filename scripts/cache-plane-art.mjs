@@ -18,6 +18,8 @@ const run = async () => {
   let updatedFromDisk = 0;
   let fetched = 0;
   let failed = 0;
+  /** @type {{id: string, name: string, reason: string}[]} */
+  const failedEntries = [];
 
   for (const plane of planes) {
     if (!plane || typeof plane.id !== "string") continue;
@@ -45,6 +47,11 @@ const run = async () => {
 
     try {
       const card = await fetchScryfallCard(queryName);
+      if (!card) {
+        failed += 1;
+        failedEntries.push({ id: plane.id, name: queryName, reason: "Card lookup returned no result." });
+        continue;
+      }
       if (card?.oracle_text && typeof card.oracle_text === "string") {
         plane.rulesText = card.oracle_text.trim();
       }
@@ -52,6 +59,7 @@ const run = async () => {
       const imageUrl = uris.art_crop ?? uris.normal ?? uris.large ?? undefined;
       if (!imageUrl) {
         failed += 1;
+        failedEntries.push({ id: plane.id, name: queryName, reason: "Card record did not include a usable image URL." });
         continue;
       }
 
@@ -68,7 +76,7 @@ const run = async () => {
     } catch (error) {
       failed += 1;
       const message = error instanceof Error ? error.message : String(error);
-      console.warn(`[art-cache] Failed for "${queryName}": ${message}`);
+      failedEntries.push({ id: plane.id, name: queryName, reason: message });
     }
   }
 
@@ -81,6 +89,12 @@ const run = async () => {
   console.log(`[art-cache] Metadata updated from disk: ${updatedFromDisk}`);
   console.log(`[art-cache] Newly fetched this run: ${fetched}`);
   console.log(`[art-cache] Failed lookups/downloads: ${failed}`);
+  if (failedEntries.length > 0) {
+    console.log("[art-cache] Failure details:");
+    for (const entry of failedEntries) {
+      console.log(`  - ${entry.id} (${entry.name}): ${entry.reason}`);
+    }
+  }
 };
 
 run().catch((error) => {
