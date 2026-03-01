@@ -697,3 +697,11 @@ status: complete
 description: Modal drag behavior should be clamped to the visible viewport so users cannot drag the modal off-screen (top edge above viewport, bottom edge below viewport, or similarly out of horizontal bounds).
 Resolution: Modal drag now clamps pointer deltas against current panel bounds and viewport dimensions, preventing off-screen drag in any direction; added unit coverage for boundary clamping behavior.
 
+
+---
+
+title: Add game mode selection before session start (Regular Planechase vs Blind Eternities)
+status: complete
+description: Before starting a session, players should choose mode. Blind Eternities keeps current map-based implementation. Regular Planechase should show only one active plane at a time; when planeswalking resolves, replace the current plane with the next deck card instead of map movement flow.
+Resolution: Added setup-time game mode selection in control bar and threaded mode through start-session intent/state config; implemented regular-mode planeswalk flow to replace the active plane directly (single face-up center tile) while preserving existing Blind Eternities adjacency flow.
+

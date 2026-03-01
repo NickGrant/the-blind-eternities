@@ -15,6 +15,30 @@
         }
       </div>
     </div>
+
+    <div class="control-bar__set-picker">
+      <div class="control-bar__set-picker-title">Game Mode</div>
+      <div class="control-bar__set-options">
+        <label class="control-bar__set-option">
+          <input
+            type="radio"
+            name="game-mode"
+            [checked]="selectedGameMode() === GAME_MODE.BLIND_ETERNITIES"
+            (change)="setGameMode(GAME_MODE.BLIND_ETERNITIES)"
+          />
+          Blind Eternities
+        </label>
+        <label class="control-bar__set-option">
+          <input
+            type="radio"
+            name="game-mode"
+            [checked]="selectedGameMode() === GAME_MODE.REGULAR_PLANECHASE"
+            (change)="setGameMode(GAME_MODE.REGULAR_PLANECHASE)"
+          />
+          Regular Planechase
+        </label>
+      </div>
+    </div>
     <button type="button" class="control-bar__button" (click)="startSession()" [disabled]="!canStartSession()">
       Start Session
     </button>

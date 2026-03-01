@@ -43,6 +43,20 @@ Goal:
 Primary specification:
 - `docs/15-phenomenon-support-spec.md`
 
+### Milestone 9 - Play Modes and Player Onboarding
+
+Status: In progress
+
+Goal:
+- Add pre-session play-mode selection supporting:
+  - `Blind Eternities` (current map movement model)
+  - `Regular Planechase` (single active plane replacement model)
+- Add player-facing "How to Use" guidance accessible during normal play
+
+Primary scope source:
+- `ISSUES.md`
+- `docs/13-ux-behavior-spec.md`
+
 ## Change Policy
 
 Any scope or behavior change requires:

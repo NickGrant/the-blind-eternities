@@ -5,11 +5,15 @@ This addendum captures currently agreed runtime UX behavior.
 ## Session and Turn Flow
 
 - Session starts in setup state and transitions through bootstrap automatically.
+- Setup includes game mode selection:
+  - `Blind Eternities` (map-adjacency movement)
+  - `Regular Planechase` (single active plane replacement)
 - Dice roll from control bar resolves immediately (or via debug overrides in dev).
 - Planeswalk flow:
   - select highlighted adjacent plane
   - confirm move
   - movement completes automatically
+  - in `Regular Planechase`, planeswalk replaces the active plane directly and does not enter adjacency selection flow
 
 ## Map Interaction
 
@@ -34,3 +38,15 @@ This addendum captures currently agreed runtime UX behavior.
   - roll dice (chaos)
   - roll dice (planechase)
   - show hidden cards
+
+## Planned Additions
+
+### Player Help / How-To-Use
+
+- Non-dev users must have a visible "How to Use" entry point.
+- Help content should explain:
+  - how to start a session
+  - what roll outcomes do
+  - mode-specific movement/planeswalk behavior
+  - modal interactions
+  - what debug controls are (and that they may be hidden outside dev mode)

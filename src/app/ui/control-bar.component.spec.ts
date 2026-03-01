@@ -39,6 +39,23 @@ describe("ControlBarComponent (class-only)", () => {
     expect(intent.type).toBe("domain/start_session");
     if (intent.type === "domain/start_session") {
       expect(intent.includedSetCodes).toEqual(["OPCA"]);
+      expect(intent.gameMode).toBe("BLIND_ETERNITIES");
+    }
+  });
+
+  it("dispatches selected Regular Planechase mode when changed before start", () => {
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.setGameMode("REGULAR_PLANECHASE");
+    cmp.startSession();
+
+    const intent = dispatchMock.mock.calls[0][0];
+    expect(intent.type).toBe("domain/start_session");
+    if (intent.type === "domain/start_session") {
+      expect(intent.gameMode).toBe("REGULAR_PLANECHASE");
     }
   });
 

@@ -29,6 +29,32 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     );
   });
 
+  it("replaces active plane directly on planeswalk in regular planechase mode", () => {
+    const rolling = buildState("ROLLING");
+    rolling.config.gameMode = "REGULAR_PLANECHASE";
+    rolling.map.partyCoord = "0,0";
+    rolling.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "1,0": mkTile("1,0"),
+    };
+    rolling.deck.currentPlaneId = "plane-current";
+    rolling.deck.drawPile = ["plane-next", "plane-after"];
+    rolling.deck.discardPile = ["plane-old"];
+
+    const next = reduceSessionState(rolling, {
+      type: "domain/roll_resolved",
+      atMs: 10,
+      outcome: "planeswalk",
+    });
+
+    expect(next.fsm.state).toBe("MODAL_OPEN");
+    expect(next.deck.currentPlaneId).toBe("plane-next");
+    expect(next.deck.drawPile).toEqual(["plane-after"]);
+    expect(next.deck.discardPile).toEqual(["plane-old", "plane-current"]);
+    expect(Object.keys(next.map.tilesByCoord)).toEqual(["0,0"]);
+    expect(next.modal.active?.planeId).toBe("plane-next");
+  });
+
   it("opens landing modal when movement completes", () => {
     const moving = buildState("MOVING");
     moving.map.partyCoord = "0,0";
@@ -164,6 +190,7 @@ function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {
       decayDistance: 3,
       bootstrapRevealOrder: ["C", "N", "E", "S", "W"],
       ensurePlusEnabled: true,
+      gameMode: "BLIND_ETERNITIES",
     },
     rng: { seed: "seed-1", rollCount: 0 },
     deck: { drawPile: [], discardPile: [], currentPlaneId: "p:0,0" },

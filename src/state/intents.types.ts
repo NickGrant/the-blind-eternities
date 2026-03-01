@@ -45,6 +45,13 @@ export const MODAL_TYPE = {
 
 export type ModalType = (typeof MODAL_TYPE)[keyof typeof MODAL_TYPE];
 
+export const GAME_MODE = {
+  BLIND_ETERNITIES: "BLIND_ETERNITIES",
+  REGULAR_PLANECHASE: "REGULAR_PLANECHASE",
+} as const;
+
+export type GameMode = (typeof GAME_MODE)[keyof typeof GAME_MODE];
+
 export const DOMAIN_INTENT = {
   START_SESSION: "domain/start_session",
   RESTART_SESSION: "domain/restart_session",
@@ -74,6 +81,7 @@ export type DomainIntent =
       type: typeof DOMAIN_INTENT.START_SESSION;
       atMs: number;
       includedSetCodes?: string[];
+      gameMode?: GameMode;
       initialDeck?: {
         drawPile: string[];
         discardPile: string[];

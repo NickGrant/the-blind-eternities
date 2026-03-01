@@ -11,6 +11,8 @@ export type FsmState =
   | "MODAL_OPEN"
   | "ERROR";
 
+export type GameMode = "BLIND_ETERNITIES" | "REGULAR_PLANECHASE";
+
 export type SessionState = {
   meta: {
     version: number;
@@ -43,6 +45,7 @@ export type SessionState = {
     decayDistance: number;
     bootstrapRevealOrder: ("C" | "N" | "E" | "S" | "W")[];
     ensurePlusEnabled: boolean;
+    gameMode: GameMode;
   };
 
   rng: {

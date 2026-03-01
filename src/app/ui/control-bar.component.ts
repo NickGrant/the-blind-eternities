@@ -2,7 +2,7 @@ import { Component, Input, computed, signal } from "@angular/core";
 import { DeckService } from "../core/deck.service";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
-import { DOMAIN_INTENT } from "../../state/intents.types";
+import { DOMAIN_INTENT, GAME_MODE, type GameMode } from "../../state/intents.types";
 
 @Component({
   selector: "app-control-bar",
@@ -23,6 +23,7 @@ export class ControlBarComponent {
   }
 
   protected readonly DOMAIN_INTENT = DOMAIN_INTENT;
+  protected readonly GAME_MODE = GAME_MODE;
   readonly state;
   readonly fsmState = computed(() => this.state().fsm.state);
   readonly planeSets;
@@ -32,6 +33,7 @@ export class ControlBarComponent {
   readonly canStartSession = computed(() => this.selectedPlayableCount() >= this.minimumSessionPlanes);
   readonly showRollButton = computed(() => this.fsmState() === "IDLE" || this.rollToastVisibleState());
   readonly rollButtonDisabled = computed(() => this.rollToastVisibleState() || this.fsmState() !== "IDLE");
+  readonly selectedGameMode = signal<GameMode>(GAME_MODE.BLIND_ETERNITIES);
   readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
 
@@ -83,7 +85,12 @@ export class ControlBarComponent {
       type: DOMAIN_INTENT.START_SESSION,
       atMs: Date.now(),
       includedSetCodes: this.selectedSetCodes(),
+      gameMode: this.selectedGameMode(),
     });
+  }
+
+  setGameMode(mode: GameMode): void {
+    this.selectedGameMode.set(mode);
   }
 
   /**

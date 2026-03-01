@@ -49,7 +49,8 @@ export function initMapForSession(
     }),
   };
 
-  const ensured = state.config.ensurePlusEnabled
+  const gameMode = intent.gameMode ?? state.config.gameMode;
+  const ensured = state.config.ensurePlusEnabled && gameMode === "BLIND_ETERNITIES"
     ? ensurePlusBounded({
         tilesByCoord: tilesSeeded,
         partyCoord: centerKey,
@@ -78,6 +79,10 @@ export function initMapForSession(
 
   return {
     ...state,
+    config: {
+      ...state.config,
+      gameMode,
+    },
     deck: {
       ...state.deck,
       drawPile: [...dealt.drawPile],
@@ -244,6 +249,68 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     meta: {
       toCoord: partyCoord,
       decayRemoved: decayed.removed.length,
+    },
+  });
+}
+
+export function applyRegularPlaneswalk(state: SessionState, atMs: number): SessionState {
+  const current = state.deck.currentPlaneId;
+  const nextDeck = drawPlanesWithRecycle({
+    drawPile: state.deck.drawPile,
+    discardPile: current ? [...state.deck.discardPile, current] : state.deck.discardPile,
+    count: 1,
+    atMs,
+    seed: state.rng.seed,
+  });
+  const nextPlaneId = nextDeck.drawn[0] ?? current;
+  if (!nextPlaneId) return state;
+
+  const centerKey = "0,0";
+  const center = state.map.tilesByCoord[centerKey] ?? createTile({
+    coordKey: centerKey,
+    planeId: nextPlaneId,
+    atMs,
+    isFaceUp: true,
+  });
+
+  const tilesByCoord = {
+    [centerKey]: {
+      ...center,
+      planeId: nextPlaneId,
+      isFaceUp: true,
+      revealedAtMs: atMs,
+    },
+  };
+
+  const mapped = {
+    ...state,
+    deck: {
+      ...state.deck,
+      drawPile: [...nextDeck.drawPile],
+      discardPile: [...nextDeck.discardPile],
+      currentPlaneId: nextPlaneId,
+    },
+    map: {
+      ...state.map,
+      tilesByCoord,
+      partyCoord: centerKey,
+      highlights: { eligibleMoveCoords: [] },
+    },
+    ui: {
+      ...state.ui,
+      selections: {
+        ...(state.ui.selections ?? {}),
+        selectedCoord: undefined,
+      },
+    },
+  };
+
+  return appendLog(mapped, {
+    atMs,
+    level: "info",
+    message: "Regular Planechase planeswalk resolved.",
+    meta: {
+      currentPlaneId: nextPlaneId,
     },
   });
 }

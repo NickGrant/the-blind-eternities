@@ -4,7 +4,13 @@ import { isAdjacentCardinal, parseCoordKey } from "./map/coord";
 import { createNewSessionState } from "./session.factory";
 import { transition, withLastIntent, withRollCountIncremented } from "./reducer/fsm-core";
 import { appendLog } from "./reducer/logging";
-import { applyBootstrapReveal, applyMapPostMove, initMapForSession, setEligibleMoves } from "./reducer/map-flow";
+import {
+  applyBootstrapReveal,
+  applyMapPostMove,
+  applyRegularPlaneswalk,
+  initMapForSession,
+  setEligibleMoves,
+} from "./reducer/map-flow";
 import { closeModal, enqueueModal, toModalDescriptor } from "./reducer/modal-flow";
 
 type FsmState = SessionState["fsm"]["state"];
@@ -156,6 +162,16 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
         if (intent.outcome === DIE_OUTCOME.PLANESWALK) {
           const rolled = withRollCountIncremented(state);
           const logged = withRollOutcomeLogged(rolled, { atMs: intent.atMs, outcome: DIE_OUTCOME.PLANESWALK });
+          if (state.config.gameMode === "REGULAR_PLANECHASE") {
+            const advanced = applyRegularPlaneswalk(logged, intent.atMs);
+            const withModal = enqueueModal(advanced, {
+              id: `planeswalk_${intent.atMs}`,
+              type: "PLANE",
+              planeId: advanced.deck.currentPlaneId,
+              resumeToState: "IDLE",
+            });
+            return transition(withModal, "MODAL_OPEN", intent);
+          }
           const next = transition(logged, "AWAIT_MOVE", intent);
           return setEligibleMoves(next);
         }
