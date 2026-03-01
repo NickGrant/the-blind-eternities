@@ -37,7 +37,7 @@ describe("DeckService", () => {
     const a = service.createInitialDeck({ atMs: 123, seed: "seed-1" });
     const b = service.createInitialDeck({ atMs: 123, seed: "seed-1" });
 
-    expect(a.drawPile.length).toBeGreaterThanOrEqual(10);
+    expect(a.drawPile.length).toBe(service.countPlayablePlanesForSets([]));
     expect(a).toEqual(b);
     expect(a.drawPile).not.toContain("plane-ivy-lane");
   });
@@ -52,11 +52,19 @@ describe("DeckService", () => {
 
   it("filters deck creation by selected set codes", () => {
     const service = new DeckService();
-    const sets = service.listPlaneSetOptions();
-    const selected = sets.map((s) => s.code);
+    const selected = ["OPCA"];
     const deck = service.createInitialDeck({ atMs: 1, seed: "seed-1", includedSetCodes: selected });
+    const byId = new Map(service.listPlanes().map((plane) => [plane.id, plane] as const));
 
     expect(deck.drawPile.length).toBeGreaterThan(0);
+    expect(
+      deck.drawPile.every((id) => {
+        const plane = byId.get(id);
+        if (!plane) return false;
+        const codes = plane.setCodes?.length ? plane.setCodes : plane.setCode ? [plane.setCode] : [];
+        return codes.includes("OPCA");
+      })
+    ).toBe(true);
   });
 
   it("counts playable planes for selected sets", () => {
@@ -70,5 +78,15 @@ describe("DeckService", () => {
     expect(() =>
       service.createInitialDeck({ atMs: 1, seed: "seed-1", includedSetCodes: ["PHOP"] })
     ).toThrowError(/At least 5 playable planes/);
+  });
+
+  it("always exposes planechase-family set options for setup UI", () => {
+    const service = new DeckService();
+    const codes = new Set(service.listPlaneSetOptions().map((set) => set.code));
+    expect(codes.has("OPCA")).toBe(true);
+    expect(codes.has("OPC2")).toBe(true);
+    expect(codes.has("OHOP")).toBe(true);
+    expect(codes.has("HOP")).toBe(true);
+    expect(codes.has("PHOP")).toBe(true);
   });
 });

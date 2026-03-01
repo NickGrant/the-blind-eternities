@@ -1,4 +1,4 @@
-# Operational Considerations
+﻿# Operational Considerations
 
 This document captures **non-functional expectations, operational assumptions, and guardrails**
 for the Blind Eternities Planechase application.
@@ -130,7 +130,7 @@ No guarantees are made for:
 
 While the grid is conceptually infinite:
 - practical tile count is constrained by decay
-- expected active tiles ≤ ~50 at any time
+- expected active tiles <= ~50 at any time
 
 Performance optimizations should assume:
 - frequent pan/zoom
@@ -238,3 +238,4 @@ When in doubt, the system should prefer:
 
 If an operational decision risks slowing down a live game,
 it should be reconsidered.
+

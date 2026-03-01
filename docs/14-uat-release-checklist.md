@@ -1,4 +1,4 @@
-# UAT and Release Readiness Checklist
+﻿# UAT and Release Readiness Checklist
 
 Use this checklist before release candidate sign-off.
 

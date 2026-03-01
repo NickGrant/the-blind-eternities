@@ -1,4 +1,4 @@
-# Runtime Flow & Finite State Machine
+﻿# Runtime Flow & Finite State Machine
 
 ## Purpose
 This document defines the **runtime sequencing model** for the Blind Eternities Planechase application.
@@ -67,7 +67,7 @@ This prevents UI event noise from causing state corruption.
 When a modal is opened, the system transitions to **MODAL_OPEN** and stores a `resumeToState`.
 When the modal closes, the system transitions back to `resumeToState`.
 
-> Modal presentation must never “leak” additional transitions.
+> Modal presentation must never "leak" additional transitions.
 
 ---
 
@@ -134,3 +134,4 @@ When the modal closes, the system transitions back to `resumeToState`.
 - **Ensure-Plus** should be applied after movement (and also after bootstrap as needed) to maintain C/N/E/S/W adjacency.
 - **Decay** should be evaluated after movement resolution and map stabilization.
 - Modal queue behavior must ensure only **one modal is visible** at a time; additional modal triggers are queued.
+

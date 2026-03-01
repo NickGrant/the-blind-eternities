@@ -1,9 +1,9 @@
-# Testing Standards
+﻿# Testing Standards
 
 ## Goals
 - Catch regressions in core logic early.
 - Keep tests deterministic and fast.
-- Avoid coupling tests to Phaser rendering details (Milestone 0–5 constraint).
+- Avoid coupling tests to Phaser rendering details (Milestone 0-5 constraint).
 
 This project uses:
 - **Vitest** as the runner (Angular `@angular/build:unit-test`)
@@ -13,7 +13,7 @@ This project uses:
 ## File Naming & Location
 - All tests use `*.spec.ts`
 - Tests live beside the file they test:
-  - `src/app/core/fatal-error.store.ts` → `src/app/core/fatal-error.store.spec.ts`
+  - `src/app/core/fatal-error.store.ts` -> `src/app/core/fatal-error.store.spec.ts`
 
 ## Test Types & Required Coverage
 
@@ -25,8 +25,8 @@ Scope: pure logic, stores, services.
 
 Examples:
 - `FatalErrorStore.set/clear`
-- “config object built correctly”
-- “guards reject invalid input”
+- "config object built correctly"
+- "guards reject invalid input"
 
 ### 2) DOM Tests (Required for UI Components)
 Scope: Angular standalone components, templates, bindings, and conditional rendering.
@@ -76,3 +76,4 @@ Not required in v1 unless/until:
   - ensure-plus
   - decay
   - deck/reshuffle
+

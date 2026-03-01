@@ -1,4 +1,4 @@
-# Phenomenon Support Specification (Draft)
+﻿# Phenomenon Support Specification (Draft)
 
 This document defines the target behavior for adding Phenomenon card support.
 It is a planning/specification artifact and does not imply implementation is complete.

@@ -1,4 +1,4 @@
-# Definition of Ready (DoR)
+﻿# Definition of Ready (DoR)
 
 ## Purpose
 
@@ -10,7 +10,7 @@ If a work item does not meet the DoR, it **must not enter execution**.
 
 ---
 
-## A Work Item Is “Ready” When All of the Following Are True
+## A Work Item Is "Ready" When All of the Following Are True
 
 ### 1. Scope & Intent Are Clear
 - The goal of the work is explicitly stated.
@@ -94,3 +94,4 @@ If success cannot be observed, the work item is **not ready**.
 - DoR is checked **before starting work**
 - Items that fail DoR must be clarified, split, or re-scoped
 - DoR exists to prevent partial or speculative implementation
+

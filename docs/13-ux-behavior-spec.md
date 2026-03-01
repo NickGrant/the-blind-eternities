@@ -1,4 +1,4 @@
-# UX Behavior Specification
+﻿# UX Behavior Specification
 
 This addendum captures currently agreed runtime UX behavior.
 

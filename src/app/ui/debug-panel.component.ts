@@ -121,6 +121,9 @@ import { SessionStore } from "../core/session.store";
     `,
   ],
 })
+/**
+ * Development-only panel for deterministic/session diagnostics and debug actions.
+ */
 export class DebugPanelComponent {
   readonly collapsed = signal(true);
   readonly state;
@@ -139,30 +142,51 @@ export class DebugPanelComponent {
     this.state = this.sessionStore.state;
   }
 
+  /**
+   * Expands/collapses the panel.
+   */
   toggle(): void {
     this.collapsed.update((v) => !v);
   }
 
+  /**
+   * Dispatches a standard random die roll.
+   */
   rollRandom(): void {
     this.orchestrator.dispatch({ type: "domain/roll_die", atMs: Date.now() });
   }
 
+  /**
+   * Debug shortcut to start session from setup.
+   */
   startSession(): void {
     this.orchestrator.debugStartSession();
   }
 
+  /**
+   * Debug shortcut to restart and re-bootstrap a session.
+   */
   restartSession(): void {
     this.orchestrator.debugRestartSession();
   }
 
+  /**
+   * Forces chaos result.
+   */
   rollChaos(): void {
     this.orchestrator.debugRollForced("chaos");
   }
 
+  /**
+   * Forces planeswalk result.
+   */
   rollPlaneswalk(): void {
     this.orchestrator.debugRollForced("planeswalk");
   }
 
+  /**
+   * Reveals all hidden cards.
+   */
   showHiddenCards(): void {
     this.orchestrator.debugRevealAllCards();
   }

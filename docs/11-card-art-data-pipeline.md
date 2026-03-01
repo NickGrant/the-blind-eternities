@@ -1,4 +1,4 @@
-# Card and Art Data Pipeline
+﻿# Card and Art Data Pipeline
 
 This document defines how card metadata and art are maintained.
 

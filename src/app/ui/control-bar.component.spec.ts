@@ -21,9 +21,10 @@ describe("ControlBarComponent (class-only)", () => {
     const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
       dispatch: dispatchMock,
     };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets"> = {
+    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
       listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
       countPlayablePlanesForSets: () => 10,
+      getMinimumSessionPlanes: () => 5,
     };
 
     const cmp = new ControlBarComponent(
@@ -50,9 +51,10 @@ describe("ControlBarComponent (class-only)", () => {
     const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
       dispatch: dispatchMock,
     };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets"> = {
+    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
       listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
       countPlayablePlanesForSets: () => 10,
+      getMinimumSessionPlanes: () => 5,
     };
 
     const cmp = new ControlBarComponent(
@@ -71,6 +73,35 @@ describe("ControlBarComponent (class-only)", () => {
     }
   });
 
+  it("uses DeckService minimum threshold to gate session start", () => {
+    const initial = createNewSessionState({ atMs: 1 });
+    initial.fsm.state = "SETUP";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state"> = {
+      state: _state.asReadonly(),
+    };
+    const dispatchMock = vi.fn<(intent: DomainIntent) => void>();
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: dispatchMock,
+    };
+    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
+      listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 2, isPlanechaseDefault: true }],
+      countPlayablePlanesForSets: () => 2,
+      getMinimumSessionPlanes: () => 2,
+    };
+
+    const cmp = new ControlBarComponent(
+      orchestratorMock as SessionOrchestrator,
+      storeMock as SessionStore,
+      deckMock as DeckService
+    );
+
+    expect(cmp.canStartSession()).toBe(true);
+    cmp.startSession();
+    expect(dispatchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("does not start session when selected sets provide fewer than 5 planes", () => {
     const initial = createNewSessionState({ atMs: 1 });
     initial.fsm.state = "SETUP";
@@ -83,9 +114,10 @@ describe("ControlBarComponent (class-only)", () => {
     const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
       dispatch: dispatchMock,
     };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets"> = {
+    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
       listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 4, isPlanechaseDefault: true }],
       countPlayablePlanesForSets: () => 4,
+      getMinimumSessionPlanes: () => 5,
     };
 
     const cmp = new ControlBarComponent(
@@ -111,9 +143,10 @@ describe("ControlBarComponent (class-only)", () => {
     const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
       dispatch: dispatchMock,
     };
-    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets"> = {
+    const deckMock: Pick<DeckService, "listPlaneSetOptions" | "countPlayablePlanesForSets" | "getMinimumSessionPlanes"> = {
       listPlaneSetOptions: () => [{ code: "OPCA", label: "Planechase Anthology", count: 10, isPlanechaseDefault: true }],
       countPlayablePlanesForSets: () => 10,
+      getMinimumSessionPlanes: () => 5,
     };
 
     const cmp = new ControlBarComponent(

@@ -29,7 +29,7 @@ import { SessionStore } from "../core/session.store";
         <button type="button" (click)="startSession()" [disabled]="!canStartSession()">
           Start Session
         </button>
-        <span class="hint">Playable planes from selection: {{ selectedPlayableCount() }} (minimum 5).</span>
+        <span class="hint">Playable planes from selection: {{ selectedPlayableCount() }} (minimum {{ minimumSessionPlanes }}).</span>
       }
 
       @if (fsmState() === "IDLE") {
@@ -113,13 +113,17 @@ import { SessionStore } from "../core/session.store";
     `,
   ],
 })
+/**
+ * Renders primary session controls and pre-session set selection.
+ */
 export class ControlBarComponent {
   readonly state;
   readonly fsmState = computed(() => this.state().fsm.state);
   readonly planeSets;
+  readonly minimumSessionPlanes: number;
   readonly selectedSetCodes = computed(() => [...this.selectedSets()].sort());
   readonly selectedPlayableCount = computed(() => this.deckService.countPlayablePlanesForSets(this.selectedSetCodes()));
-  readonly canStartSession = computed(() => this.selectedPlayableCount() >= 5);
+  readonly canStartSession = computed(() => this.selectedPlayableCount() >= this.minimumSessionPlanes);
   private readonly selectedSets = signal<Set<string>>(new Set());
 
   constructor(
@@ -128,6 +132,7 @@ export class ControlBarComponent {
     private readonly deckService: DeckService
   ) {
     this.state = this.sessionStore.state;
+    this.minimumSessionPlanes = this.deckService.getMinimumSessionPlanes();
     const sets = this.deckService.listPlaneSetOptions();
     this.planeSets = signal(sets).asReadonly();
     const defaults = sets.filter((s) => s.isPlanechaseDefault).map((s) => s.code);
@@ -139,6 +144,9 @@ export class ControlBarComponent {
     return this.selectedSets().has(code);
   }
 
+  /**
+   * Toggles a set selection while enforcing at least one selected option.
+   */
   toggleSet(code: string): void {
     this.selectedSets.update((current) => {
       const next = new Set(current);
@@ -152,6 +160,9 @@ export class ControlBarComponent {
     });
   }
 
+  /**
+   * Dispatches a filtered start-session intent when selection is valid.
+   */
   startSession(): void {
     if (!this.canStartSession()) return;
     this.orchestrator.dispatch({
@@ -161,6 +172,9 @@ export class ControlBarComponent {
     });
   }
 
+  /**
+   * Quits current play and returns to setup selection state.
+   */
   quitSession(): void {
     this.orchestrator.dispatch({
       type: "domain/restart_session",
@@ -168,6 +182,9 @@ export class ControlBarComponent {
     });
   }
 
+  /**
+   * Dispatches standard control-bar intents.
+   */
   dispatch(type: "domain/roll_die" | "domain/confirm_move" | "domain/cancel_move" | "domain/restart_session"): void {
     this.orchestrator.dispatch({ type, atMs: Date.now() });
   }

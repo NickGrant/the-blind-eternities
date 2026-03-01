@@ -1,10 +1,11 @@
-# Contributor Runbook
+﻿# Contributor Runbook
 
 This runbook defines how to contribute safely and consistently.
 
 ## Primary Workflow Sources
 
-- `ISSUES.md`: active backlog and issue status
+- `ISSUES.md`: active backlog only
+- `ISSUES_ARCHIVE.md`: completed issue history
 - `ROLES.md`: role-specific behavior expectations
 - `AGENTS.md`: agent operating rules and file-loading behavior
 
@@ -18,7 +19,8 @@ This runbook defines how to contribute safely and consistently.
 4. Update `ISSUES.md`:
    - set status to `complete` when finished
    - append `Resolution:` line (1-2 sentences)
-   - if reopened, keep history and append another `Resolution:` line
+   - move completed entries to `ISSUES_ARCHIVE.md`
+   - if reopened, move issue back to `ISSUES.md` and append another `Resolution:` line when fixed again
 5. Commit code + doc changes together when behavior changed.
 
 ## Roles and Decision Boundaries

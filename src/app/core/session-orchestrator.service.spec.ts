@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { SessionOrchestrator } from "./session-orchestrator.service";
 import type { SessionStore } from "./session.store";
 import type { DeckService } from "./deck.service";
+import { DeckValidationError } from "./deck.service";
 import type { DieService } from "./die.service";
 import type { FatalErrorStore } from "./fatal-error.store";
 import { createNewSessionState } from "../../state/session.factory";
@@ -28,8 +29,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -77,8 +79,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -91,6 +94,45 @@ describe("SessionOrchestrator", () => {
 
     orchestrator.dispatch({ type: "domain/start_session", atMs: 100, includedSetCodes: ["OPCA"] });
     expect(receivedSets).toEqual(["OPCA"]);
+  });
+
+  it("clears prior fatal banner on successful start_session preparation", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "SETUP";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({
+        drawPile: ["plane-1", "plane-2", "plane-3", "plane-4", "plane-5", "plane-6"],
+        discardPile: [],
+      }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+
+    let clearCalls = 0;
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
+      set: () => void 0,
+      clear: () => {
+        clearCalls += 1;
+      },
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      false
+    );
+
+    orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
+    expect(clearCalls).toBe(1);
   });
 
   it("auto-resolves roll_die using DieService", () => {
@@ -114,8 +156,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "chaos",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -156,10 +199,11 @@ describe("SessionOrchestrator", () => {
     };
 
     let fatalCode = "";
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: (error) => {
         fatalCode = error.code;
       },
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -176,6 +220,50 @@ describe("SessionOrchestrator", () => {
     expect(fatalCode).toBe("CARD_DATA_INIT_FAILED");
     expect(next.fsm.state).toBe("ERROR");
     expect(next.fsm.context?.error?.code).toBe("CARD_DATA_INIT_FAILED");
+  });
+
+  it("keeps SETUP and surfaces validation banner for user-correctable start errors", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "SETUP";
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => {
+        throw new DeckValidationError("At least 5 playable planes are required to start a session.");
+      },
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+
+    let fatalCode = "";
+    let fatalMessage = "";
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
+      set: (error) => {
+        fatalCode = error.code;
+        fatalMessage = error.message;
+      },
+      clear: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      false
+    );
+
+    orchestrator.dispatch({ type: "domain/start_session", atMs: 100 });
+
+    expect(_state().fsm.state).toBe("SETUP");
+    expect(fatalCode).toBe("SESSION_VALIDATION_FAILED");
+    expect(fatalMessage).toContain("At least 5 playable planes");
   });
 
   it("auto-completes movement after confirm_move", () => {
@@ -210,8 +298,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -248,8 +337,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -282,8 +372,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -316,8 +407,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(
@@ -353,8 +445,9 @@ describe("SessionOrchestrator", () => {
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
     };
-    const fatalMock: Pick<FatalErrorStore, "set"> = {
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
       set: () => void 0,
+      clear: () => void 0,
     };
 
     const orchestrator = new SessionOrchestrator(

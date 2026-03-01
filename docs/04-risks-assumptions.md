@@ -1,4 +1,4 @@
-# Risks, Assumptions & Open Decisions
+﻿# Risks, Assumptions & Open Decisions
 
 ## Assumptions
 - Facilitator-only rules

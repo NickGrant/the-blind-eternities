@@ -9,6 +9,9 @@ import { closeModal, enqueueModal, toModalDescriptor } from "./reducer/modal-flo
 
 type FsmState = SessionState["fsm"]["state"];
 
+/**
+ * Appends a standard die-resolution log entry with current roll context.
+ */
 function withRollOutcomeLogged(
   state: SessionState,
   args: { atMs: number; outcome: "blank" | "chaos" | "planeswalk" }
@@ -24,6 +27,9 @@ function withRollOutcomeLogged(
   });
 }
 
+/**
+ * Canonical pure reducer for all domain intents.
+ */
 export function reduceSessionState(state: SessionState, intent: DomainIntent): SessionState {
   if (intent.type === "domain/restart_session") {
     const reset = createNewSessionState({

@@ -1,4 +1,4 @@
-# Assets Serving Troubleshooting
+﻿# Assets Serving Troubleshooting
 
 Use this guide when `/assets/...` files fail to load at runtime.
 

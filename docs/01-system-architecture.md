@@ -1,4 +1,4 @@
-# System Architecture & State Model
+﻿# System Architecture & State Model
 
 ## Overview
 This document describes the core technical architecture, state ownership model,
@@ -35,11 +35,11 @@ Phaser must never:
 
 ## Core Services
 
-- **SessionStore** — holds the canonical SessionState
-- **SessionOrchestrator** — the only component allowed to advance the FSM
-- **DeckService** — manages draw / discard / reshuffle behavior
-- **ModalQueueService** — enforces single-modal visibility and deterministic sequencing
-- **LogService** — records player-facing events
+- **SessionStore** - holds the canonical SessionState
+- **SessionOrchestrator** - the only component allowed to advance the FSM
+- **DeckService** - manages draw / discard / reshuffle behavior
+- **ModalQueueService** - enforces single-modal visibility and deterministic sequencing
+- **LogService** - records player-facing events
 
 ---
 
@@ -215,3 +215,4 @@ export type LogEntry = {
 Violations of these invariants are fatal errors.
 
 ---
+

@@ -1,15 +1,15 @@
-# Definition of Done (DoD)
+﻿# Definition of Done (DoD)
 
 ## Purpose
 
 The Definition of Done (DoD) determines whether completed work is **safe to build upon**,
 **consistent with system invariants**, and **trustworthy during live play**.
 
-A work item is not considered “done” until **all DoD criteria are met**.
+A work item is not considered "done" until **all DoD criteria are met**.
 
 ---
 
-## A Work Item Is “Done” When All of the Following Are True
+## A Work Item Is "Done" When All of the Following Are True
 
 ### 1. FSM Integrity Is Preserved
 - No illegal FSM transitions are possible.
@@ -81,7 +81,7 @@ After the change:
 - A basic turn can be completed (where applicable)
 - No new dead ends or blocked states are introduced
 
-“Technically correct but unusable” does **not** count as done.
+"Technically correct but unusable" does **not** count as done.
 
 ---
 
@@ -90,3 +90,4 @@ After the change:
 - DoD is checked **before marking work complete**
 - Repeated DoD failures indicate the task should be split or re-scoped
 - DoD exists to ensure long-term maintainability and table trust
+

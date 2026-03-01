@@ -1,4 +1,4 @@
-# Build-Time Data & Asset Pipeline
+﻿# Build-Time Data & Asset Pipeline
 
 ## Goals
 - Avoid runtime Scryfall calls

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { DEV_MODE } from "./dev-mode";
-import { DeckService } from "./deck.service";
+import { DeckService, DeckValidationError } from "./deck.service";
 import { DieService } from "./die.service";
 import { FatalErrorStore } from "./fatal-error.store";
 import type { DomainIntent } from "../../state/intents.types";
@@ -23,6 +23,9 @@ export class SessionOrchestrator {
     @Inject(DEV_MODE) private readonly devMode: boolean,
   ) {}
 
+  /**
+   * Injects system-sourced payloads before reducer handling.
+   */
   private prepareIntent(current: ReturnType<SessionStore["state"]>, intent: DomainIntent): DomainIntent {
     if (intent.type !== "domain/start_session") return intent;
 
@@ -36,6 +39,9 @@ export class SessionOrchestrator {
     };
   }
 
+  /**
+   * Applies a domain intent and commits resulting state transitions.
+   */
   dispatch(intent: DomainIntent): void {
     const current = this.store.state();
     let preparedIntent: DomainIntent = intent;
@@ -43,7 +49,16 @@ export class SessionOrchestrator {
     if (intent.type === "domain/start_session") {
       try {
         preparedIntent = this.prepareIntent(current, intent);
+        this.fatalErrorStore.clear();
       } catch (err) {
+        if (err instanceof DeckValidationError) {
+          this.fatalErrorStore.set({
+            code: "SESSION_VALIDATION_FAILED",
+            message: err.message,
+          });
+          return;
+        }
+
         const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
         this.fatalErrorStore.set({
           code: "CARD_DATA_INIT_FAILED",
@@ -117,6 +132,9 @@ export class SessionOrchestrator {
     }
   }
 
+  /**
+   * Forces a deterministic debug roll outcome.
+   */
   debugRollForced(outcome: "chaos" | "planeswalk"): void {
     if (!this.devMode) return;
     this.dispatch({
@@ -126,6 +144,9 @@ export class SessionOrchestrator {
     });
   }
 
+  /**
+   * Reveals all currently hidden cards for debugging.
+   */
   debugRevealAllCards(): void {
     if (!this.devMode) return;
     this.dispatch({
@@ -134,6 +155,9 @@ export class SessionOrchestrator {
     });
   }
 
+  /**
+   * Starts a session from setup when debug mode is enabled.
+   */
   debugStartSession(): void {
     if (!this.devMode) return;
     if (this.store.state().fsm.state !== "SETUP") return;
@@ -141,6 +165,9 @@ export class SessionOrchestrator {
     this.dispatch({ type: "domain/start_session", atMs: Date.now() });
   }
 
+  /**
+   * Resets state and immediately starts a fresh debug session.
+   */
   debugRestartSession(): void {
     if (!this.devMode) return;
     const atMs = Date.now();

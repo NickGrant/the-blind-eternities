@@ -42,6 +42,14 @@ const SET_LABELS: Record<string, string> = {
 const DEFAULT_PLANECHASE_SET_CODES = new Set(["OPCA", "OPC2", "OHOP", "HOP", "PHOP"]);
 const MIN_PLANES_PER_SESSION = 5;
 
+/**
+ * Indicates a user-correctable deck selection/configuration issue.
+ */
+export class DeckValidationError extends Error {}
+
+/**
+ * Reads local plane metadata and provides deterministic deck/set operations.
+ */
 @Injectable({ providedIn: "root" })
 export class DeckService {
   private readonly planes: PlaneCard[] = ((cardsCatalog as CardsCatalog).planes ?? [])
@@ -65,25 +73,40 @@ export class DeckService {
     (p) => typeof p.rulesText === "string" && p.rulesText.length > 0
   );
 
+  /**
+   * Returns all known planes from local catalog.
+   */
   listPlanes(): readonly PlaneCard[] {
     return this.planes;
   }
 
+  /**
+   * Returns the minimum number of playable planes required to start a session.
+   */
+  getMinimumSessionPlanes(): number {
+    return MIN_PLANES_PER_SESSION;
+  }
+
+  /**
+   * Counts playable planes that match at least one selected set code.
+   */
   countPlayablePlanesForSets(includedSetCodes: readonly string[]): number {
     const include = new Set(includedSetCodes.map((code) => code.trim()).filter((code) => code.length > 0));
     if (include.size === 0) return this.playablePlanes.length;
 
     return this.playablePlanes.filter((plane) => {
-      const codes =
-        (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+      const codes = this.resolvePlaneSetCodes(plane);
       return codes.some((code) => include.has(code));
     }).length;
   }
 
+  /**
+   * Returns selectable set options with playable counts and default flags.
+   */
   listPlaneSetOptions(): readonly PlaneSetOption[] {
     const counts = new Map<string, number>();
     this.playablePlanes.forEach((plane) => {
-      const codes = (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+      const codes = this.resolvePlaneSetCodes(plane);
       const uniqueCodes = [...new Set(codes)];
       uniqueCodes.forEach((code) => {
         counts.set(code, (counts.get(code) ?? 0) + 1);
@@ -104,11 +127,17 @@ export class DeckService {
       .sort((a, b) => a.code.localeCompare(b.code));
   }
 
+  /**
+   * Returns metadata for a plane id.
+   */
   getPlane(id: string | undefined): PlaneCard | undefined {
     if (!id) return undefined;
     return this.planesById.get(id);
   }
 
+  /**
+   * Returns display name for a plane id.
+   */
   getPlaneName(id: string | undefined): string | undefined {
     const plane = this.getPlane(id);
     if (plane?.name) return plane.name;
@@ -116,10 +145,16 @@ export class DeckService {
     return this.humanizePlaneId(id);
   }
 
+  /**
+   * Returns chaos text for a plane if present.
+   */
   getPlaneChaosText(id: string | undefined): string | undefined {
     return this.getPlane(id)?.chaosText;
   }
 
+  /**
+   * Returns rules text for modals, falling back to chaos text when needed.
+   */
   getPlaneRulesText(id: string | undefined): string | undefined {
     const plane = this.getPlane(id);
     if (!plane) return undefined;
@@ -127,11 +162,17 @@ export class DeckService {
     return plane.chaosText;
   }
 
+  /**
+   * Returns card art URL for a plane if present.
+   */
   getPlaneArtUrl(id: string | undefined): string | undefined {
     const art = this.getPlane(id)?.artUrl;
     return art?.trim() || undefined;
   }
 
+  /**
+   * Creates deterministic draw/discard piles for a new session.
+   */
   createInitialDeck(args: {
     atMs: number;
     seed?: string;
@@ -141,17 +182,16 @@ export class DeckService {
     const sourcePlanes =
       include.size > 0
         ? this.playablePlanes.filter((plane) => {
-            const codes =
-              (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+            const codes = this.resolvePlaneSetCodes(plane);
             return codes.some((code) => include.has(code));
           })
         : this.playablePlanes;
 
     if (include.size > 0 && sourcePlanes.length === 0) {
-      throw new Error("No playable cards matched the selected set filters.");
+      throw new DeckValidationError("No playable cards matched the selected set filters.");
     }
     if (sourcePlanes.length < MIN_PLANES_PER_SESSION) {
-      throw new Error(`At least ${MIN_PLANES_PER_SESSION} playable planes are required to start a session.`);
+      throw new DeckValidationError(`At least ${MIN_PLANES_PER_SESSION} playable planes are required to start a session.`);
     }
 
     if (this.playablePlanes.length === 0) {
@@ -165,6 +205,16 @@ export class DeckService {
     });
   }
 
+  /**
+   * Resolves all set codes associated with a plane entry.
+   */
+  private resolvePlaneSetCodes(plane: PlaneCard): string[] {
+    return (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+  }
+
+  /**
+   * Converts a slug id into a human-readable title.
+   */
   private humanizePlaneId(id: string): string {
     const base = id.startsWith("plane-") ? id.slice("plane-".length) : id;
     return base
