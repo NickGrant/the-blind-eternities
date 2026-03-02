@@ -1102,3 +1102,221 @@ description: Replace current Phaser theme background SVG files with raster art a
 - remove legacy SVG background files after raster migration is validated
 Resolution: Completed raster migration by normalizing theme PNG naming/mapping, deleting legacy SVGs, and replacing tiling behavior with viewport-fit background rendering. Added npm-native optimization flow (`assets:optimize:themes` and `assets:optimize:themes:dry`) backed by `sharp` and reduced theme background total size from 10.43 MB to 3.53 MB (66.11% saved).
 
+---
+
+title: Reduce initial bundle pressure by lazy-loading card catalog data
+status: complete
+priority: high
+description: `DeckService` currently imports `src/assets/cards.json` directly into the application bundle, increasing initial JS payload and parse time. Move catalog loading to runtime asset fetch (or equivalent lazy mechanism) with caching/error handling to reduce startup cost and improve scalability as card data grows.
+Resolution: Refactored deck catalog loading to runtime fetch via `DeckService.loadCatalog()` and wired app startup with an `APP_INITIALIZER` so the catalog loads before UI usage. Production build `main` bundle dropped from 1.59 MB to 1.51 MB raw.
+
+---
+
+title: Disable zoom controls when no cards are present on canvas
+status: complete
+priority: medium
+description: Zoom in/out controls should be disabled when there are no rendered cards/tiles on the Phaser canvas to avoid non-functional interactions and reduce user confusion.
+Resolution: Added zoom-control gating in `MapScene` so HUD controls become visually disabled and non-interactive when no tiles are rendered; zoom actions now no-op until cards are present.
+
+---
+
+title: Move set card counts to hover tooltips and validate counts include all cards
+status: complete
+priority: medium
+description: In Deck Sets selection, remove always-visible per-set count text from button labels and show counts on hover/focus tooltip instead. Validate that displayed counts represent all playable cards in the selected set scope (planes plus any other supported card types), not planes-only counts.
+Resolution: Removed inline count text from set buttons, added hover/focus tooltip text for playable card totals, and updated set-option counting logic to use all playable cards (planes plus supported non-plane card types) rather than planes-only.
+
+---
+
+title: Align playable planes helper text with Deck Sets label and stack on mobile
+status: complete
+priority: medium
+description: Update Deck Sets header layout so helper text (playable planes minimum summary) appears on the same horizontal row as the `Deck Sets` label and is right-justified on desktop. On mobile, collapse to a stacked layout with label on top and helper text below.
+Resolution: Reworked Deck Sets header into a desktop row with right-justified helper text and added a mobile breakpoint that stacks label and helper text vertically.
+
+---
+
+title: Add application-appropriate favicon
+status: complete
+priority: medium
+description: Replace the default favicon with a project-appropriate icon for Blind Eternities Planechase and ensure it is wired correctly for local/dev and production (including GitHub Pages) builds.
+Resolution: Added a custom app-specific SVG favicon in `public/favicon.svg` and wired it in `index.html`, replacing the default Angular favicon reference.
+
+---
+
+title: Improve page title and SEO meta tags
+status: complete
+priority: medium
+description: Update the app document head with a stronger, product-appropriate page title and core SEO/social metadata (description, Open Graph, and related tags) for better discoverability and share previews.
+Resolution: Updated `index.html` with a product-specific page title and added SEO/social metadata including description, keywords, Open Graph fields, and Twitter card tags.
+
+---
+
+title: No art shown for phenomenon cards
+status: complete
+priority: medium
+description: Phenomenon cards currently do not render dedicated art in gameplay/modals. Ensure phenomenon entries can resolve and display art assets consistently with plane card art behavior.
+Resolution: Extended art caching to process both planes and phenomena, then fetched missing phenomenon art with throttling (`--delay-ms=10000`) and updated `cards.json` art URLs. Current run fetched 12 phenomenon images with 0 failures.
+
+---
+
+title: No modal rules text shown for phenomenon cards
+status: complete
+priority: medium
+description: When phenomenon cards are surfaced, modal content should include the phenomenon rules text. Add phenomenon-aware modal text resolution and fallback handling similar to plane modals.
+Resolution: Updated modal text resolution to use card-type agnostic deck lookups so phenomenon modals now pull rules text from catalog data the same as plane cards.
+
+---
+
+title: Combine Fog of War and Optional Rules into one settings box with stacked switches
+status: complete
+priority: medium
+description: Merge the separate `Fog of War` and `Optional Rules` setup boxes into a single settings section. Keep Fog of War enabled by default, shorten Fog of War label text, and render both switches vertically stacked for clearer layout.
+Resolution: Merged both toggles into a single `Rules` setup box, shortened Fog of War copy to `Reveal nearby cards`, retained default-on behavior, and enforced vertical switch stacking in control-bar layout styles.
+
+---
+
+title: Remove spacing between button-group buttons
+status: complete
+priority: medium
+description: Button groups should render as contiguous segmented controls with no visual gap between adjacent buttons, matching Bootstrap button-group expectations.
+Resolution: Removed internal gap/wrapping spacing from button-group option rows so grouped controls render as contiguous segmented buttons.
+
+---
+
+title: Add contrast/accessibility regression checks for themed UI variants
+status: complete
+priority: medium
+description: Theme changes have repeatedly introduced readability regressions. Add repeatable accessibility checks (manual checklist and/or automated lint/test gate) for color contrast and text legibility across all supported themes, especially for Bootstrap component variants.
+Resolution: Added automated contrast validation via `npm run test:contrast` (`scripts/check-theme-contrast.mjs`) and integrated the command into contributor verification guidance for theme-sensitive UI work.
+
+---
+
+title: Add quality guardrails for PNG optimization workflow
+status: complete
+priority: low
+description: The new PNG optimization flow is effective but currently has no quality guardrails. Add configurable quality presets, before/after reporting artifact output, and an optional visual-regression step to ensure aggressive compression does not degrade background art beyond acceptable thresholds.
+Resolution: Extended `optimize-theme-backgrounds.mjs` with configurable quality/effort args, RMSE threshold enforcement (`--max-rmse`), and JSON reporting (`--report`), then added `assets:optimize:themes:guardrail` for repeatable dry-run quality gating.
+
+---
+
+title: Document asset optimization workflow in project docs index/runbook
+status: complete
+priority: low
+description: Add documentation for `assets:optimize:themes` and `assets:optimize:themes:dry` (when to run, expected outputs, and commit expectations) in active docs so release prep and contributor workflows stay consistent.
+Resolution: Documented optimization and guardrail commands plus recommended run order/usage in `docs/10-contributor-runbook.md` and `docs/11-card-art-data-pipeline.md`.
+
+---
+
+title: Refactor MapScene into smaller domain-focused collaborators
+status: complete
+priority: medium
+description: `src/phaser/scenes/map.scene.ts` has grown into a large multi-responsibility class (theme sync, background loading, camera controls, tile rendering, pointer interactions, art loading, zoom HUD). Split into focused collaborators/services to reduce cognitive load, improve testability, and lower regression risk during gameplay/UI changes.
+Resolution: Extracted theme and palette definitions into `map-theme.ts` and separated zoom HUD behavior into `MapZoomHud` (`map-zoom-hud.ts`), reducing direct UI/controller responsibilities inside `MapScene` while preserving existing rendering behavior.
+
+---
+
+title: Consolidate duplicated theme mappings between Phaser bootstrap and scene/theme tokens
+status: complete
+priority: medium
+description: Theme color/theme-id mapping logic is currently duplicated across `src/styles.scss`, `src/phaser/scenes/map.scene.ts`, and `src/phaser/phaser-bootstrap.service.ts`. Extract shared theme metadata into a single source of truth to prevent drift and inconsistent fallback behavior between app shell and Phaser bootstrap.
+Resolution: Added shared runtime theme config in `map-theme.ts` (theme IDs, palettes, background assets, bootstrap background colors) and switched both `MapScene` and `PhaserBootstrapService` to read from the shared module.
+
+---
+
+title: Update Fog of War helper label text to include "on move"
+status: complete
+priority: medium
+description: In session setup, update the user-facing Fog of War switch label so it ends with `on move` (for example, `Reveal nearby cards on move`) to clarify that reveal behavior is movement-triggered.
+Resolution: Updated the setup rules switch label copy to `Reveal nearby cards on move` for explicit movement-triggered behavior wording.
+
+---
+
+title: Make setup option boxes equal size in row and preserve Start Session button height
+status: complete
+priority: medium
+description: Adjust flex/layout rules for the row containing `Deck Sets`, `Game Mode`, and `Rules` boxes so those boxes render at equal visual size. Preserve current Start Session button height and alignment; if needed, wrap button in a container so equal-height box behavior does not regress button sizing.
+Resolution: Added a dedicated setup row layout container with equal-flex option boxes and a separate action container for Start Session, keeping the button height stable while normalizing setup box sizing across desktop/mobile layouts.
+
+---
+
+title: "Esc" text in How to Use does not match theme contrast rules
+status: complete
+priority: medium
+description: Update the `<kbd>` Esc styling in the How to Use section so text/background contrast follows the same theme readability standards as surrounding instructional copy.
+Resolution: Increased `<kbd>` token contrast by setting stronger foreground color, font weight, and darker themed background mix so Esc styling aligns with theme readability standards.
+
+---
+
+title: Stack game control sections vertically on md viewport
+status: complete
+priority: medium
+description: At medium viewport widths, game control sections should stack vertically instead of staying in a horizontal row to improve readability and prevent cramped controls.
+Resolution: Added a medium-breakpoint layout rule (`max-width: 980px`) that stacks setup control sections vertically while preserving full-width action alignment for consistent readability.
+
+---
+
+title: Keep button-group button heights consistent when labels wrap
+status: complete
+priority: medium
+description: In setup button groups, all buttons in the same group should maintain equal height even when one or more labels wrap to multiple lines.
+Resolution: Updated button-group button styling to use consistent min-height and centered inline-flex alignment with wrapped label support, keeping all segmented buttons at matching heights within each group.
+reason-reopened: Button heights are still not equal; likely missing flex behavior that makes each grouped button stretch to matching vertical size.
+Resolution: Updated grouped controls to `align-items: stretch` and enforced stretch behavior on visible `.btn` siblings of `.btn-check`, keeping wrapped labels while normalizing button heights within each group.
+
+---
+
+title: Move setup-box vertical stacking breakpoint to lg
+status: complete
+priority: medium
+description: Adjust responsive layout so setup control boxes switch to vertical stacking at the `lg` breakpoint instead of the current breakpoint.
+Resolution: Moved setup-row stacking rule from `max-width: 980px` to `max-width: 992px` (Bootstrap `lg` threshold), keeping Start Session sizing/alignment intact in stacked mode.
+
+---
+
+title: Set selector button group is too wide on smaller screens
+status: complete
+priority: medium
+description: The Deck Sets control uses a segmented button-group layout that forces an overly wide minimum width. Replace this with a wrap-friendly selector pattern so set choices remain usable on smaller screens without horizontal pressure.
+Resolution: Replaced the Deck Sets segmented button-group with a responsive wrapping grid of independent toggle buttons, preserving selection behavior while allowing clean wrapping at narrow widths.
+
+---
+
+title: Start Session button should be taller when full width
+status: complete
+priority: medium
+description: When the setup row stacks and Start Session becomes full-width, increase its vertical size so it maintains prominence and touch ergonomics.
+Resolution: Added stacked-layout sizing rules so the full-width Start Session button gets a larger minimum height at the `lg` stack breakpoint.
+
+---
+
+title: Keep Deck Sets buttons equal height in stacked grid layout
+status: complete
+priority: medium
+description: After introducing the responsive Deck Sets grid, button heights can diverge when labels have different line counts (for example `Planechase` versus longer names). Ensure set buttons in the same row/stack maintain equal visual height.
+Resolution: Updated the set-grid layout to use equal row sizing and made each set option a full-height flex item so all set buttons in the same grid row remain visually equal height.
+
+---
+
+title: Prevent Game Mode button height growth during viewport resize
+status: complete
+priority: medium
+description: Game Mode segmented buttons currently become too tall during some resize ranges. Button height should remain stable across viewport changes and only increase when label wrapping requires equal-height adjustment within the group.
+Resolution: Stopped resize-driven stretching by top-aligning the segmented control container and keeping game mode buttons at content-driven height, while preserving equal height behavior when labels wrap.
+
+---
+
+title: Top-align content inside Game Mode and Rules setup containers
+status: complete
+priority: medium
+description: The content inside the `Game Mode` and `Rules` setup boxes should align to the top edge of their containers for consistent vertical rhythm with neighboring setup boxes.
+Resolution: Applied top content alignment to setup picker grids so the Game Mode and Rules sections anchor to the top rather than stretching vertically.
+
+---
+
+title: Increase switch control height for better usability
+status: complete
+priority: medium
+description: Setup switches are currently too short. Increase switch/control height (and matching label alignment) to improve readability and touch ergonomics.
+Resolution: Increased switch input dimensions and tightened label alignment/line-height so setup switches have larger click targets and improved readability.
+

@@ -26,65 +26,37 @@
 
 ### Functional
 
-title: Add application-appropriate favicon
-status: unstarted
-priority: medium
-description: Replace the default favicon with a project-appropriate icon for Blind Eternities Planechase and ensure it is wired correctly for local/dev and production (including GitHub Pages) builds.
-
----
-
-title: Improve page title and SEO meta tags
-status: unstarted
-priority: medium
-description: Update the app document head with a stronger, product-appropriate page title and core SEO/social metadata (description, Open Graph, and related tags) for better discoverability and share previews.
-
----
-
-title: Refactor MapScene into smaller domain-focused collaborators
-status: unstarted
-priority: medium
-description: `src/phaser/scenes/map.scene.ts` has grown into a large multi-responsibility class (theme sync, background loading, camera controls, tile rendering, pointer interactions, art loading, zoom HUD). Split into focused collaborators/services to reduce cognitive load, improve testability, and lower regression risk during gameplay/UI changes.
-
----
-
-title: Consolidate duplicated theme mappings between Phaser bootstrap and scene/theme tokens
-status: unstarted
-priority: medium
-description: Theme color/theme-id mapping logic is currently duplicated across `src/styles.scss`, `src/phaser/scenes/map.scene.ts`, and `src/phaser/phaser-bootstrap.service.ts`. Extract shared theme metadata into a single source of truth to prevent drift and inconsistent fallback behavior between app shell and Phaser bootstrap.
-
----
-
-title: Reduce initial bundle pressure by lazy-loading card catalog data
+title: Add lint/type-style quality gate to prevent regressions
 status: unstarted
 priority: high
-description: `DeckService` currently imports `src/assets/cards.json` directly into the application bundle, increasing initial JS payload and parse time. Move catalog loading to runtime asset fetch (or equivalent lazy mechanism) with caching/error handling to reduce startup cost and improve scalability as card data grows.
+description: The project currently relies on tests/build only and has no lint command in package scripts. Add a lint gate (and optional formatting check) wired into local verification and CI to catch maintainability and style regressions early.
 
 ---
 
-title: Add contrast/accessibility regression checks for themed UI variants
+title: Split ControlBarComponent into setup and in-session subcomponents
 status: unstarted
 priority: medium
-description: Theme changes have repeatedly introduced readability regressions. Add repeatable accessibility checks (manual checklist and/or automated lint/test gate) for color contrast and text legibility across all supported themes, especially for Bootstrap component variants.
+description: `ControlBarComponent` is handling setup config, active play controls, quit-confirm flow, and help content in one class/template. Refactor into smaller focused components to reduce coupling and simplify long-term maintenance.
 
 ---
 
-title: Add quality guardrails for PNG optimization workflow
+title: Add a repeatable UAT smoke test workflow for core gameplay loop
 status: unstarted
-priority: low
-description: The new PNG optimization flow is effective but currently has no quality guardrails. Add configurable quality presets, before/after reporting artifact output, and an optional visual-regression step to ensure aggressive compression does not degrade background art beyond acceptable thresholds.
+priority: high
+description: There is no automated or scripted browser smoke test that covers start session -> roll die -> move/resolve -> modal close across both Blind Eternities and Planechase modes. Add a repeatable UAT smoke flow and document pass criteria.
 
 ---
 
-title: Document asset optimization workflow in project docs index/runbook
-status: unstarted
-priority: low
-description: Add documentation for `assets:optimize:themes` and `assets:optimize:themes:dry` (when to run, expected outputs, and commit expectations) in active docs so release prep and contributor workflows stay consistent.
-
----
-
-title: Disable zoom controls when no cards are present on canvas
+title: Add card-art coverage report to data pipeline
 status: unstarted
 priority: medium
-description: Zoom in/out controls should be disabled when there are no rendered cards/tiles on the Phaser canvas to avoid non-functional interactions and reduce user confusion.
+description: The team does not have a single command that reports total playable cards, cached art count, and missing-art IDs by type/set. Add an artifact coverage report script to reduce uncertainty about when image fetching is complete.
 
 ---
+
+### Documentation
+
+title: Update docs to reflect fog-of-war values 0/1 and current setup UX
+status: unstarted
+priority: high
+description: Several active docs still reference legacy fog values (`1`/`2`) and outdated profile wording. Update delivery/runtime/UX/article-alignment docs to match implemented `0/1` behavior and current setup labels.
