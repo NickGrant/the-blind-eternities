@@ -1,0 +1,51 @@
+@if (showRollButton) {
+  <button type="button" class="btn btn-primary control-bar__button-slot" [disabled]="rollButtonDisabled" (click)="emitAction(DOMAIN_INTENT.ROLL_DIE)">
+    Roll Die
+  </button>
+}
+
+@if (fsmState === "AWAIT_MOVE") {
+  <button
+    type="button"
+    class="btn btn-outline-secondary control-bar__button-slot"
+    (click)="emitAction(DOMAIN_INTENT.CANCEL_MOVE)"
+  >
+    Cancel Move
+  </button>
+  <span class="control-bar__hint">Click a highlighted plane to select movement.</span>
+  <span class="control-bar__hint">Teal highlights are Hellride diagonal options.</span>
+}
+
+@if (fsmState === "CONFIRM_MOVE") {
+  <button type="button" class="btn btn-primary control-bar__button-slot" (click)="emitAction(DOMAIN_INTENT.CONFIRM_MOVE)">
+    Confirm Move
+  </button>
+  <button
+    type="button"
+    class="btn btn-outline-secondary control-bar__button-slot"
+    (click)="emitAction(DOMAIN_INTENT.CANCEL_MOVE)"
+  >
+    Back
+  </button>
+}
+
+@if (fsmState === "ERROR") {
+  <button type="button" class="btn btn-primary control-bar__button-slot" (click)="emitAction(DOMAIN_INTENT.RESTART_SESSION)">
+    Restart Session
+  </button>
+}
+
+@if (fsmState !== "SETUP") {
+  @if (isQuitConfirming) {
+    <button type="button" class="btn btn-danger control-bar__button-slot" (click)="quitSession.emit()">
+      Confirm Quit
+    </button>
+    <button type="button" class="btn btn-outline-secondary control-bar__button-slot" (click)="cancelQuitSession.emit()">
+      Keep Playing
+    </button>
+  } @else {
+    <button type="button" class="btn btn-outline-secondary control-bar__button-slot" (click)="quitSession.emit()">
+      Quit Session
+    </button>
+  }
+}

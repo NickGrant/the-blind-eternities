@@ -271,6 +271,50 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     const phase = next.log.entries.find((entry) => entry.message === "Phase: phenomenon_resolve");
     expect(phase?.meta?.["phenomenonReplaceCount"]).toBe(1);
   });
+
+  it("keeps entered destination plane active before phenomenon replacement finalization", () => {
+    const moving = buildState("MOVING");
+    moving.map.partyCoord = "0,0";
+    moving.config.ensurePlusEnabled = false;
+    moving.config.fogOfWarDistance = 0;
+    moving.deck.drawPile = ["phenomenon-spatial-merging", "plane-fill-replacement"];
+    moving.deck.cardTypesById = {
+      "phenomenon-spatial-merging": "PHENOMENON",
+      "plane-fill-replacement": "PLANE",
+      "plane-entered": "PLANE",
+    };
+    moving.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "1,0": { ...mkTile("1,0", false), planeId: "plane-entered" },
+      "0,1": { ...mkTile("0,1", false), planeId: "plane@0,1" },
+    };
+    moving.fsm.context = {
+      pendingMove: { fromCoord: "0,0", toCoord: "1,0" },
+    };
+
+    const next = reduceSessionState(moving, {
+      type: "domain/movement_complete",
+      atMs: 80,
+    });
+
+    expect(next.fsm.state).toBe("MODAL_OPEN");
+    expect(next.deck.currentPlaneId).toBe("plane-entered");
+    expect(next.modal.active?.planeId).toBe("plane-entered");
+    expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-fill-replacement");
+
+    const phaseMessages = next.log.entries.slice(-4).map((entry) => entry.message);
+    expect(phaseMessages).toEqual([
+      "Phase: move",
+      "Phase: board_fill",
+      "Phase: phenomenon_resolve",
+      "Movement completed.",
+    ]);
+    const movePhase = next.log.entries.find((entry) => entry.message === "Phase: move");
+    const phenomenonPhase = next.log.entries.find((entry) => entry.message === "Phase: phenomenon_resolve");
+    expect((movePhase?.meta?.["phaseIndex"] as number | undefined) ?? 0).toBeLessThan(
+      (phenomenonPhase?.meta?.["phaseIndex"] as number | undefined) ?? 0
+    );
+  });
 });
 
 function buildState(fsmState: SessionState["fsm"]["state"]): SessionState {

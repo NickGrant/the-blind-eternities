@@ -43,5 +43,4 @@ When movement resolves in Blind Eternities:
 
 ## Open Follow-Up (Tracked in ISSUES)
 
-- Replace ID-prefix phenomenon detection with explicit card-type metadata.
 - Validate exact enter-plane effect ordering with acceptance tests tied to article matrix.

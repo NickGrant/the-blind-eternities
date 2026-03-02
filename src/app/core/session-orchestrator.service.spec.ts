@@ -1,4 +1,4 @@
-﻿import { signal } from "@angular/core";
+import { signal } from "@angular/core";
 import { describe, expect, it } from "vitest";
 
 import { SessionOrchestrator } from "./session-orchestrator.service";
@@ -29,6 +29,7 @@ describe("SessionOrchestrator", () => {
       createInitialDeck: () => ({
         drawPile: ["plane-1", "plane-2", "plane-3", "plane-4", "plane-5", "plane-6"],
         discardPile: [],
+        cardTypesById: {},
       }),
     };
     const dieMock: Pick<DieService, "roll"> = {
@@ -78,6 +79,7 @@ describe("SessionOrchestrator", () => {
         return {
           drawPile: ["plane-1", "plane-2", "plane-3", "plane-4", "plane-5", "plane-6"],
           discardPile: [],
+          cardTypesById: {},
         };
       },
     };
@@ -114,6 +116,7 @@ describe("SessionOrchestrator", () => {
       createInitialDeck: () => ({
         drawPile: ["plane-1", "plane-2", "plane-3", "plane-4", "plane-5", "plane-6"],
         discardPile: [],
+        cardTypesById: {},
       }),
     };
     const dieMock: Pick<DieService, "roll"> = {
@@ -156,7 +159,7 @@ describe("SessionOrchestrator", () => {
     };
 
     const deckMock: Pick<DeckService, "createInitialDeck"> = {
-      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+      createInitialDeck: () => ({ drawPile: [], discardPile: [], cardTypesById: {} }),
     };
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "chaos",
@@ -298,7 +301,7 @@ describe("SessionOrchestrator", () => {
     };
 
     const deckMock: Pick<DeckService, "createInitialDeck"> = {
-      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+      createInitialDeck: () => ({ drawPile: [], discardPile: [], cardTypesById: {} }),
     };
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
@@ -326,6 +329,80 @@ describe("SessionOrchestrator", () => {
     expect(next.modal.active?.planeId).toBe(next.map.tilesByCoord["1,0"].planeId);
   });
 
+  it("keeps entered plane active when phenomenon replacement occurs during auto-complete", () => {
+    const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
+    initial.fsm.state = "CONFIRM_MOVE";
+    initial.fsm.context = { pendingMove: { fromCoord: "0,0", toCoord: "1,0" } };
+    initial.map.partyCoord = "0,0";
+    initial.config.ensurePlusEnabled = false;
+    initial.config.fogOfWarDistance = 0;
+    initial.deck.drawPile = ["phenomenon-spatial-merging", "plane-fill-replacement"];
+    initial.deck.cardTypesById = {
+      "phenomenon-spatial-merging": "PHENOMENON",
+      "plane-fill-replacement": "PLANE",
+      "plane-entered": "PLANE",
+    };
+    initial.map.tilesByCoord = {
+      "0,0": {
+        coord: { x: 0, y: 0 },
+        planeId: "plane-origin",
+        revealedAtMs: 0,
+        isFaceUp: true,
+      },
+      "1,0": {
+        coord: { x: 1, y: 0 },
+        planeId: "plane-entered",
+        revealedAtMs: 0,
+        isFaceUp: false,
+      },
+      "0,1": {
+        coord: { x: 0, y: 1 },
+        planeId: "plane@0,1",
+        revealedAtMs: 0,
+        isFaceUp: false,
+      },
+    };
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const deckMock: Pick<DeckService, "createInitialDeck"> = {
+      createInitialDeck: () => ({ drawPile: [], discardPile: [], cardTypesById: {} }),
+    };
+    const dieMock: Pick<DieService, "roll"> = {
+      roll: () => "blank",
+    };
+    const fatalMock: Pick<FatalErrorStore, "set" | "clear"> = {
+      set: () => void 0,
+      clear: () => void 0,
+    };
+
+    const orchestrator = new SessionOrchestrator(
+      storeMock as SessionStore,
+      deckMock as DeckService,
+      dieMock as DieService,
+      fatalMock as FatalErrorStore,
+      createDevModeStore(false)
+    );
+
+    orchestrator.dispatch({ type: "domain/confirm_move", atMs: 240 });
+
+    const next = _state();
+    expect(next.fsm.state).toBe("MODAL_OPEN");
+    expect(next.deck.currentPlaneId).toBe("plane-entered");
+    expect(next.modal.active?.planeId).toBe("plane-entered");
+    expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-fill-replacement");
+    const phaseMessages = next.log.entries.slice(-4).map((entry) => entry.message);
+    expect(phaseMessages).toEqual([
+      "Phase: move",
+      "Phase: board_fill",
+      "Phase: phenomenon_resolve",
+      "Movement completed.",
+    ]);
+  });
+
   it("debugRollForced resolves deterministic debug outcomes from IDLE", () => {
     const initial = createNewSessionState({ atMs: 1, seed: "seed-x" });
     initial.fsm.state = "IDLE";
@@ -337,7 +414,7 @@ describe("SessionOrchestrator", () => {
       setState: (next) => _state.set(next),
     };
     const deckMock: Pick<DeckService, "createInitialDeck"> = {
-      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+      createInitialDeck: () => ({ drawPile: [], discardPile: [], cardTypesById: {} }),
     };
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
@@ -372,7 +449,7 @@ describe("SessionOrchestrator", () => {
       setState: (next) => _state.set(next),
     };
     const deckMock: Pick<DeckService, "createInitialDeck"> = {
-      createInitialDeck: () => ({ drawPile: [], discardPile: [] }),
+      createInitialDeck: () => ({ drawPile: [], discardPile: [], cardTypesById: {} }),
     };
     const dieMock: Pick<DieService, "roll"> = {
       roll: () => "blank",
@@ -407,6 +484,7 @@ describe("SessionOrchestrator", () => {
       createInitialDeck: () => ({
         drawPile: ["p1", "p2", "p3", "p4", "p5", "p6"],
         discardPile: [],
+        cardTypesById: {},
       }),
     };
     const dieMock: Pick<DieService, "roll"> = {
@@ -445,6 +523,7 @@ describe("SessionOrchestrator", () => {
       createInitialDeck: () => ({
         drawPile: ["p1", "p2", "p3", "p4", "p5", "p6"],
         discardPile: [],
+        cardTypesById: {},
       }),
     };
     const dieMock: Pick<DieService, "roll"> = {
@@ -468,6 +547,8 @@ describe("SessionOrchestrator", () => {
     expect(_state().map.partyCoord).toBe("0,0");
   });
 });
+
+
 
 
 

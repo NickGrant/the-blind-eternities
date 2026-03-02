@@ -2,6 +2,9 @@
 
 Use this checklist before release candidate sign-off.
 
+Reference smoke script:
+- `docs/17-uat-smoke-workflow.md`
+
 ## Functional Verification
 
 - [ ] Session start and bootstrap reveal complete successfully
@@ -29,6 +32,7 @@ Use this checklist before release candidate sign-off.
 
 ## Quality Gates
 
+- [ ] `npm run lint` passes
 - [ ] `npm run test:unit` passes
 - [ ] `npm run build` passes
 - [ ] `ISSUES.md` has no unresolved release-blocking entries

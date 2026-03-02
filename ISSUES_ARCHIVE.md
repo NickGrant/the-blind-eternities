@@ -1320,3 +1320,67 @@ priority: medium
 description: Setup switches are currently too short. Increase switch/control height (and matching label alignment) to improve readability and touch ergonomics.
 Resolution: Increased switch input dimensions and tightened label alignment/line-height so setup switches have larger click targets and improved readability.
 
+---
+
+title: Add lint/type-style quality gate to prevent regressions
+status: complete
+priority: high
+description: The project currently relies on tests/build only and has no lint command in package scripts. Add a lint gate (and optional formatting check) wired into local verification and CI to catch maintainability and style regressions early.
+Resolution: Added a `lint` gate (`npm run lint`) backed by strict TypeScript no-emit checks for app and spec configs, updated contributor/release docs to include it, and fixed existing spec typing drift so the gate passes.
+
+---
+
+title: Split ControlBarComponent into setup and in-session subcomponents
+status: complete
+priority: medium
+description: `ControlBarComponent` is handling setup config, active play controls, quit-confirm flow, and help content in one class/template. Refactor into smaller focused components to reduce coupling and simplify long-term maintenance.
+Resolution: Split control rendering into `ControlBarSetupComponent` and `ControlBarSessionComponent`, with `ControlBarComponent` now coordinating state and help content while delegating setup/session UI responsibilities.
+
+---
+
+title: Add a repeatable UAT smoke test workflow for core gameplay loop
+status: complete
+priority: high
+description: There is no automated or scripted browser smoke test that covers start session -> roll die -> move/resolve -> modal close across both Blind Eternities and Planechase modes. Add a repeatable UAT smoke flow and document pass criteria.
+Resolution: Added `docs/17-uat-smoke-workflow.md` with deterministic step-by-step smoke paths for Blind Eternities and Planechase plus explicit pass criteria and command gate requirements.
+
+---
+
+title: Add card-art coverage report to data pipeline
+status: complete
+priority: medium
+description: The team does not have a single command that reports total playable cards, cached art count, and missing-art IDs by type/set. Add an artifact coverage report script to reduce uncertainty about when image fetching is complete.
+Resolution: Added `scripts/report-card-art-coverage.mjs` plus `npm run art:coverage` and `npm run art:coverage:json`, and documented usage in pipeline docs for repeatable visibility into missing playable art.
+
+---
+
+title: Support ?dev-mode URL param outside dev builds
+status: complete
+priority: medium
+description: Add support for a `?dev-mode` URL query parameter that enables dev mode even when running non-dev environments (for example production/GitHub Pages), with safe defaults when the parameter is absent.
+Resolution: Updated `DEV_MODE` resolution to allow query-param activation (`?dev-mode`, `?dev-mode=true`) outside dev builds while still supporting explicit falsey values (`0`, `false`, `off`).
+
+---
+
+title: Slightly reduce switch height and increase spacing between switches
+status: complete
+priority: medium
+description: Tune setup switch styling by reducing switch control height slightly and adding more vertical spacing between stacked switches for better visual balance.
+Resolution: Refined setup switch dimensions to a slightly shorter control and increased vertical spacing in the switch stack for improved visual rhythm.
+
+---
+
+title: Update docs to reflect fog-of-war values 0/1 and current setup UX
+status: complete
+priority: high
+description: Several active docs still reference legacy fog values (`1`/`2`) and outdated profile wording. Update delivery/runtime/UX/article-alignment docs to match implemented `0/1` behavior and current setup labels.
+Resolution: Updated delivery/runtime/UX/article-alignment docs to reflect current numeric fog semantics (`0`/`1`), always-on Blind Eternities hellride behavior, and current setup wording.
+
+---
+
+title: Add acceptance tests for enter-plane and phenomenon resolution ordering
+status: complete
+priority: high
+description: Documentation still marks article alignment as partial for move ordering (`enter plane` before `phenomenon fill/replace`). Add explicit reducer/orchestrator acceptance tests that validate this ordering and associated phase logs.
+Resolution: Added reducer and orchestrator acceptance tests that assert destination plane becomes active/modal-target before phenomenon fill replacement finalization, and that phase logs preserve the required move -> board_fill -> phenomenon_resolve -> finalize ordering.
+

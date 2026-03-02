@@ -14,6 +14,7 @@ This runbook defines how to contribute safely and consistently.
 1. Confirm target issue(s) and status in `ISSUES.md`.
 2. Implement scoped changes.
 3. Run verification commands:
+   - `npm run lint`
    - `npm run test:unit`
    - `npm run build`
    - `npm run test:contrast` (for theme/accessibility-sensitive UI changes)

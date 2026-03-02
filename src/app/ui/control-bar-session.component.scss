@@ -1,0 +1,14 @@
+:host {
+  display: contents;
+}
+
+.control-bar {
+  &__hint {
+    font-size: var(--be-font-size-xs);
+    color: var(--be-color-text-muted);
+  }
+
+  &__button-slot {
+    min-height: var(--be-control-min-height);
+  }
+}

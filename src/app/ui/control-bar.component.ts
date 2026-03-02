@@ -3,10 +3,13 @@ import { DeckService } from "../core/deck.service";
 import { SessionOrchestrator } from "../core/session-orchestrator.service";
 import { SessionStore } from "../core/session.store";
 import { DOMAIN_INTENT, FOG_OF_WAR_DISTANCE, GAME_MODE, type FogOfWarDistance, type GameMode } from "../../state/intents.types";
+import { ControlBarSetupComponent } from "./control-bar-setup.component";
+import { ControlBarSessionComponent } from "./control-bar-session.component";
 
 @Component({
   selector: "app-control-bar",
   standalone: true,
+  imports: [ControlBarSetupComponent, ControlBarSessionComponent],
   templateUrl: "./control-bar.component.html",
   styleUrls: ["./control-bar.component.scss"],
 })
@@ -70,10 +73,6 @@ export class ControlBarComponent {
     this.selectedSets.set(new Set(initial));
   }
 
-  isSetSelected(code: string): boolean {
-    return this.selectedSets().has(code);
-  }
-
   /**
    * Toggles a set selection while enforcing at least one selected option.
    * @param code Plane set code to toggle.
@@ -126,22 +125,8 @@ export class ControlBarComponent {
     this.setFogOfWarDistance(enabled ? FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL : FOG_OF_WAR_DISTANCE.CURRENT_ONLY);
   }
 
-  setFogEnhancedRevealFromEvent(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    this.setFogEnhancedRevealEnabled(target?.checked === true);
-  }
-
   setEnableAntiStall(value: boolean): void {
     this.enableAntiStall.set(value);
-  }
-
-  setEnableAntiStallFromEvent(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    this.setEnableAntiStall(target?.checked === true);
-  }
-
-  getSetCountTooltip(count: number): string {
-    return `${count} playable cards`;
   }
 
   /**

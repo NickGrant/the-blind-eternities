@@ -50,7 +50,9 @@ describe("ModalHostComponent (class-only)", () => {
     expect(dispatchMock).toHaveBeenCalledTimes(1);
     const arg = dispatchMock.mock.calls[0][0];
     expect(arg.type).toBe("domain/close_modal");
-    expect(arg.modalId).toBe("m1");
+    if (arg.type === "domain/close_modal") {
+      expect(arg.modalId).toBe("m1");
+    }
   });
 
   it("uses plane metadata for title/body when modal omits explicit copy", () => {
@@ -169,8 +171,11 @@ describe("ModalHostComponent (class-only)", () => {
     cmp.onDocumentKeydown(new KeyboardEvent("keydown", { key: "Escape" }));
 
     expect(dispatchMock).toHaveBeenCalledTimes(1);
-    expect(dispatchMock.mock.calls[0][0].type).toBe("domain/close_modal");
-    expect(dispatchMock.mock.calls[0][0].modalId).toBe("m3");
+    const arg = dispatchMock.mock.calls[0][0];
+    expect(arg.type).toBe("domain/close_modal");
+    if (arg.type === "domain/close_modal") {
+      expect(arg.modalId).toBe("m3");
+    }
   });
 
   it("updates modal offset while dragging non-button modal surface", () => {

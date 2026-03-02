@@ -1,0 +1,94 @@
+<div class="control-bar__setup-row">
+  <div class="control-bar__set-picker">
+    <div class="control-bar__set-picker-header">
+      <div class="control-bar__set-picker-title">Deck Sets</div>
+      <span class="control-bar__set-picker-helper">
+        Playable planes: {{ selectedPlayableCount }} (minimum {{ minimumSessionPlanes }})
+      </span>
+    </div>
+    <div class="control-bar__set-options control-bar__set-options--set-grid" role="group" aria-label="Deck sets">
+      @for (set of planeSets; track set.code) {
+        <div class="control-bar__set-option">
+          <input
+            class="btn-check"
+            type="checkbox"
+            [id]="'set-' + set.code"
+            [checked]="isSetSelected(set.code)"
+            (change)="toggleSet.emit(set.code)"
+          />
+          <label
+            class="btn btn-outline-primary"
+            [for]="'set-' + set.code"
+            [attr.title]="getSetCountTooltip(set.count)"
+            [attr.aria-label]="set.label + ', ' + getSetCountTooltip(set.count)"
+          >
+            {{ set.label }}
+          </label>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="control-bar__set-picker">
+    <div class="control-bar__set-picker-title">Game Mode</div>
+    <div class="control-bar__set-options control-bar__set-options--button-group btn-group" role="group" aria-label="Game mode">
+      <input
+        class="btn-check"
+        type="radio"
+        name="game-mode"
+        id="game-mode-blind-eternities"
+        [checked]="selectedGameMode === GAME_MODE.BLIND_ETERNITIES"
+        (change)="gameModeChange.emit(GAME_MODE.BLIND_ETERNITIES)"
+      />
+      <label class="btn btn-outline-primary" for="game-mode-blind-eternities">Blind Eternities</label>
+
+      <input
+        class="btn-check"
+        type="radio"
+        name="game-mode"
+        id="game-mode-planechase"
+        [checked]="selectedGameMode === GAME_MODE.REGULAR_PLANECHASE"
+        (change)="gameModeChange.emit(GAME_MODE.REGULAR_PLANECHASE)"
+      />
+      <label class="btn btn-outline-primary" for="game-mode-planechase">Planechase</label>
+    </div>
+  </div>
+
+  @if (selectedGameMode === GAME_MODE.BLIND_ETERNITIES) {
+    <div class="control-bar__set-picker">
+      <div class="control-bar__set-picker-title">Rules</div>
+      <div class="control-bar__set-options control-bar__set-options--switch-stack">
+        <div class="form-check form-switch">
+          <input
+            id="fog-of-war-switch"
+            class="form-check-input"
+            type="checkbox"
+            [checked]="selectedFogOfWarDistance === FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL"
+            (change)="onFogEnhancedRevealChange($event)"
+          />
+          <label class="form-check-label" for="fog-of-war-switch">
+            Reveal nearby cards on move
+          </label>
+        </div>
+        <div class="form-check form-switch">
+          <input
+            id="anti-stall-switch"
+            class="form-check-input"
+            type="checkbox"
+            [checked]="antiStallEnabled"
+            (change)="onAntiStallChange($event)"
+          />
+          <label class="form-check-label" for="anti-stall-switch">
+            Prevent immediate backtracking
+          </label>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="control-bar__setup-action">
+    <button type="button" class="btn btn-primary control-bar__button-slot" (click)="startSession.emit()" [disabled]="!canStartSession">
+      Start Session
+    </button>
+  </div>
+</div>

@@ -10,8 +10,9 @@ This folder contains project documentation for architecture, delivery, operation
 4. `15-phenomenon-support-spec.md`
 5. `16-blind-eternities-article-alignment.md`
 6. `14-uat-release-checklist.md`
-7. `10-contributor-runbook.md`
-8. `../LLM_CONTEXT.md`
+7. `17-uat-smoke-workflow.md`
+8. `10-contributor-runbook.md`
+9. `../LLM_CONTEXT.md`
 
 ## Reference Docs (Load On Demand)
 

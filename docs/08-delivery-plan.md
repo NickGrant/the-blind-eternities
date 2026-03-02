@@ -39,7 +39,7 @@ Goal:
 Status: In progress
 
 Goal:
-- Finalize article-aligned phenomenon semantics and remove remaining detection heuristics
+- Finalize article-aligned phenomenon semantics and add acceptance tests for enter-plane vs phenomenon ordering
 
 Primary specification:
 - `docs/15-phenomenon-support-spec.md`
@@ -47,10 +47,10 @@ Primary specification:
 
 ### Milestone 9 - Play Modes and Player Onboarding
 
-Status: In progress
+Status: Complete
 
 Goal:
-- Complete migration from profile wording to numeric Fog-of-War configuration (`1` / `2`)
+- Complete migration from profile wording to numeric Fog-of-War configuration (`0` / `1`)
 - Finalize Blind Eternities setup simplification (always-on Hellride)
 - Keep onboarding/help content synchronized with active controls
 

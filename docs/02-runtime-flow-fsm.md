@@ -37,16 +37,15 @@ Implementation-grade reference for runtime sequencing, valid actions by state, a
 
 ## Bootstrap Reveal Rules
 
-- Bootstrap reveal is controlled by configured reveal order (currently profile-driven).
-- Current supported patterns:
-  - center only
-  - center + N/E/S/W
-- Pending migration: replace profile wording with numeric Fog of War (`1`/`2`) per active issue.
+- Bootstrap reveal starts with center tile face-up.
+- Fog-of-War reveal distance is numeric:
+  - `0`: reveal only the entered square on move
+  - `1`: reveal entered square plus adjacent cardinals on move
 
 ## Movement Eligibility
 
 - Cardinal movement uses adjacency highlights.
-- Hellride movement uses separate diagonal highlights and can be toggled in setup (pending issue will make it always-on for Blind Eternities).
+- Hellride movement uses separate diagonal highlights and is always-on in Blind Eternities mode.
 - Anti-stall option can exclude immediate backtracking to prior party coordinate.
 
 ## Movement Pipeline (Current)

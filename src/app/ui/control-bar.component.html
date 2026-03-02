@@ -1,152 +1,31 @@
 <div class="control-bar">
   @if (fsmState() === "SETUP") {
-    <div class="control-bar__setup-row">
-      <div class="control-bar__set-picker">
-        <div class="control-bar__set-picker-header">
-          <div class="control-bar__set-picker-title">Deck Sets</div>
-          <span class="control-bar__set-picker-helper">
-            Playable planes: {{ selectedPlayableCount() }} (minimum {{ minimumSessionPlanes }})
-          </span>
-        </div>
-        <div class="control-bar__set-options control-bar__set-options--set-grid" role="group" aria-label="Deck sets">
-          @for (set of planeSets(); track set.code) {
-            <div class="control-bar__set-option">
-              <input
-                class="btn-check"
-                type="checkbox"
-                [id]="'set-' + set.code"
-                [checked]="isSetSelected(set.code)"
-                (change)="toggleSet(set.code)"
-              />
-              <label
-                class="btn btn-outline-primary"
-                [for]="'set-' + set.code"
-                [attr.title]="getSetCountTooltip(set.count)"
-                [attr.aria-label]="set.label + ', ' + getSetCountTooltip(set.count)"
-              >
-                {{ set.label }}
-              </label>
-            </div>
-          }
-        </div>
-      </div>
-
-      <div class="control-bar__set-picker">
-        <div class="control-bar__set-picker-title">Game Mode</div>
-        <div class="control-bar__set-options control-bar__set-options--button-group btn-group" role="group" aria-label="Game mode">
-          <input
-            class="btn-check"
-            type="radio"
-            name="game-mode"
-            id="game-mode-blind-eternities"
-            [checked]="selectedGameMode() === GAME_MODE.BLIND_ETERNITIES"
-            (change)="setGameMode(GAME_MODE.BLIND_ETERNITIES)"
-          />
-          <label class="btn btn-outline-primary" for="game-mode-blind-eternities">Blind Eternities</label>
-
-            <input
-              class="btn-check"
-              type="radio"
-              name="game-mode"
-              id="game-mode-planechase"
-              [checked]="selectedGameMode() === GAME_MODE.REGULAR_PLANECHASE"
-              (change)="setGameMode(GAME_MODE.REGULAR_PLANECHASE)"
-            />
-            <label class="btn btn-outline-primary" for="game-mode-planechase">Planechase</label>
-        </div>
-      </div>
-
-      @if (selectedGameMode() === GAME_MODE.BLIND_ETERNITIES) {
-        <div class="control-bar__set-picker">
-          <div class="control-bar__set-picker-title">Rules</div>
-          <div class="control-bar__set-options control-bar__set-options--switch-stack">
-            <div class="form-check form-switch">
-              <input
-                id="fog-of-war-switch"
-                class="form-check-input"
-                type="checkbox"
-                [checked]="selectedFogOfWarDistance() === FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL"
-                (change)="setFogEnhancedRevealFromEvent($event)"
-              />
-              <label class="form-check-label" for="fog-of-war-switch">
-                Reveal nearby cards on move
-              </label>
-            </div>
-            <div class="form-check form-switch">
-              <input
-                id="anti-stall-switch"
-                class="form-check-input"
-                type="checkbox"
-                [checked]="enableAntiStall()"
-                (change)="setEnableAntiStallFromEvent($event)"
-              />
-              <label class="form-check-label" for="anti-stall-switch">
-              Prevent immediate backtracking
-              </label>
-            </div>
-          </div>
-        </div>
-      }
-
-      <div class="control-bar__setup-action">
-        <button type="button" class="btn btn-primary control-bar__button-slot" (click)="startSession()" [disabled]="!canStartSession()">
-          Start Session
-        </button>
-      </div>
-    </div>
+    <app-control-bar-setup
+      [planeSets]="planeSets()"
+      [selectedSetCodes]="selectedSetCodes()"
+      [selectedPlayableCount]="selectedPlayableCount()"
+      [minimumSessionPlanes]="minimumSessionPlanes"
+      [canStartSession]="canStartSession()"
+      [selectedGameMode]="selectedGameMode()"
+      [selectedFogOfWarDistance]="selectedFogOfWarDistance()"
+      [antiStallEnabled]="enableAntiStall()"
+      (toggleSet)="toggleSet($event)"
+      (gameModeChange)="setGameMode($event)"
+      (fogEnhancedRevealChange)="setFogEnhancedRevealEnabled($event)"
+      (antiStallChange)="setEnableAntiStall($event)"
+      (startSession)="startSession()"
+    ></app-control-bar-setup>
   }
 
-  @if (showRollButton()) {
-    <button type="button" class="btn btn-primary control-bar__button-slot" [disabled]="rollButtonDisabled()" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">
-      Roll Die
-    </button>
-  }
-
-  @if (fsmState() === "AWAIT_MOVE") {
-    <button
-      type="button"
-      class="btn btn-outline-secondary control-bar__button-slot"
-      (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
-    >
-      Cancel Move
-    </button>
-    <span class="control-bar__hint">Click a highlighted plane to select movement.</span>
-    <span class="control-bar__hint">Teal highlights are Hellride diagonal options.</span>
-  }
-
-  @if (fsmState() === "CONFIRM_MOVE") {
-    <button type="button" class="btn btn-primary control-bar__button-slot" (click)="dispatch(DOMAIN_INTENT.CONFIRM_MOVE)">
-      Confirm Move
-    </button>
-    <button
-      type="button"
-      class="btn btn-outline-secondary control-bar__button-slot"
-      (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
-    >
-      Back
-    </button>
-  }
-
-  @if (fsmState() === "ERROR") {
-    <button type="button" class="btn btn-primary control-bar__button-slot" (click)="dispatch(DOMAIN_INTENT.RESTART_SESSION)">
-      Restart Session
-    </button>
-  }
-
-  @if (fsmState() !== "SETUP") {
-    @if (isQuitConfirming()) {
-      <button type="button" class="btn btn-danger control-bar__button-slot" (click)="quitSession()">
-        Confirm Quit
-      </button>
-      <button type="button" class="btn btn-outline-secondary control-bar__button-slot" (click)="cancelQuitSession()">
-        Keep Playing
-      </button>
-    } @else {
-      <button type="button" class="btn btn-outline-secondary control-bar__button-slot" (click)="quitSession()">
-        Quit Session
-      </button>
-    }
-  }
+  <app-control-bar-session
+    [fsmState]="fsmState()"
+    [showRollButton]="showRollButton()"
+    [rollButtonDisabled]="rollButtonDisabled()"
+    [isQuitConfirming]="isQuitConfirming()"
+    (intent)="dispatch($event)"
+    (quitSession)="quitSession()"
+    (cancelQuitSession)="cancelQuitSession()"
+  ></app-control-bar-session>
 
   <details class="control-bar__help">
     <summary class="control-bar__help-summary">How to Use</summary>

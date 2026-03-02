@@ -23,6 +23,13 @@ This document defines how card metadata and art are maintained.
   - avoids burst traffic to external API
   - updates `artUrl` entries in `cards.json`
 
+- `npm run art:coverage`
+  - reports card/art coverage totals by card kind and set code
+  - lists playable card IDs that are still missing cached art files
+
+- `npm run art:coverage:json`
+  - emits the same coverage report in machine-readable JSON
+
 - `npm run assets:optimize:themes`
   - optimizes theme background PNG assets in-place
   - useful before release/package checkpoints
@@ -45,6 +52,7 @@ This document defines how card metadata and art are maintained.
 3. (Optional) optimize theme backgrounds:
    - `npm run assets:optimize:themes`
 4. Validate:
+   - `npm run art:coverage`
    - `npm run build`
    - `npm run test:contrast`
    - open app and verify cards render art

@@ -6,9 +6,10 @@ This document captures currently implemented runtime UX behavior and clearly sep
 
 - Setup includes:
   - deck set selection
-  - game mode selection (`Blind Eternities`, `Regular Planechase`)
-  - rules-profile selection when multiple options exist
-  - optional Blind Eternities toggles (`Hellride`, `Prevent immediate backtracking`)
+  - game mode selection (`Blind Eternities`, `Planechase`)
+  - Blind Eternities rules toggles:
+    - `Reveal nearby cards on move` (Fog-of-War distance `1`; off means distance `0`)
+    - `Prevent immediate backtracking` (optional anti-stall)
 - Session bootstrap is automatic after `Start Session`.
 - `How to Use` is available in-app for non-dev users.
 
@@ -30,7 +31,7 @@ This document captures currently implemented runtime UX behavior and clearly sep
 ## Implemented Movement Affordances
 
 - Cardinal movement candidates are highlighted.
-- Hellride diagonal candidates are separately highlighted and selectable when enabled.
+- Hellride diagonal candidates are separately highlighted and always enabled in Blind Eternities mode.
 - In `CONFIRM_MOVE`, selecting the chosen tile again confirms movement.
 - Non-movement inspect behavior:
   - clicking/double-clicking face-up tiles can focus and open modal details.
@@ -55,5 +56,4 @@ This document captures currently implemented runtime UX behavior and clearly sep
 
 ## Pending UX Changes (Tracked in ISSUES)
 
-- Replace rules-profile wording with numeric Fog-of-War setting (`1` / `2`).
-- Remove Hellride toggle and enforce always-on Hellride in Blind Eternities mode.
+- No open UX feature gaps are currently tracked in `ISSUES.md`.
