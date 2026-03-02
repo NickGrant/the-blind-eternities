@@ -26,84 +26,65 @@
 
 ### Functional
 
-title: Replace SVG theme backgrounds with raster art assets
+title: Add application-appropriate favicon
+status: unstarted
+priority: medium
+description: Replace the default favicon with a project-appropriate icon for Blind Eternities Planechase and ensure it is wired correctly for local/dev and production (including GitHub Pages) builds.
+
+---
+
+title: Improve page title and SEO meta tags
+status: unstarted
+priority: medium
+description: Update the app document head with a stronger, product-appropriate page title and core SEO/social metadata (description, Open Graph, and related tags) for better discoverability and share previews.
+
+---
+
+title: Refactor MapScene into smaller domain-focused collaborators
+status: unstarted
+priority: medium
+description: `src/phaser/scenes/map.scene.ts` has grown into a large multi-responsibility class (theme sync, background loading, camera controls, tile rendering, pointer interactions, art loading, zoom HUD). Split into focused collaborators/services to reduce cognitive load, improve testability, and lower regression risk during gameplay/UI changes.
+
+---
+
+title: Consolidate duplicated theme mappings between Phaser bootstrap and scene/theme tokens
+status: unstarted
+priority: medium
+description: Theme color/theme-id mapping logic is currently duplicated across `src/styles.scss`, `src/phaser/scenes/map.scene.ts`, and `src/phaser/phaser-bootstrap.service.ts`. Extract shared theme metadata into a single source of truth to prevent drift and inconsistent fallback behavior between app shell and Phaser bootstrap.
+
+---
+
+title: Reduce initial bundle pressure by lazy-loading card catalog data
 status: unstarted
 priority: high
-description: Replace current Phaser theme background SVG files with raster art assets (theme-specific generated renders) for higher visual fidelity. PNG assets now exist and this issue is unblocked. Implementation requirements:
-- normalize file naming so each theme key maps cleanly and consistently (for example `phyrexian`, `neon-dynasty`, `lithomancy`, `halo-fountain`; fix current `phyrexia.png` naming mismatch)
-- convert/normalize image dimensions and format settings as needed so assets are consistent for runtime loading
-- optimize/compress PNG files to reduce transfer and bundle weight while preserving acceptable visual quality
-- update Phaser theme background loader mapping to use the raster assets
-- remove legacy SVG background files after raster migration is validated
+description: `DeckService` currently imports `src/assets/cards.json` directly into the application bundle, increasing initial JS payload and parse time. Move catalog loading to runtime asset fetch (or equivalent lazy mechanism) with caching/error handling to reduce startup cost and improve scalability as card data grows.
 
 ---
 
-title: Add Bootstrap dependency and global stylesheet integration
-status: unstarted
-priority: high
-description: Install Bootstrap 5.3 in project dependencies and wire its stylesheet globally so Bootstrap classes used in templates are actually backed by framework CSS instead of custom reimplementation.
-
----
-
-title: Remove custom control-bar button-group CSS and use Bootstrap-native button groups
-status: unstarted
-priority: high
-description: Refactor control-bar button group implementation to rely on Bootstrap `btn-group`, `btn-check`, and button variant classes with minimal local overrides. Remove duplicated state/focus/checked styling currently implemented in `control-bar.component.scss`.
-
----
-
-title: Replace custom switch styling with Bootstrap `form-check form-switch` pattern
+title: Add contrast/accessibility regression checks for themed UI variants
 status: unstarted
 priority: medium
-description: Update Fog of War and optional rules switches to Bootstrap switch markup (`form-check form-switch` + `form-check-input`/`form-check-label`) and remove custom switch appearance rules from component SCSS.
+description: Theme changes have repeatedly introduced readability regressions. Add repeatable accessibility checks (manual checklist and/or automated lint/test gate) for color contrast and text legibility across all supported themes, especially for Bootstrap component variants.
 
 ---
 
-title: Migrate control bar action buttons to Bootstrap button variants/utilities
-status: unstarted
-priority: medium
-description: Replace custom `control-bar__button*` visual variants with Bootstrap button classes (`btn`, `btn-primary`, `btn-secondary`, `btn-danger`, disabled state) and keep component CSS focused on layout spacing only.
-
----
-
-title: Refactor modal host shell to Bootstrap modal structure without behavior regression
-status: unstarted
-priority: high
-description: The modal uses fully custom styling and structure. Migrate to Bootstrap modal classes/structure (`modal`, `modal-dialog`, `modal-content`, `modal-header`, `modal-body`, `modal-footer`) while preserving existing project-specific behavior (draggable panel, queued count, keyboard handling, viewport clamping).
-
----
-
-title: Refactor debug panel controls to Bootstrap button and details styling
-status: unstarted
-priority: medium
-description: Debug panel currently duplicates button/chip/panel styling. Migrate buttons and status chips to Bootstrap classes/utilities and reduce custom CSS to component-specific layout concerns.
-
----
-
-title: Replace custom error banner styling with Bootstrap alert component pattern
-status: unstarted
-priority: medium
-description: Update error banner to use Bootstrap alert semantics and classes (`alert`, severity variant, heading/body structure) and remove duplicated alert border/background/text styling from local SCSS.
-
----
-
-title: Reduce app shell panel/card style duplication via Bootstrap cards and utilities
-status: unstarted
-priority: medium
-description: App shell reimplements panel surfaces, headers, spacing, and list presentation. Migrate reusable panel blocks (`Game Controls`, `Event Log`, `Debug`) to Bootstrap card/layout utility classes and keep theme-specific overrides token-based.
-
----
-
-title: Add Bootstrap-conformance guardrails to documentation
+title: Add quality guardrails for PNG optimization workflow
 status: unstarted
 priority: low
-description: Update coding/style guidance docs to require Bootstrap-first implementation for common UI primitives (buttons, groups, switches, alerts, cards, modals) and prohibit duplicating framework component styles unless explicitly justified.
+description: The new PNG optimization flow is effective but currently has no quality guardrails. Add configurable quality presets, before/after reporting artifact output, and an optional visual-regression step to ensure aggressive compression does not degrade background art beyond acceptable thresholds.
 
 ---
 
-title: Phenomena not appearing in live gameplay; validate card data pipeline
+title: Document asset optimization workflow in project docs index/runbook
 status: unstarted
-priority: high
-description: Phenomenon cards are not surfacing during real gameplay runs. Investigate deck composition and runtime filtering to confirm phenomena are included when expected, and verify `cards.json` contains complete/valid phenomenon metadata required by current detection logic.
+priority: low
+description: Add documentation for `assets:optimize:themes` and `assets:optimize:themes:dry` (when to run, expected outputs, and commit expectations) in active docs so release prep and contributor workflows stay consistent.
+
+---
+
+title: Disable zoom controls when no cards are present on canvas
+status: unstarted
+priority: medium
+description: Zoom in/out controls should be disabled when there are no rendered cards/tiles on the Phaser canvas to avoid non-functional interactions and reduce user confusion.
 
 ---

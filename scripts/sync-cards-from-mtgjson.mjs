@@ -10,26 +10,33 @@ async function run() {
   const cardsRaw = await fs.readFile(cardsPath, "utf8");
   const catalog = JSON.parse(cardsRaw);
   const planes = Array.isArray(catalog.planes) ? catalog.planes : [];
+  const phenomena = Array.isArray(catalog.phenomena) ? catalog.phenomena : [];
 
   const setCodes = await readSyncSetCodes();
   const allCards = [];
   for (const code of setCodes) {
-    const cards = await fetchPlaneCardsFromSet(code);
+    const cards = await fetchPlanarCardsFromSet(code);
     allCards.push(...cards);
   }
 
-  const byName = new Map();
+  const byKey = new Map();
   for (const card of allCards) {
-    const key = String(card.name || "").toLowerCase();
-    if (!key) continue;
-    const existing = byName.get(key);
+    const kind = classifyCardKind(card);
+    if (!kind) continue;
+    const nameKey = String(card.name || "").toLowerCase();
+    if (!nameKey) continue;
+    const key = `${kind}:${nameKey}`;
+
+    const existing = byKey.get(key);
     if (!existing) {
-      byName.set(key, {
+      byKey.set(key, {
         ...card,
+        kind,
         setCodes: new Set(card.setCode ? [card.setCode] : []),
       });
       continue;
     }
+
     if (card.setCode) existing.setCodes.add(card.setCode);
     if (!existing.text && card.text) existing.text = card.text;
     if (!existing.type && card.type) existing.type = card.type;
@@ -40,63 +47,27 @@ async function run() {
     }
   }
 
-  let matched = 0;
-  for (const plane of planes) {
-    if (!plane || typeof plane.id !== "string") continue;
-    const displayName = (typeof plane.name === "string" && plane.name.trim()) || humanizePlaneId(plane.id);
-    const card = byName.get(displayName.toLowerCase());
-    if (!card) continue;
-
-    plane.name = card.name;
-    plane.rulesText = card.text || plane.rulesText;
-    plane.chaosText = extractChaosText(card.text) || plane.chaosText;
-    plane.typeLine = card.type || plane.typeLine;
-    plane.types = Array.isArray(card.types) ? card.types : plane.types;
-    plane.subtypes = Array.isArray(card.subtypes) ? card.subtypes : plane.subtypes;
-    plane.setCode = card.setCode || plane.setCode || "OPCA";
-    plane.setCodes = Array.from(card.setCodes || []);
-    plane.number = card.number || plane.number;
-    plane.mtgjsonId = card.uuid || plane.mtgjsonId;
-
-    const scryfallId = card.identifiers?.scryfallId;
-    if (typeof scryfallId === "string" && scryfallId.length > 0) {
-      plane.scryfallId = scryfallId;
-    }
-    matched += 1;
-  }
-
-  let added = 0;
-  const existingIds = new Set(
-    planes
-      .filter((plane) => plane && typeof plane.id === "string")
-      .map((plane) => plane.id)
-  );
-  for (const card of byName.values()) {
-    const id = toPlaneId(card.name);
-    if (!id || existingIds.has(id)) continue;
-    planes.push({
-      id,
-      name: card.name,
-      rulesText: card.text || undefined,
-      chaosText: extractChaosText(card.text) || undefined,
-      typeLine: card.type || undefined,
-      types: Array.isArray(card.types) ? card.types : undefined,
-      subtypes: Array.isArray(card.subtypes) ? card.subtypes : undefined,
-      setCode: card.setCode || undefined,
-      setCodes: Array.from(card.setCodes || []),
-      number: card.number || undefined,
-      mtgjsonId: card.uuid || undefined,
-      scryfallId: card.identifiers?.scryfallId || undefined,
-    });
-    existingIds.add(id);
-    added += 1;
-  }
+  const planeStats = syncGroup({
+    target: planes,
+    source: byKey,
+    kind: "PLANE",
+    toId: toPlaneId,
+    fallbackSetCode: "OPCA",
+  });
+  const phenomenonStats = syncGroup({
+    target: phenomena,
+    source: byKey,
+    kind: "PHENOMENON",
+    toId: toPhenomenonId,
+    fallbackSetCode: "OPCA",
+  });
 
   catalog.planes = planes;
+  catalog.phenomena = phenomena;
 
   await fs.writeFile(cardsPath, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   console.log(
-    `[cards-sync] Updated ${matched} existing and added ${added} new plane entries from MTGJSON (${setCodes.join(", ")}).`
+    `[cards-sync] planes updated=${planeStats.updated} added=${planeStats.added}; phenomena updated=${phenomenonStats.updated} added=${phenomenonStats.added}; sets=${setCodes.join(", ")}`
   );
 }
 
@@ -114,11 +85,11 @@ async function readSyncSetCodes() {
 }
 
 /**
- * Fetches a set payload from MTGJSON and returns only Plane cards.
+ * Fetches a set payload from MTGJSON and returns only planar cards.
  * @param {string} setCode MTGJSON set code.
- * @returns {Promise<object[]>} Plane card records from the set.
+ * @returns {Promise<object[]>} Plane/phenomenon card records from the set.
  */
-async function fetchPlaneCardsFromSet(setCode) {
+async function fetchPlanarCardsFromSet(setCode) {
   const url = `https://mtgjson.com/api/v5/${setCode}.json`;
   const response = await fetch(url);
   if (!response.ok) {
@@ -131,10 +102,101 @@ async function fetchPlaneCardsFromSet(setCode) {
     throw new Error(`Invalid MTGJSON payload for ${setCode}.`);
   }
 
-  return cards.filter((card) => {
-    const type = typeof card?.type === "string" ? card.type : "";
-    return type.toLowerCase().includes("plane");
+  return cards.filter((card) => classifyCardKind(card));
+}
+
+/**
+ * Determines whether a card is a plane or phenomenon.
+ * @param {object} card MTGJSON card.
+ * @returns {"PLANE"|"PHENOMENON"|undefined} Normalized planar kind.
+ */
+function classifyCardKind(card) {
+  const type = typeof card?.type === "string" ? card.type.toLowerCase() : "";
+  if (type.includes("phenomenon")) return "PHENOMENON";
+  if (type.includes("plane")) return "PLANE";
+  return undefined;
+}
+
+/**
+ * Synchronizes a single card-kind collection in-place.
+ * @param {object} args Sync arguments.
+ * @returns {{updated:number, added:number}} Update statistics.
+ */
+function syncGroup(args) {
+  const existing = args.target;
+  const source = args.source;
+  const existingByName = new Map();
+  existing.forEach((item) => {
+    const name = typeof item?.name === "string" ? item.name.trim().toLowerCase() : "";
+    if (!name) return;
+    existingByName.set(name, item);
   });
+
+  let updated = 0;
+  for (const sourceCard of source.values()) {
+    if (sourceCard.kind !== args.kind) continue;
+    const key = String(sourceCard.name || "").toLowerCase();
+    const current = existingByName.get(key);
+    if (!current) continue;
+    applyCardData(current, sourceCard, args.fallbackSetCode);
+    updated += 1;
+  }
+
+  const existingIds = new Set(
+    existing
+      .filter((item) => item && typeof item.id === "string")
+      .map((item) => item.id)
+  );
+  let added = 0;
+  for (const sourceCard of source.values()) {
+    if (sourceCard.kind !== args.kind) continue;
+    const id = args.toId(sourceCard.name);
+    if (!id || existingIds.has(id)) continue;
+
+    const next = {
+      id,
+      name: sourceCard.name,
+      rulesText: sourceCard.text || undefined,
+      chaosText: extractChaosText(sourceCard.text) || undefined,
+      typeLine: sourceCard.type || undefined,
+      types: Array.isArray(sourceCard.types) ? sourceCard.types : undefined,
+      subtypes: Array.isArray(sourceCard.subtypes) ? sourceCard.subtypes : undefined,
+      setCode: sourceCard.setCode || undefined,
+      setCodes: Array.from(sourceCard.setCodes || []),
+      number: sourceCard.number || undefined,
+      mtgjsonId: sourceCard.uuid || undefined,
+      scryfallId: sourceCard.identifiers?.scryfallId || undefined,
+    };
+    existing.push(next);
+    existingIds.add(id);
+    added += 1;
+  }
+
+  return { updated, added };
+}
+
+/**
+ * Applies source data to existing card record.
+ * @param {object} target Existing catalog entry.
+ * @param {object} source Source MTGJSON entry.
+ * @param {string} fallbackSetCode Default set code fallback.
+ */
+function applyCardData(target, source, fallbackSetCode) {
+  target.name = source.name;
+  target.rulesText = source.text || target.rulesText;
+  target.chaosText = extractChaosText(source.text) || target.chaosText;
+  target.typeLine = source.type || target.typeLine;
+  target.types = Array.isArray(source.types) ? source.types : target.types;
+  target.subtypes = Array.isArray(source.subtypes) ? source.subtypes : target.subtypes;
+  target.setCode = source.setCode || target.setCode || fallbackSetCode;
+  target.setCodes = Array.from(source.setCodes || []);
+  target.number = source.number || target.number;
+  target.mtgjsonId = source.uuid || target.mtgjsonId;
+
+  const scryfallId = source.identifiers?.scryfallId;
+  if (typeof scryfallId === "string" && scryfallId.length > 0) {
+    target.scryfallId = scryfallId;
+  }
 }
 
 /**
@@ -160,32 +222,39 @@ function extractChaosText(rulesText) {
 }
 
 /**
- * Converts a plane ID slug into a title-cased display name.
- * @param {string} id Plane ID slug.
- * @returns {string} Human-readable name.
- */
-function humanizePlaneId(id) {
-  const base = id.startsWith("plane-") ? id.slice("plane-".length) : id;
-  return base
-    .split("-")
-    .filter((chunk) => chunk.length > 0)
-    .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
-    .join(" ");
-}
-
-/**
  * Converts a card name into canonical plane ID format.
  * @param {string | undefined} name Card name.
  * @returns {string | undefined} Plane ID slug with `plane-` prefix.
  */
 function toPlaneId(name) {
+  const slug = slugify(name);
+  if (!slug) return undefined;
+  return `plane-${slug}`;
+}
+
+/**
+ * Converts a card name into canonical phenomenon ID format.
+ * @param {string | undefined} name Card name.
+ * @returns {string | undefined} Phenomenon ID slug with `phenomenon-` prefix.
+ */
+function toPhenomenonId(name) {
+  const slug = slugify(name);
+  if (!slug) return undefined;
+  return `phenomenon-${slug}`;
+}
+
+/**
+ * Converts arbitrary card names into slug format.
+ * @param {string | undefined} name Input name.
+ * @returns {string | undefined} Normalized slug.
+ */
+function slugify(name) {
   if (typeof name !== "string") return undefined;
   const slug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
-  if (!slug) return undefined;
-  return `plane-${slug}`;
+  return slug || undefined;
 }
 
 run().catch((error) => {

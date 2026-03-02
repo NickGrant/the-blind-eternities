@@ -37,7 +37,7 @@ describe("DeckService", () => {
     const a = service.createInitialDeck({ atMs: 123, seed: "seed-1" });
     const b = service.createInitialDeck({ atMs: 123, seed: "seed-1" });
 
-    expect(a.drawPile.length).toBe(service.countPlayablePlanesForSets([]));
+    expect(a.drawPile.length).toBeGreaterThanOrEqual(service.countPlayablePlanesForSets([]));
     expect(a).toEqual(b);
   });
 
@@ -54,10 +54,12 @@ describe("DeckService", () => {
     const selected = ["OPCA"];
     const deck = service.createInitialDeck({ atMs: 1, seed: "seed-1", includedSetCodes: selected });
     const byId = new Map(service.listPlanes().map((plane) => [plane.id, plane] as const));
+    const drawnPlaneIds = deck.drawPile.filter((id) => byId.has(id));
 
     expect(deck.drawPile.length).toBeGreaterThan(0);
+    expect(drawnPlaneIds.length).toBeGreaterThan(0);
     expect(
-      deck.drawPile.every((id) => {
+      drawnPlaneIds.every((id) => {
         const plane = byId.get(id);
         if (!plane) return false;
         const codes = plane.setCodes?.length ? plane.setCodes : plane.setCode ? [plane.setCode] : [];

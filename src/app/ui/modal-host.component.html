@@ -1,8 +1,9 @@
 @if (activeModal()) {
-  <div class="modal-host">
-    <section
+  <div class="modal modal-host d-block" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-host__dialog">
+      <section
       #modalPanel
-      class="modal-host__panel"
+      class="modal-content modal-host__panel"
       [class.modal-host__panel--dragging]="isDragging()"
       [style.--be-modal-offset-x]="modalOffsetX()"
       [style.--be-modal-offset-y]="modalOffsetY()"
@@ -14,22 +15,25 @@
       tabindex="-1"
     >
       <div class="modal-host__attention" aria-hidden="true"></div>
-      <header class="modal-host__header">
-        <h3 class="modal-host__title" [id]="'modal-title-' + activeModal()!.id">{{ modalTitle() }}</h3>
-        <div class="modal-host__meta">
+      <header class="modal-header modal-host__header">
+        <h3 class="modal-title modal-host__title" [id]="'modal-title-' + activeModal()!.id">{{ modalTitle() }}</h3>
+        <div class="modal-host__meta text-body-secondary">
           @if (queueCount() > 0) {
-            <span>{{ queueCount() }} queued</span>
+            <span class="badge text-bg-secondary">{{ queueCount() }} queued</span>
           }
         </div>
       </header>
 
-      <p class="modal-host__body" [id]="'modal-body-' + activeModal()!.id" [innerHTML]="modalBodyHtml()"></p>
+      <div class="modal-body modal-host__body">
+        <p class="mb-0" [id]="'modal-body-' + activeModal()!.id" [innerHTML]="modalBodyHtml()"></p>
+      </div>
 
-      <footer class="modal-host__footer">
-        <button type="button" class="modal-host__button modal-host__button--close" (click)="closeActiveModal()">
+      <footer class="modal-footer modal-host__footer">
+        <button type="button" class="btn btn-primary modal-host__button" (click)="closeActiveModal()">
           Close
         </button>
       </footer>
-    </section>
+      </section>
+    </div>
   </div>
 }

@@ -1,7 +1,5 @@
 .debug-panel {
-  border: 1px solid var(--be-color-border-contrast);
-  border-radius: var(--be-radius-lg);
-  padding: var(--be-space-3);
+  padding: 0;
   display: grid;
   gap: var(--be-space-2);
 
@@ -13,8 +11,7 @@
   }
 
   &__title {
-    margin: 0;
-    font-size: var(--be-font-size-sm);
+    color: var(--be-color-text-strong);
   }
 
   &__actions {
@@ -32,17 +29,11 @@
   &__state-chip {
     display: inline-flex;
     align-items: center;
-    padding: var(--be-space-1) var(--be-space-2);
-    border-radius: var(--be-radius-pill);
-    border: 1px solid var(--be-color-border-contrast);
-    background: var(--be-color-overlay-muted);
     font-size: var(--be-font-size-xs);
   }
 
   &__details {
-    border: 1px solid var(--be-color-border-contrast);
-    border-radius: var(--be-radius-md);
-    padding: var(--be-space-1) var(--be-space-2);
+    background: var(--be-color-surface-subtle);
   }
 
   &__summary {
@@ -56,24 +47,5 @@
     max-height: 140px;
     overflow: auto;
     font-size: var(--be-font-size-xs);
-  }
-
-  &__button {
-    padding: var(--be-space-2) var(--be-space-2);
-    border-radius: var(--be-radius-md);
-    border: 1px solid var(--be-color-border-contrast);
-    background: var(--be-color-overlay-muted);
-    color: inherit;
-    cursor: pointer;
-
-    &[disabled] {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    &--danger {
-      border-color: var(--be-color-danger-border);
-      background: var(--be-color-danger-surface);
-    }
   }
 }

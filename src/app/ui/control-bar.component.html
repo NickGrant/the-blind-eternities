@@ -5,13 +5,13 @@
       <div class="control-bar__set-options control-bar__set-options--button-group btn-group" role="group" aria-label="Deck sets">
         @for (set of planeSets(); track set.code) {
           <input
-            class="control-bar__btn-check btn-check"
+            class="btn-check"
             type="checkbox"
             [id]="'set-' + set.code"
             [checked]="isSetSelected(set.code)"
             (change)="toggleSet(set.code)"
           />
-          <label class="control-bar__btn-toggle btn btn-outline-primary" [for]="'set-' + set.code">
+          <label class="btn btn-outline-primary" [for]="'set-' + set.code">
             {{ set.label }} ({{ set.count }})
           </label>
         }
@@ -25,39 +25,42 @@
       <div class="control-bar__set-picker-title">Game Mode</div>
       <div class="control-bar__set-options control-bar__set-options--button-group btn-group" role="group" aria-label="Game mode">
         <input
-          class="control-bar__btn-check btn-check"
+          class="btn-check"
           type="radio"
           name="game-mode"
           id="game-mode-blind-eternities"
           [checked]="selectedGameMode() === GAME_MODE.BLIND_ETERNITIES"
           (change)="setGameMode(GAME_MODE.BLIND_ETERNITIES)"
         />
-        <label class="control-bar__btn-toggle btn btn-outline-primary" for="game-mode-blind-eternities">Blind Eternities</label>
+        <label class="btn btn-outline-primary" for="game-mode-blind-eternities">Blind Eternities</label>
 
         <input
-          class="control-bar__btn-check btn-check"
+          class="btn-check"
           type="radio"
           name="game-mode"
           id="game-mode-planechase"
           [checked]="selectedGameMode() === GAME_MODE.REGULAR_PLANECHASE"
           (change)="setGameMode(GAME_MODE.REGULAR_PLANECHASE)"
         />
-        <label class="control-bar__btn-toggle btn btn-outline-primary" for="game-mode-planechase">Planechase</label>
+        <label class="btn btn-outline-primary" for="game-mode-planechase">Planechase</label>
       </div>
     </div>
     @if (selectedGameMode() === GAME_MODE.BLIND_ETERNITIES) {
       <div class="control-bar__set-picker">
         <div class="control-bar__set-picker-title">Fog of War</div>
         <div class="control-bar__set-options">
-          <label class="control-bar__set-option control-bar__set-option--switch">
+          <div class="form-check form-switch">
             <input
+              id="fog-of-war-switch"
+              class="form-check-input"
               type="checkbox"
-              role="switch"
               [checked]="selectedFogOfWarDistance() === FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL"
               (change)="setFogEnhancedRevealEnabled(($any($event.target)).checked)"
             />
+            <label class="form-check-label" for="fog-of-war-switch">
             Reveal entered square and adjacent cardinal squares
-          </label>
+            </label>
+          </div>
         </div>
       </div>
     }
@@ -65,20 +68,28 @@
       <div class="control-bar__set-picker">
         <div class="control-bar__set-picker-title">Optional Rules</div>
         <div class="control-bar__set-options">
-          <label class="control-bar__set-option control-bar__set-option--switch">
-            <input type="checkbox" role="switch" [checked]="enableAntiStall()" (change)="setEnableAntiStall(($any($event.target)).checked)" />
+          <div class="form-check form-switch">
+            <input
+              id="anti-stall-switch"
+              class="form-check-input"
+              type="checkbox"
+              [checked]="enableAntiStall()"
+              (change)="setEnableAntiStall(($any($event.target)).checked)"
+            />
+            <label class="form-check-label" for="anti-stall-switch">
             Prevent immediate backtracking
-          </label>
+            </label>
+          </div>
         </div>
       </div>
     }
-    <button type="button" class="control-bar__button control-bar__button--slot" (click)="startSession()" [disabled]="!canStartSession()">
+    <button type="button" class="btn btn-primary control-bar__button-slot" (click)="startSession()" [disabled]="!canStartSession()">
       Start Session
     </button>
   }
 
   @if (showRollButton()) {
-    <button type="button" class="control-bar__button control-bar__button--slot" [disabled]="rollButtonDisabled()" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">
+    <button type="button" class="btn btn-primary control-bar__button-slot" [disabled]="rollButtonDisabled()" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">
       Roll Die
     </button>
   }
@@ -86,7 +97,7 @@
   @if (fsmState() === "AWAIT_MOVE") {
     <button
       type="button"
-      class="control-bar__button control-bar__button--secondary control-bar__button--slot"
+      class="btn btn-outline-secondary control-bar__button-slot"
       (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
     >
       Cancel Move
@@ -96,12 +107,12 @@
   }
 
   @if (fsmState() === "CONFIRM_MOVE") {
-    <button type="button" class="control-bar__button control-bar__button--slot" (click)="dispatch(DOMAIN_INTENT.CONFIRM_MOVE)">
+    <button type="button" class="btn btn-primary control-bar__button-slot" (click)="dispatch(DOMAIN_INTENT.CONFIRM_MOVE)">
       Confirm Move
     </button>
     <button
       type="button"
-      class="control-bar__button control-bar__button--secondary control-bar__button--slot"
+      class="btn btn-outline-secondary control-bar__button-slot"
       (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
     >
       Back
@@ -109,21 +120,21 @@
   }
 
   @if (fsmState() === "ERROR") {
-    <button type="button" class="control-bar__button control-bar__button--slot" (click)="dispatch(DOMAIN_INTENT.RESTART_SESSION)">
+    <button type="button" class="btn btn-primary control-bar__button-slot" (click)="dispatch(DOMAIN_INTENT.RESTART_SESSION)">
       Restart Session
     </button>
   }
 
   @if (fsmState() !== "SETUP") {
     @if (isQuitConfirming()) {
-      <button type="button" class="control-bar__button control-bar__button--danger control-bar__button--slot" (click)="quitSession()">
+      <button type="button" class="btn btn-danger control-bar__button-slot" (click)="quitSession()">
         Confirm Quit
       </button>
-      <button type="button" class="control-bar__button control-bar__button--secondary control-bar__button--slot" (click)="cancelQuitSession()">
+      <button type="button" class="btn btn-outline-secondary control-bar__button-slot" (click)="cancelQuitSession()">
         Keep Playing
       </button>
     } @else {
-      <button type="button" class="control-bar__button control-bar__button--secondary control-bar__button--slot" (click)="quitSession()">
+      <button type="button" class="btn btn-outline-secondary control-bar__button-slot" (click)="quitSession()">
         Quit Session
       </button>
     }

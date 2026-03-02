@@ -2463,5 +2463,219 @@
       "scryfallId": "9f7ec46f-1499-4c75-8568-d9266a3d1e69",
       "artUrl": "assets/plane-art/plane-unit-headquarters.jpg"
     }
+  ],
+  "phenomena": [
+    {
+      "id": "phenomenon-chaotic-aether",
+      "name": "Chaotic Aether",
+      "rulesText": "When you encounter Chaotic Aether, each blank roll of the planar die is a {CHAOS} roll until a player planeswalks away from a plane. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "1",
+      "mtgjsonId": "5c1ec268-409d-511e-9f83-10c0801ff353",
+      "scryfallId": "42ecb371-53aa-4368-8ddd-88ae8e90ae0c"
+    },
+    {
+      "id": "phenomenon-interplanar-tunnel",
+      "name": "Interplanar Tunnel",
+      "rulesText": "When you encounter Interplanar Tunnel, reveal cards from the top of your planar deck until you reveal five plane cards. Put a plane card from among them on top of your planar deck, then put the rest of the revealed cards on the bottom in a random order. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "2",
+      "mtgjsonId": "55f9a223-082b-561f-abdd-888f8e3d039e",
+      "scryfallId": "56e4874c-9d3d-4a1c-a027-186a33ce0da7"
+    },
+    {
+      "id": "phenomenon-morphic-tide",
+      "name": "Morphic Tide",
+      "rulesText": "When you encounter Morphic Tide, each player shuffles all permanents they own into their library, then reveals that many cards from the top of their library. Each player puts all artifact, creature, land, and planeswalker cards revealed this way onto the battlefield, then does the same for enchantment cards, then puts all cards revealed this way that weren't put onto the battlefield on the bottom of their library in any order. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "3",
+      "mtgjsonId": "4d8e3f9e-a22a-543b-a092-62d5f609910c",
+      "scryfallId": "54327aa2-319d-4430-a266-03cadeed6146"
+    },
+    {
+      "id": "phenomenon-mutual-epiphany",
+      "name": "Mutual Epiphany",
+      "rulesText": "When you encounter Mutual Epiphany, each player draws four cards. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "4",
+      "mtgjsonId": "1209fccc-a286-55ed-8820-d94a135eac64",
+      "scryfallId": "3205818c-c7a9-4b70-a403-854c2ad9456d"
+    },
+    {
+      "id": "phenomenon-planewide-disaster",
+      "name": "Planewide Disaster",
+      "rulesText": "When you encounter Planewide Disaster, destroy all creatures. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "5",
+      "mtgjsonId": "024490b2-9ea8-5c39-970c-62bc9a04ec39",
+      "scryfallId": "10fc16b9-3913-400f-bd27-02fcd5c28147"
+    },
+    {
+      "id": "phenomenon-reality-shaping",
+      "name": "Reality Shaping",
+      "rulesText": "When you encounter Reality Shaping, starting with you, each player may put a permanent card from their hand onto the battlefield. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "6",
+      "mtgjsonId": "5c97953d-d501-546d-8107-179a13b385bb",
+      "scryfallId": "211014b3-ad13-41b3-bfb6-b907108769fd"
+    },
+    {
+      "id": "phenomenon-spatial-merging",
+      "name": "Spatial Merging",
+      "rulesText": "When you encounter Spatial Merging, reveal cards from the top of your planar deck until you reveal two plane cards. Simultaneously planeswalk to both of them. Put all other cards revealed this way on the bottom of your planar deck in any order.",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "7",
+      "mtgjsonId": "6d857443-ba87-500f-8889-3246224b2476",
+      "scryfallId": "de44957b-3dcb-45db-a6a7-b5c6e64b582a"
+    },
+    {
+      "id": "phenomenon-time-distortion",
+      "name": "Time Distortion",
+      "rulesText": "When you encounter Time Distortion, reverse the game's turn order. (For example, if play had proceeded clockwise around the table, it now goes counterclockwise. Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "OPCA",
+      "setCodes": [
+        "OPCA",
+        "OPC2"
+      ],
+      "number": "8",
+      "mtgjsonId": "5970fc35-de32-5ae7-a7ee-2412b3479877",
+      "scryfallId": "ba38fb01-ea16-4a2d-964a-41f7b4d74024"
+    },
+    {
+      "id": "phenomenon-caught-in-a-parallel-universe",
+      "name": "Caught in a Parallel Universe",
+      "rulesText": "When you encounter Caught in a Parallel Universe, each player chooses a creature controlled by the player to their left. Each player creates a token that's a copy of the creature they chose, except it has menace. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "WHO",
+      "setCodes": [
+        "WHO"
+      ],
+      "number": "572",
+      "mtgjsonId": "38be451d-cfa3-52e5-81e8-1e20077ec531",
+      "scryfallId": "d8ddc6d0-50cc-4914-a6f2-00fb93d4402a"
+    },
+    {
+      "id": "phenomenon-fixed-point-in-time",
+      "name": "Fixed Point in Time",
+      "rulesText": "When you encounter Fixed Point in Time, until your next turn, if a player would planeswalk as a result of rolling the planar die, chaos ensues instead. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "WHO",
+      "setCodes": [
+        "WHO"
+      ],
+      "number": "582",
+      "mtgjsonId": "47604611-0a78-5ea8-b0ef-21531a47ce40",
+      "scryfallId": "a05478f9-3a9a-4887-a8e7-63550eaa6030"
+    },
+    {
+      "id": "phenomenon-human-time-lord-meta-crisis",
+      "name": "Human—Time Lord Meta-Crisis",
+      "rulesText": "When you encounter Human—Time Lord Meta-Crisis, each player chooses one or two creatures they control. Each player creates a token that's a copy of the first creature they chose, except it isn't legendary. Then each player who chose a second creature puts a number of +1/+1 counters on the token they created equal to the power of the second creature they chose. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "WHO",
+      "setCodes": [
+        "WHO"
+      ],
+      "number": "585",
+      "mtgjsonId": "5abd4084-405d-5312-ba65-82fc5461cc61",
+      "scryfallId": "f5def75a-f511-42e8-a652-7de4abfbd968"
+    },
+    {
+      "id": "phenomenon-unleash-the-flux",
+      "name": "Unleash the Flux",
+      "rulesText": "When you encounter Unleash the Flux, each player sacrifices a nonland permanent of their choice, then you flip a coin. If you lose the flip, repeat this process. (Then planeswalk away from this phenomenon.)",
+      "typeLine": "Phenomenon",
+      "types": [
+        "Phenomenon"
+      ],
+      "subtypes": [],
+      "setCode": "WHO",
+      "setCodes": [
+        "WHO"
+      ],
+      "number": "605",
+      "mtgjsonId": "18ff2672-ceda-531f-9608-f7632e79d300",
+      "scryfallId": "8e3c04ad-a8b5-453a-aff4-dce743b1c693"
+    }
   ]
 }

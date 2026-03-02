@@ -688,7 +688,7 @@ Resolution: Added Git remote to target repository, bumped project version metada
 title: Disable dev mode on GitHub Pages deployments
 status: complete
 description: The production build served via GitHub Pages should default to dev mode off so debug-only panels and controls are hidden in the hosted experience.
-Resolution: Added production file replacement in ngular.json so Pages/production builds use environment.prod.ts where dev is false, ensuring debug-only UI is disabled in hosted builds.
+Resolution: Added production file replacement in angular.json so Pages/production builds use environment.prod.ts where dev is false, ensuring debug-only UI is disabled in hosted builds.
 
 ---
 
@@ -992,3 +992,113 @@ status: complete
 priority: high
 description: Remove user-facing enable/disable controls for Hellride. In Blind Eternities mode, Hellride behavior should always be active and enforced in state/rules flow. Regular Planechase behavior remains unaffected.
 Resolution: Removed Hellride controls from setup UI and help copy now states Hellride is always active in Blind Eternities. Movement eligibility now enforces Hellride diagonals automatically in Blind Eternities and keeps Regular Planechase behavior unchanged.
+
+---
+
+title: Add Bootstrap dependency and global stylesheet integration
+status: complete
+priority: high
+description: Install Bootstrap 5.3 in project dependencies and wire its stylesheet globally so Bootstrap classes used in templates are actually backed by framework CSS instead of custom reimplementation.
+Resolution: Added bootstrap@5.3.3 to dependencies and imported bootstrap/dist/css/bootstrap.min.css at the top of src/styles.scss, enabling framework-native styling across templates.
+
+---
+
+title: Remove custom control-bar button-group CSS and use Bootstrap-native button groups
+status: complete
+priority: high
+description: Refactor control-bar button group implementation to rely on Bootstrap btn-group, btn-check, and button variant classes with minimal local overrides. Remove duplicated state/focus/checked styling currently implemented in control-bar.component.scss.
+Resolution: Updated deck-set and game-mode controls to Bootstrap btn-check plus btn-group markup and removed custom checked/focus button-group styling from control-bar SCSS.
+
+---
+
+title: Refactor modal host shell to Bootstrap modal structure without behavior regression
+status: complete
+priority: high
+description: The modal uses fully custom styling and structure. Migrate to Bootstrap modal classes/structure (modal, modal-dialog, modal-content, modal-header, modal-body, modal-footer) while preserving existing project-specific behavior (draggable panel, queued count, keyboard handling, viewport clamping).
+Resolution: Migrated modal host markup to Bootstrap modal semantics while preserving drag interactions, queued-count display, keyboard handling, and viewport clamping behavior through existing component logic.
+
+---
+
+title: Phenomena not appearing in live gameplay; validate card data pipeline
+status: complete
+priority: high
+description: Phenomenon cards are not surfacing during real gameplay runs. Investigate deck composition and runtime filtering to confirm phenomena are included when expected, and verify cards.json contains complete/valid phenomenon metadata required by current detection logic.
+Resolution: Extended card sync and deck loading to include phenomena, added card-type metadata mapping in deck initialization, and refreshed cards.json so runtime draw/replacement logic can surface and handle phenomena correctly.
+
+---
+
+title: Replace custom switch styling with Bootstrap form-check form-switch pattern
+status: complete
+priority: medium
+description: Update Fog of War and optional rules switches to Bootstrap switch markup (form-check form-switch plus form-check-input/form-check-label) and remove custom switch appearance rules from component SCSS.
+Resolution: Replaced custom switch markup with Bootstrap form-check form-switch controls for Fog of War and optional rules and removed bespoke switch rendering styles from control-bar SCSS.
+
+---
+
+title: Migrate control bar action buttons to Bootstrap button variants/utilities
+status: complete
+priority: medium
+description: Replace custom control-bar__button visual variants with Bootstrap button classes (btn, btn-primary, btn-secondary, btn-danger, disabled state) and keep component CSS focused on layout spacing only.
+Resolution: Converted control-bar action buttons to Bootstrap button variants and reduced component CSS to layout-only button sizing via control-bar__button-slot.
+
+---
+
+title: Refactor debug panel controls to Bootstrap button and details styling
+status: complete
+priority: medium
+description: Debug panel currently duplicates button/chip/panel styling. Migrate buttons and status chips to Bootstrap classes/utilities and reduce custom CSS to component-specific layout concerns.
+Resolution: Updated debug actions and state chip to Bootstrap button/badge patterns, styled details sections with Bootstrap utility classes, and removed duplicated button styling from debug-panel SCSS.
+
+---
+
+title: Replace custom error banner styling with Bootstrap alert component pattern
+status: complete
+priority: medium
+description: Update error banner to use Bootstrap alert semantics and classes (alert, severity variant, heading/body structure) and remove duplicated alert border/background/text styling from local SCSS.
+Resolution: Refactored error banner markup to Bootstrap alert alert-danger semantics with heading/body structure and removed redundant custom border/background/title/message style definitions.
+
+---
+
+title: Reduce app shell panel/card style duplication via Bootstrap cards and utilities
+status: complete
+priority: medium
+description: App shell reimplements panel surfaces, headers, spacing, and list presentation. Migrate reusable panel blocks (Game Controls, Event Log, Debug) to Bootstrap card/layout utility classes and keep theme-specific overrides token-based.
+Resolution: Migrated core shell panels to Bootstrap card structure (card + card-body) and shifted app-shell styling toward tokenized overrides via card CSS variables instead of fully custom panel primitives.
+
+---
+
+title: Canvas background should not tile
+status: complete
+priority: medium
+description: Phaser canvas theme backgrounds should render as a single composed scene background and should not visually tile/repeat across the viewport during camera movement or resize.
+Resolution: Replaced the Phaser tiling background path with a single non-repeating image background that is scaled to cover the viewport, so camera movement and resize no longer produce visible tiling seams.
+
+---
+
+title: Fix theme color regressions after Bootstrap migration and improve theme contrast
+status: complete
+priority: medium
+description: Inputs and buttons have theme color regressions after switching to Bootstrap classes. Audit and correct theme token/class overrides so controls remain theme-consistent, then evaluate text/background contrast across all themes with focused fixes for Phyrexian, Neon Dynasty, and Halo Fountain where dark text is hard to distinguish from darker backgrounds.
+Resolution: Added a token-driven Bootstrap conformance layer in global styles to map body/text/border/button/form/badge/alert colors to theme variables, restoring themed control styling and improving text contrast across darker themes.
+
+---
+
+title: Add Bootstrap-conformance guardrails to documentation
+status: complete
+priority: low
+description: Update coding/style guidance docs to require Bootstrap-first implementation for common UI primitives (buttons, groups, switches, alerts, cards, modals) and prohibit duplicating framework component styles unless explicitly justified.
+Resolution: Updated contributor guidance with explicit Bootstrap-first rules for common UI primitives and documented that custom overrides should be scoped, token-based, and justified when Bootstrap defaults are insufficient.
+
+---
+
+title: Replace SVG theme backgrounds with raster art assets
+status: complete
+priority: high
+description: Replace current Phaser theme background SVG files with raster art assets (theme-specific generated renders) for higher visual fidelity. PNG assets now exist and this issue is unblocked. Implementation requirements:
+- normalize file naming so each theme key maps cleanly and consistently (for example `phyrexian`, `neon-dynasty`, `lithomancy`, `halo-fountain`; fix current `phyrexia.png` naming mismatch)
+- convert/normalize image dimensions and format settings as needed so assets are consistent for runtime loading
+- optimize/compress PNG files to reduce transfer and bundle weight while preserving acceptable visual quality
+- update Phaser theme background loader mapping to use the raster assets
+- remove legacy SVG background files after raster migration is validated
+Resolution: Completed raster migration by normalizing theme PNG naming/mapping, deleting legacy SVGs, and replacing tiling behavior with viewport-fit background rendering. Added npm-native optimization flow (`assets:optimize:themes` and `assets:optimize:themes:dry`) backed by `sharp` and reduced theme background total size from 10.43 MB to 3.53 MB (66.11% saved).
+

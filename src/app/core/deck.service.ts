@@ -15,18 +15,21 @@ export type PlaneCard = {
   cardKind?: CardKind;
 };
 
+type CatalogCard = {
+  id: string;
+  name?: string;
+  rulesText?: string;
+  chaosText?: string;
+  artUrl?: string;
+  setCode?: string;
+  setCodes?: string[];
+  typeLine?: string;
+  types?: string[];
+};
+
 type CardsCatalog = {
-  planes?: Array<{
-    id: string;
-    name?: string;
-    rulesText?: string;
-    chaosText?: string;
-    artUrl?: string;
-    setCode?: string;
-    setCodes?: string[];
-    typeLine?: string;
-    types?: string[];
-  }>;
+  planes?: CatalogCard[];
+  phenomena?: CatalogCard[];
 };
 
 export type PlaneSetOption = {
@@ -45,34 +48,17 @@ const MIN_PLANES_PER_SESSION = 5;
 export class DeckValidationError extends Error {}
 
 /**
- * Reads local plane metadata and provides deterministic deck/set operations.
+ * Reads local card metadata and provides deterministic deck/set operations.
  */
 @Injectable({ providedIn: "root" })
 export class DeckService {
-  private readonly planes: PlaneCard[] = ((cardsCatalog as CardsCatalog).planes ?? [])
-    .filter((p) => typeof p.id === "string" && p.id.length > 0)
-    .map((p) => ({
-      id: p.id,
-      name: p.name?.trim() || this.humanizePlaneId(p.id),
-      setCode: p.setCode?.trim() || undefined,
-      setCodes: Array.isArray(p.setCodes)
-        ? p.setCodes.map((code) => String(code).trim()).filter((code) => code.length > 0)
-        : p.setCode?.trim()
-          ? [p.setCode.trim()]
-          : [],
-      rulesText: p.rulesText?.trim() || undefined,
-      chaosText: p.chaosText?.trim() || undefined,
-      artUrl: p.artUrl?.trim() || undefined,
-      cardKind: this.resolveCardKind({
-        typeLine: p.typeLine,
-        types: Array.isArray(p.types) ? p.types : [],
-      }),
-    }));
+  private readonly planes: PlaneCard[] = this.buildCards((cardsCatalog as CardsCatalog).planes ?? [], "PLANE");
+  private readonly phenomena: PlaneCard[] = this.buildCards((cardsCatalog as CardsCatalog).phenomena ?? [], "PHENOMENON");
+  private readonly cards: PlaneCard[] = [...this.planes, ...this.phenomena];
 
   private readonly planesById = new Map(this.planes.map((p) => [p.id, p] as const));
-  private readonly playablePlanes = this.planes.filter(
-    (p) => typeof p.rulesText === "string" && p.rulesText.length > 0
-  );
+  private readonly playablePlanes = this.planes.filter((p) => typeof p.rulesText === "string" && p.rulesText.length > 0);
+  private readonly playableCards = this.cards.filter((p) => typeof p.rulesText === "string" && p.rulesText.length > 0);
 
   /**
    * Returns all known planes from local catalog.
@@ -183,6 +169,7 @@ export class DeckService {
     includedSetCodes?: readonly string[];
   }): { drawPile: string[]; discardPile: string[]; cardTypesById: Record<string, CardKind> } {
     const include = new Set((args.includedSetCodes ?? []).map((code) => code.trim()).filter((code) => code.length > 0));
+
     const sourcePlanes =
       include.size > 0
         ? this.playablePlanes.filter((plane) => {
@@ -190,26 +177,32 @@ export class DeckService {
             return codes.some((code) => include.has(code));
           })
         : this.playablePlanes;
+    const sourceCards =
+      include.size > 0
+        ? this.playableCards.filter((card) => {
+            const codes = this.resolvePlaneSetCodes(card);
+            return codes.some((code) => include.has(code));
+          })
+        : this.playableCards;
 
-    if (include.size > 0 && sourcePlanes.length === 0) {
+    if (include.size > 0 && sourceCards.length === 0) {
       throw new DeckValidationError("No playable cards matched the selected set filters.");
     }
     if (sourcePlanes.length < MIN_PLANES_PER_SESSION) {
       throw new DeckValidationError(`At least ${MIN_PLANES_PER_SESSION} playable planes are required to start a session.`);
     }
-
     if (this.playablePlanes.length === 0) {
       throw new Error("No playable plane cards available in cards catalog.");
     }
 
     const shuffled = createShuffledDeck({
-      planeIds: sourcePlanes.map((p) => p.id),
+      planeIds: sourceCards.map((card) => card.id),
       atMs: args.atMs,
       seed: args.seed,
     });
     const cardTypesById: Record<string, CardKind> = {};
-    sourcePlanes.forEach((plane) => {
-      cardTypesById[plane.id] = plane.cardKind ?? "UNKNOWN";
+    sourceCards.forEach((card) => {
+      cardTypesById[card.id] = card.cardKind ?? "UNKNOWN";
     });
     return {
       ...shuffled,
@@ -218,10 +211,36 @@ export class DeckService {
   }
 
   /**
-   * Resolves all set codes associated with a plane entry.
+   * Resolves all set codes associated with a card entry.
    */
-  private resolvePlaneSetCodes(plane: PlaneCard): string[] {
-    return (plane.setCodes ?? []).length > 0 ? (plane.setCodes as string[]) : [plane.setCode?.trim() || "UNKNOWN"];
+  private resolvePlaneSetCodes(card: PlaneCard): string[] {
+    return (card.setCodes ?? []).length > 0 ? [...(card.setCodes ?? [])] : [card.setCode?.trim() || "UNKNOWN"];
+  }
+
+  /**
+   * Maps raw catalog items into normalized runtime card records.
+   */
+  private buildCards(source: CatalogCard[], defaultKind: CardKind): PlaneCard[] {
+    return source
+      .filter((card) => typeof card.id === "string" && card.id.length > 0)
+      .map((card) => ({
+        id: card.id,
+        name: card.name?.trim() || this.humanizePlaneId(card.id),
+        setCode: card.setCode?.trim() || undefined,
+        setCodes: Array.isArray(card.setCodes)
+          ? card.setCodes.map((code) => String(code).trim()).filter((code) => code.length > 0)
+          : card.setCode?.trim()
+            ? [card.setCode.trim()]
+            : [],
+        rulesText: card.rulesText?.trim() || undefined,
+        chaosText: card.chaosText?.trim() || undefined,
+        artUrl: card.artUrl?.trim() || undefined,
+        cardKind: this.resolveCardKind({
+          typeLine: card.typeLine,
+          types: Array.isArray(card.types) ? card.types : [],
+          defaultKind,
+        }),
+      }));
   }
 
   /**
@@ -239,12 +258,13 @@ export class DeckService {
   /**
    * Derives a normalized card kind from MTGJSON-like type metadata.
    */
-  private resolveCardKind(args: { typeLine?: string; types: string[] }): CardKind {
-    const tokens = [...args.types, ...(args.typeLine ? args.typeLine.split(/[\s—-]+/g) : [])]
+  private resolveCardKind(args: { typeLine?: string; types: string[]; defaultKind: CardKind }): CardKind {
+    const normalizedTypeLine = (args.typeLine ?? "").replace(/[^a-z0-9]+/gi, " ");
+    const tokens = [...args.types, ...normalizedTypeLine.split(" ")]
       .map((token) => token.trim().toUpperCase())
       .filter((token) => token.length > 0);
     if (tokens.includes("PHENOMENON")) return "PHENOMENON";
     if (tokens.includes("PLANE")) return "PLANE";
-    return "UNKNOWN";
+    return args.defaultKind;
   }
 }

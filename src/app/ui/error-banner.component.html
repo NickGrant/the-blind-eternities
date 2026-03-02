@@ -1,9 +1,9 @@
-<div class="error-banner" role="alert">
+<div class="error-banner alert alert-danger mb-3" role="alert">
   @if(error) {
-    <div class="error-banner__title">Error: {{ error.code }}</div>
-    <div class="error-banner__message">{{ error.message }}</div>
+    <div class="alert-heading fw-bold">Error: {{ error.code }}</div>
+    <div>{{ error.message }}</div>
     @if(error.detail) {
-      <div class="error-banner__detail">{{ error.detail }}</div>
+      <div class="error-banner__detail mt-1">{{ error.detail }}</div>
     }
   }
 </div>

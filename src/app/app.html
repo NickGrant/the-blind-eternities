@@ -26,34 +26,40 @@
       }
     </header>
 
-    <section class="app-shell__controls app-shell__panel">
-      <h2>Game Controls</h2>
-      <app-control-bar [rollToastVisible]="!!rollToast()"></app-control-bar>
+    <section class="app-shell__controls app-shell__panel card">
+      <div class="card-body">
+        <h2 class="app-shell__panel-title h6">Game Controls</h2>
+        <app-control-bar [rollToastVisible]="!!rollToast()"></app-control-bar>
+      </div>
     </section>
   </section>
 
   <section class="app-shell__content" [class.app-shell__content--dev]="devModeEnabled()">
     @if (devModeEnabled()) {
       <div class="app-shell__left">
-        <div class="app-shell__panel">
-          <h2>Event Log</h2>
-          @if (logEntries().length === 0) {
-            <div class="app-shell__empty">No events yet. Start a session to generate play logs.</div>
-          } @else {
-            <ul class="app-shell__event-log">
-              @for (entry of logEntries(); track entry.id) {
-                <li [class]="'lvl-' + entry.level">
-                  <div class="app-shell__event-line">{{ entry.message }}</div>
-                  <div class="app-shell__event-meta">{{ entry.level }} | {{ entry.atMs }}</div>
-                </li>
-              }
-            </ul>
-          }
+        <div class="app-shell__panel card">
+          <div class="card-body">
+            <h2 class="app-shell__panel-title h6">Event Log</h2>
+            @if (logEntries().length === 0) {
+              <div class="app-shell__empty">No events yet. Start a session to generate play logs.</div>
+            } @else {
+              <ul class="app-shell__event-log">
+                @for (entry of logEntries(); track entry.id) {
+                  <li [class]="'lvl-' + entry.level">
+                    <div class="app-shell__event-line">{{ entry.message }}</div>
+                    <div class="app-shell__event-meta">{{ entry.level }} | {{ entry.atMs }}</div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
         </div>
 
-        <div class="app-shell__panel">
-          <h2>Debug</h2>
-          <app-debug-panel></app-debug-panel>
+        <div class="app-shell__panel card">
+          <div class="card-body">
+            <h2 class="app-shell__panel-title h6">Debug</h2>
+            <app-debug-panel></app-debug-panel>
+          </div>
         </div>
       </div>
     }

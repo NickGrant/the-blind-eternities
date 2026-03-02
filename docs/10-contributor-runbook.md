@@ -42,6 +42,10 @@ This runbook defines how to contribute safely and consistently.
   - component logic in `*.component.ts`
   - template in `*.component.html`
   - styles in `*.component.scss`
+- Use Bootstrap-first implementation for common UI primitives:
+  - buttons, button groups, switches/checks, alerts, cards, and modal shell structure
+  - use component SCSS for layout and theme-token overrides, not full component reimplementation
+- If Bootstrap behavior/styling must be overridden, document why in the PR/issue and keep overrides scoped to tokens/utilities.
 - Avoid non-trivial inline template/style blocks in component decorators.
 - Use BEM-style class naming for component-level styles.
 - Use tokenized styling through CSS variables (`--be-*`) instead of repeated hardcoded values.

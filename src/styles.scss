@@ -1,3 +1,5 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
 /* Global layout reset so viewport math is consistent across browsers. */
 *,
 *::before,
@@ -47,6 +49,8 @@ body {
   --be-color-text-strong: #f8fbff;
   --be-color-text-muted: #a8b8ca;
   --be-color-text-inverse: #f5f7fb;
+  --be-color-accent: #9cc7ff;
+  --be-color-accent-contrast: #08111f;
 
   --be-color-border: rgba(164, 187, 212, 0.36);
   --be-color-border-subtle: rgba(138, 158, 182, 0.28);
@@ -79,6 +83,8 @@ body {
   --be-color-text: #dde5e8;
   --be-color-text-strong: #f7fcfd;
   --be-color-text-muted: #9aaab2;
+  --be-color-accent: #9ad1b3;
+  --be-color-accent-contrast: #07110d;
   --be-color-border: rgba(178, 208, 196, 0.34);
   --be-color-border-subtle: rgba(152, 180, 168, 0.24);
   --be-gradient-modal: linear-gradient(180deg, #151d1f 0%, #0c1113 100%);
@@ -104,6 +110,8 @@ body {
   --be-color-text: #e8ebff;
   --be-color-text-strong: #ffffff;
   --be-color-text-muted: #b6befa;
+  --be-color-accent: #7dd5ff;
+  --be-color-accent-contrast: #08142f;
   --be-color-border: rgba(116, 177, 255, 0.42);
   --be-color-border-subtle: rgba(130, 113, 255, 0.3);
   --be-gradient-modal: linear-gradient(180deg, #1a1f4b 0%, #111634 100%);
@@ -130,6 +138,8 @@ body {
   --be-color-text-strong: #2f1f14;
   --be-color-text-muted: #80614a;
   --be-color-text-inverse: #2f1f14;
+  --be-color-accent: #bf8a4d;
+  --be-color-accent-contrast: #21160a;
   --be-color-border: rgba(184, 145, 101, 0.44);
   --be-color-border-subtle: rgba(198, 163, 121, 0.32);
   --be-gradient-modal: linear-gradient(180deg, #f5e9d2 0%, #e6d1ad 100%);
@@ -155,6 +165,8 @@ body {
   --be-color-text: #e7fcff;
   --be-color-text-strong: #ffffff;
   --be-color-text-muted: #b8ecf3;
+  --be-color-accent: #f2d29a;
+  --be-color-accent-contrast: #122a34;
   --be-color-border: rgba(145, 235, 232, 0.4);
   --be-color-border-subtle: rgba(126, 214, 214, 0.3);
   --be-gradient-modal: linear-gradient(180deg, #11596e 0%, #0a3441 100%);
@@ -171,4 +183,107 @@ body {
     linear-gradient(135deg, rgba(245, 228, 188, 0.2), transparent 46%),
     linear-gradient(330deg, rgba(236, 213, 171, 0.16), transparent 58%);
   --be-control-overlay: linear-gradient(180deg, rgba(238, 226, 188, 0.22), rgba(14, 73, 88, 0.42));
+}
+
+/* Bootstrap conformance layer: keep framework components theme-aware via tokens. */
+:root {
+  --bs-body-bg: var(--be-color-bg);
+  --bs-body-color: var(--be-color-text);
+  --bs-emphasis-color: var(--be-color-text-strong);
+  --bs-secondary-color: var(--be-color-text-muted);
+  --bs-tertiary-color: var(--be-color-text-muted);
+  --bs-border-color: var(--be-color-border-subtle);
+  --bs-link-color: var(--be-color-text-strong);
+  --bs-link-hover-color: var(--be-color-text);
+}
+
+.text-body-secondary {
+  color: var(--be-color-text-muted) !important;
+}
+
+.btn {
+  --bs-btn-font-weight: 600;
+  --bs-btn-focus-box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--be-color-accent) 40%, transparent);
+}
+
+.btn-primary {
+  --bs-btn-color: var(--be-color-accent-contrast);
+  --bs-btn-bg: var(--be-color-accent);
+  --bs-btn-border-color: color-mix(in srgb, var(--be-color-accent) 78%, #ffffff 22%);
+  --bs-btn-hover-color: var(--be-color-accent-contrast);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--be-color-accent) 86%, #ffffff 14%);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--be-color-accent) 70%, #ffffff 30%);
+  --bs-btn-active-color: var(--be-color-accent-contrast);
+  --bs-btn-active-bg: color-mix(in srgb, var(--be-color-accent) 75%, #000000 25%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--be-color-accent) 60%, #000000 40%);
+  --bs-btn-disabled-color: color-mix(in srgb, var(--be-color-accent-contrast) 60%, #ffffff 40%);
+  --bs-btn-disabled-bg: color-mix(in srgb, var(--be-color-accent) 48%, #000000 52%);
+  --bs-btn-disabled-border-color: color-mix(in srgb, var(--be-color-accent) 45%, #000000 55%);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--be-color-text-strong);
+  --bs-btn-border-color: var(--be-color-border);
+  --bs-btn-hover-color: var(--be-color-text-strong);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--be-color-surface-subtle) 80%, var(--be-color-accent) 20%);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--be-color-border) 70%, var(--be-color-accent) 30%);
+  --bs-btn-active-color: var(--be-color-text-strong);
+  --bs-btn-active-bg: color-mix(in srgb, var(--be-color-surface-subtle) 70%, var(--be-color-accent) 30%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--be-color-border) 60%, var(--be-color-accent) 40%);
+  --bs-btn-disabled-color: color-mix(in srgb, var(--be-color-text-muted) 70%, #ffffff 30%);
+  --bs-btn-disabled-border-color: color-mix(in srgb, var(--be-color-border-subtle) 70%, #000000 30%);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--be-color-text);
+  --bs-btn-border-color: var(--be-color-border-subtle);
+  --bs-btn-hover-color: var(--be-color-text-strong);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--be-color-surface-subtle) 85%, #ffffff 15%);
+  --bs-btn-hover-border-color: var(--be-color-border);
+  --bs-btn-active-color: var(--be-color-text-strong);
+  --bs-btn-active-bg: color-mix(in srgb, var(--be-color-surface-subtle) 70%, #ffffff 30%);
+  --bs-btn-active-border-color: var(--be-color-border);
+}
+
+.btn-danger {
+  --bs-btn-color: #fff6f6;
+}
+
+.form-control,
+.form-select {
+  color: var(--be-color-text);
+  border-color: var(--be-color-border);
+  background: var(--be-control-overlay), var(--be-color-surface-subtle);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: color-mix(in srgb, var(--be-color-border) 65%, var(--be-color-accent) 35%);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--be-color-accent) 35%, transparent);
+}
+
+.form-check-label {
+  color: var(--be-color-text);
+}
+
+.form-check-input {
+  border-color: var(--be-color-border);
+  background-color: color-mix(in srgb, var(--be-color-surface-subtle) 80%, #000000 20%);
+}
+
+.form-check-input:checked {
+  border-color: color-mix(in srgb, var(--be-color-accent) 75%, #ffffff 25%);
+  background-color: var(--be-color-accent);
+}
+
+.badge.text-bg-secondary {
+  background-color: color-mix(in srgb, var(--be-color-surface-subtle) 85%, #000000 15%) !important;
+  color: var(--be-color-text-strong) !important;
+}
+
+.alert-danger {
+  --bs-alert-color: var(--be-color-text-strong);
+  --bs-alert-bg: var(--be-color-danger-bg);
+  --bs-alert-border-color: var(--be-color-danger-border);
 }

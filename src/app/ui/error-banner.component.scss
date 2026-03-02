@@ -1,22 +1,7 @@
 .error-banner {
-  border: 1px solid var(--be-color-danger-border-strong);
-  background: var(--be-color-danger-bg);
   color: var(--be-color-text);
-  padding: var(--be-space-3) var(--be-space-4);
-  border-radius: var(--be-radius-md);
-  margin-bottom: var(--be-space-3);
-
-  &__title {
-    font-weight: 700;
-    margin-bottom: var(--be-space-1);
-  }
-
-  &__message {
-    font-weight: 500;
-  }
 
   &__detail {
-    margin-top: var(--be-space-1);
     font-family: var(--be-font-family-mono);
     font-size: var(--be-font-size-xs);
     opacity: 0.9;

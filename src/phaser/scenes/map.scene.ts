@@ -109,10 +109,10 @@ const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
 };
 
 const THEME_BACKGROUND_ASSETS: Record<MapThemeId, string> = {
-  phyrexian: "assets/theme-backgrounds/phyrexian-bg.svg",
-  "neon-dynasty": "assets/theme-backgrounds/neon-dynasty-bg.svg",
-  lithomancy: "assets/theme-backgrounds/lithomancy-bg.svg",
-  "halo-fountain": "assets/theme-backgrounds/halo-fountain-bg.svg",
+  phyrexian: "assets/theme-backgrounds/phyrexian.png",
+  "neon-dynasty": "assets/theme-backgrounds/neon-dynasty.png",
+  lithomancy: "assets/theme-backgrounds/lithomancy.png",
+  "halo-fountain": "assets/theme-backgrounds/halo-fountain.png",
 };
 
 export class MapScene extends Phaser.Scene {
@@ -134,7 +134,7 @@ export class MapScene extends Phaser.Scene {
   private readonly artTextureByUrl = new Map<string, string>();
   private readonly pendingArtLoads = new Set<string>();
   private readonly pendingThemeBackgroundLoads = new Set<MapThemeId>();
-  private background?: Phaser.GameObjects.TileSprite;
+  private background?: Phaser.GameObjects.Image;
   private activeThemeId: MapThemeId = "phyrexian";
   private palette: ThemePalette = THEME_PALETTES.phyrexian;
   private readonly minZoom = 0.5;
@@ -534,14 +534,13 @@ export class MapScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
     if (!this.background) {
-      this.background = this.add.tileSprite(0, 0, w, h, textureKey).setOrigin(0, 0);
+      this.background = this.add.image(w / 2, h / 2, textureKey).setOrigin(0.5, 0.5);
       this.background.setScrollFactor(0, 0);
       this.background.setDepth(-10);
     } else {
-      this.background.setSize(w, h);
       this.background.setTexture(textureKey);
     }
-    this.updateBackgroundScroll();
+    this.fitBackgroundToViewport();
   }
 
   private syncTheme(force = false): void {
@@ -616,10 +615,22 @@ export class MapScene extends Phaser.Scene {
   }
 
   private updateBackgroundScroll(): void {
+    this.fitBackgroundToViewport();
+  }
+
+  private fitBackgroundToViewport(): void {
     if (!this.background) return;
-    const cam = this.cameras.main;
-    this.background.tilePositionX = cam.scrollX * 0.15;
-    this.background.tilePositionY = cam.scrollY * 0.15;
+
+    const viewportWidth = this.scale.width;
+    const viewportHeight = this.scale.height;
+    const texture = this.textures.get(this.background.texture.key);
+    const sourceImage = texture?.getSourceImage() as { width?: number; height?: number } | undefined;
+    const textureWidth = sourceImage?.width ?? viewportWidth;
+    const textureHeight = sourceImage?.height ?? viewportHeight;
+
+    const scale = Math.max(viewportWidth / textureWidth, viewportHeight / textureHeight);
+    this.background.setPosition(viewportWidth / 2, viewportHeight / 2);
+    this.background.setDisplaySize(textureWidth * scale, textureHeight * scale);
   }
 
   private onResize(): void {
