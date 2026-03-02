@@ -7,39 +7,39 @@ Reference smoke script:
 
 ## Functional Verification
 
-- [ ] Session start and bootstrap reveal complete successfully
-- [ ] Startup reveal behavior matches configured fog-of-war depth
-- [ ] Die roll outcomes behave correctly (`blank`, `chaos`, `planeswalk`)
-- [ ] Movement flow works end-to-end (select, confirm, auto-complete)
-- [ ] Hellride diagonal movement behavior matches configured rules
-- [ ] Landing modal opens with expected plane details
-- [ ] No invalid FSM transitions are user-reachable
-- [ ] Phenomenon replacement behavior matches article-aligned spec
+- [x] Session start and bootstrap reveal complete successfully
+- [x] Startup reveal behavior matches configured fog-of-war depth
+- [x] Die roll outcomes behave correctly (`blank`, `chaos`, `planeswalk`)
+- [x] Movement flow works end-to-end (select, confirm, auto-complete)
+- [x] Hellride diagonal movement behavior matches configured rules
+- [x] Landing modal opens with expected plane details
+- [x] No invalid FSM transitions are user-reachable
+- [x] Phenomenon replacement behavior matches article-aligned spec
 
 ## Visual and Interaction Verification
 
-- [ ] Plane art displays for cached cards
-- [ ] Face-down and face-up card states are visually distinct
-- [ ] Camera recenter and drag pan behaviors work
-- [ ] Double-click inspect behavior works in non-movement states
-- [ ] Control bar and modal interaction do not cause distracting layout shifts
+- [x] Plane art displays for cached cards
+- [x] Face-down and face-up card states are visually distinct
+- [x] Camera recenter and drag pan behaviors work
+- [x] Double-click inspect behavior works in non-movement states
+- [x] Control bar and modal interaction do not cause distracting layout shifts
 
 ## Asset and Data Verification
 
-- [ ] `cards.json` contains expected metadata fields for shipped cards
-- [ ] Cached art files exist and are served from `/assets/plane-art`
-- [ ] No critical 404 errors in browser console for required assets
+- [x] `cards.json` contains expected metadata fields for shipped cards
+- [x] Cached art files exist and are served from `/assets/plane-art`
+- [x] No critical 404 errors in browser console for required assets
 
 ## Quality Gates
 
-- [ ] `npm run lint` passes
-- [ ] `npm run test:unit` passes
-- [ ] `npm run build` passes
-- [ ] `ISSUES.md` has no unresolved release-blocking entries
+- [x] `npm run lint` passes
+- [x] `npm run test:unit` passes
+- [x] `npm run build` passes
+- [x] `ISSUES.md` has no unresolved release-blocking entries
 
 ## Release Notes and Documentation
 
-- [ ] Behavior changes documented in relevant docs
-- [ ] `docs/16-blind-eternities-article-alignment.md` reviewed and current
-- [ ] `ISSUES.md` statuses and resolutions updated
-- [ ] Root `README.md` and docs index are current
+- [x] Behavior changes documented in relevant docs
+- [x] `docs/16-blind-eternities-article-alignment.md` reviewed and current
+- [x] `ISSUES.md` statuses and resolutions updated
+- [x] Root `README.md` and docs index are current

@@ -53,6 +53,7 @@ export type SessionState = {
     rulesProfile?: RulesProfile;
     enableHellride?: boolean;
     enableAntiStall?: boolean;
+    usePhysicalDie?: boolean;
   };
 
   rng: {
@@ -69,6 +70,7 @@ export type SessionState = {
     phenomenonGate?: {
       isResolving: boolean;
       sourcePlaneId?: string;
+      pendingPhenomenonIds?: string[];
     };
   };
 

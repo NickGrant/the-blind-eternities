@@ -20,11 +20,13 @@ export class ControlBarSetupComponent {
   @Input() selectedGameMode: GameMode = GAME_MODE.BLIND_ETERNITIES;
   @Input() selectedFogOfWarDistance: FogOfWarDistance = FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL;
   @Input() antiStallEnabled = false;
+  @Input() usePhysicalDie = false;
 
   @Output() toggleSet = new EventEmitter<string>();
   @Output() gameModeChange = new EventEmitter<GameMode>();
   @Output() fogEnhancedRevealChange = new EventEmitter<boolean>();
   @Output() antiStallChange = new EventEmitter<boolean>();
+  @Output() usePhysicalDieChange = new EventEmitter<boolean>();
   @Output() startSession = new EventEmitter<void>();
 
   protected readonly GAME_MODE = GAME_MODE;
@@ -46,5 +48,10 @@ export class ControlBarSetupComponent {
   onAntiStallChange(event: Event): void {
     const target = event.target as HTMLInputElement | null;
     this.antiStallChange.emit(target?.checked === true);
+  }
+
+  onPhysicalDieChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    this.usePhysicalDieChange.emit(target?.checked === true);
   }
 }

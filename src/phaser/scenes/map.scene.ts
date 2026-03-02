@@ -246,13 +246,7 @@ export class MapScene extends Phaser.Scene {
       fontStyle: "bold",
       align: "center",
       wordWrap: { width: artWidth - 10, useAdvancedWrap: true },
-      shadow: {
-        offsetX: 1,
-        offsetY: 1,
-        color: "#000000",
-        blur: 1,
-        fill: true,
-      },
+      shadow: this.getNameLabelShadowStyle(),
     });
     label.setOrigin(0.5, 1);
     objects.push(labelBackdrop, label);
@@ -659,6 +653,25 @@ export class MapScene extends Phaser.Scene {
 
   private canUseZoomControls(): boolean {
     return this.tilesByCoord.size > 0;
+  }
+
+  private getNameLabelShadowStyle(): Phaser.Types.GameObjects.Text.TextShadow {
+    if (this.activeThemeId === "lithomancy") {
+      return {
+        offsetX: 0,
+        offsetY: 0,
+        color: "#f8ecd1",
+        blur: 0,
+        fill: false,
+      };
+    }
+    return {
+      offsetX: 1,
+      offsetY: 1,
+      color: "#000000",
+      blur: 1,
+      fill: true,
+    };
   }
 
 }

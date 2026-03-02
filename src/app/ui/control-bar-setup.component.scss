@@ -90,6 +90,10 @@
       gap: calc(var(--be-space-2) + 2px);
     }
 
+    &--inline-switch {
+      margin-top: var(--be-space-2);
+    }
+
     &--set-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
@@ -160,6 +164,10 @@
     &__setup-action &__button-slot {
       width: 100%;
       min-height: calc(var(--be-control-min-height) + 10px);
+    }
+
+    &__set-options--set-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 }

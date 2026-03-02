@@ -154,7 +154,33 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
 
     case "IDLE": {
       if (intent.type === DOMAIN_INTENT.ROLL_DIE) {
+        if (state.config.usePhysicalDie) return state;
         return transition(state, "ROLLING", intent);
+      }
+      if (intent.type === DOMAIN_INTENT.MANUAL_WALK) {
+        if (!state.config.usePhysicalDie) return state;
+        const logged = appendLog(state, {
+          atMs: intent.atMs,
+          level: "info",
+          message: "Manual walk triggered.",
+          meta: {
+            gameMode: state.config.gameMode,
+            fogOfWarDistance: getFogOfWarDistance(state),
+            usePhysicalDie: true,
+          },
+        });
+        if (state.config.gameMode === "REGULAR_PLANECHASE") {
+          const advanced = applyRegularPlaneswalk(logged, intent.atMs);
+          const withModal = enqueueModal(advanced, {
+            id: `manual_walk_${intent.atMs}`,
+            type: "PLANE",
+            planeId: advanced.deck.currentPlaneId,
+            resumeToState: "IDLE",
+          });
+          return transition(withModal, "MODAL_OPEN", intent);
+        }
+        const next = transition(logged, "AWAIT_MOVE", intent);
+        return setEligibleMoves(next);
       }
       return state;
     }
@@ -238,6 +264,28 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
     case "MOVING": {
       if (intent.type === DOMAIN_INTENT.MOVEMENT_COMPLETE) {
         const mapped = applyMapPostMove(state, intent.atMs);
+        const pendingPhenomena = mapped.deck.phenomenonGate?.pendingPhenomenonIds ?? [];
+        if (mapped.deck.phenomenonGate?.isResolving && pendingPhenomena.length > 0) {
+          const [firstPhenomenon, ...restPhenomena] = pendingPhenomena;
+          const withGate = {
+            ...mapped,
+            deck: {
+              ...mapped.deck,
+              phenomenonGate: {
+                ...(mapped.deck.phenomenonGate ?? { isResolving: true }),
+                isResolving: true,
+                pendingPhenomenonIds: restPhenomena,
+              },
+            },
+          };
+          const withModal = enqueueModal(withGate, {
+            id: `phenomenon_${intent.atMs}_0`,
+            type: "PHENOMENON",
+            planeId: firstPhenomenon,
+            resumeToState: "MODAL_OPEN",
+          });
+          return transition(withModal, "MODAL_OPEN", intent, { pendingMove: undefined });
+        }
         if (mapped.deck.currentPlaneId) {
           const withModal = enqueueModal(mapped, {
             id: `landed_${intent.atMs}`,
@@ -254,6 +302,73 @@ export function reduceSessionState(state: SessionState, intent: DomainIntent): S
 
     case "MODAL_OPEN": {
       if (intent.type === DOMAIN_INTENT.CLOSE_MODAL) {
+        const active = state.modal.active;
+        const gate = state.deck.phenomenonGate;
+        if (
+          active?.type === "PHENOMENON" &&
+          gate?.isResolving === true &&
+          (!intent.modalId || intent.modalId === active.id)
+        ) {
+          const pendingPhenomena = gate.pendingPhenomenonIds ?? [];
+          if (pendingPhenomena.length > 0) {
+            const [nextPhenomenon, ...rest] = pendingPhenomena;
+            return withLastIntent(
+              {
+                ...state,
+                deck: {
+                  ...state.deck,
+                  phenomenonGate: {
+                    ...gate,
+                    isResolving: true,
+                    pendingPhenomenonIds: rest,
+                  },
+                },
+                modal: {
+                  ...state.modal,
+                  active: {
+                    id: `phenomenon_${intent.atMs}_${rest.length}`,
+                    type: "PHENOMENON",
+                    planeId: nextPhenomenon,
+                    resumeToState: "MODAL_OPEN",
+                  },
+                  isOpen: true,
+                },
+              },
+              intent
+            );
+          }
+
+          const withClearedGate = {
+            ...state,
+            deck: {
+              ...state.deck,
+              phenomenonGate: {
+                ...gate,
+                isResolving: false,
+                pendingPhenomenonIds: [],
+              },
+            },
+          };
+          if (withClearedGate.deck.currentPlaneId) {
+            return withLastIntent(
+              {
+                ...withClearedGate,
+                modal: {
+                  ...withClearedGate.modal,
+                  active: {
+                    id: `landed_after_phenomenon_${intent.atMs}`,
+                    type: "PLANE",
+                    planeId: withClearedGate.deck.currentPlaneId,
+                    resumeToState: "IDLE",
+                  },
+                  queue: [],
+                  isOpen: true,
+                },
+              },
+              intent
+            );
+          }
+        }
         return closeModal(state, intent);
       }
       return state;

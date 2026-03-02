@@ -35,6 +35,7 @@ export const createNewSessionState = (args: {
       rulesProfile: "BLIND_FOG_OF_WAR",
       enableHellride: true,
       enableAntiStall: false,
+      usePhysicalDie: false,
     },
 
     rng: {
@@ -50,6 +51,7 @@ export const createNewSessionState = (args: {
       phenomenonGate: {
         isResolving: false,
         sourcePlaneId: undefined,
+        pendingPhenomenonIds: [],
       },
     },
 

@@ -9,10 +9,12 @@
       [selectedGameMode]="selectedGameMode()"
       [selectedFogOfWarDistance]="selectedFogOfWarDistance()"
       [antiStallEnabled]="enableAntiStall()"
+      [usePhysicalDie]="usePhysicalDie()"
       (toggleSet)="toggleSet($event)"
       (gameModeChange)="setGameMode($event)"
       (fogEnhancedRevealChange)="setFogEnhancedRevealEnabled($event)"
       (antiStallChange)="setEnableAntiStall($event)"
+      (usePhysicalDieChange)="setUsePhysicalDie($event)"
       (startSession)="startSession()"
     ></app-control-bar-setup>
   }
@@ -20,6 +22,7 @@
   <app-control-bar-session
     [fsmState]="fsmState()"
     [showRollButton]="showRollButton()"
+    [showWalkButton]="showWalkButton()"
     [rollButtonDisabled]="rollButtonDisabled()"
     [isQuitConfirming]="isQuitConfirming()"
     (intent)="dispatch($event)"

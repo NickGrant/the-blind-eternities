@@ -392,7 +392,8 @@ describe("SessionOrchestrator", () => {
     const next = _state();
     expect(next.fsm.state).toBe("MODAL_OPEN");
     expect(next.deck.currentPlaneId).toBe("plane-entered");
-    expect(next.modal.active?.planeId).toBe("plane-entered");
+    expect(next.modal.active?.type).toBe("PHENOMENON");
+    expect(next.modal.active?.planeId).toBe("phenomenon-spatial-merging");
     expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-fill-replacement");
     const phaseMessages = next.log.entries.slice(-4).map((entry) => entry.message);
     expect(phaseMessages).toEqual([
@@ -401,6 +402,14 @@ describe("SessionOrchestrator", () => {
       "Phase: phenomenon_resolve",
       "Movement completed.",
     ]);
+
+    orchestrator.dispatch({
+      type: "domain/close_modal",
+      atMs: 241,
+      modalId: next.modal.active?.id,
+    });
+    expect(_state().modal.active?.type).toBe("PLANE");
+    expect(_state().modal.active?.planeId).toBe("plane-entered");
   });
 
   it("debugRollForced resolves deterministic debug outcomes from IDLE", () => {

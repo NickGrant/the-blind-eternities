@@ -107,6 +107,49 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     expect(next.modal.active?.planeId).toBe("plane-next");
   });
 
+  it("enters move selection on manual walk in blind eternities when physical die is enabled", () => {
+    const idle = buildState("IDLE");
+    idle.config.gameMode = "BLIND_ETERNITIES";
+    idle.config.usePhysicalDie = true;
+    idle.map.partyCoord = "0,0";
+    idle.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+      "0,-1": mkTile("0,-1"),
+      "1,0": mkTile("1,0"),
+      "0,1": mkTile("0,1"),
+      "-1,0": mkTile("-1,0"),
+    };
+
+    const next = reduceSessionState(idle, {
+      type: "domain/manual_walk",
+      atMs: 11,
+    });
+
+    expect(next.fsm.state).toBe("AWAIT_MOVE");
+    expect(next.map.highlights?.eligibleMoveCoords.length).toBeGreaterThan(0);
+    expect(next.log.entries[next.log.entries.length - 1]?.message).toBe("Manual walk triggered.");
+  });
+
+  it("applies regular planeswalk flow on manual walk in regular planechase", () => {
+    const idle = buildState("IDLE");
+    idle.config.gameMode = "REGULAR_PLANECHASE";
+    idle.config.usePhysicalDie = true;
+    idle.deck.currentPlaneId = "plane-current";
+    idle.deck.drawPile = ["plane-next", "plane-after"];
+    idle.map.tilesByCoord = {
+      "0,0": mkTile("0,0"),
+    };
+
+    const next = reduceSessionState(idle, {
+      type: "domain/manual_walk",
+      atMs: 12,
+    });
+
+    expect(next.fsm.state).toBe("MODAL_OPEN");
+    expect(next.deck.currentPlaneId).toBe("plane-next");
+    expect(next.modal.active?.planeId).toBe("plane-next");
+  });
+
   it("opens landing modal when movement completes", () => {
     const moving = buildState("MOVING");
     moving.map.partyCoord = "0,0";
@@ -299,7 +342,8 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
 
     expect(next.fsm.state).toBe("MODAL_OPEN");
     expect(next.deck.currentPlaneId).toBe("plane-entered");
-    expect(next.modal.active?.planeId).toBe("plane-entered");
+    expect(next.modal.active?.type).toBe("PHENOMENON");
+    expect(next.modal.active?.planeId).toBe("phenomenon-spatial-merging");
     expect(next.map.tilesByCoord["0,1"].planeId).toBe("plane-fill-replacement");
 
     const phaseMessages = next.log.entries.slice(-4).map((entry) => entry.message);
@@ -314,6 +358,14 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     expect((movePhase?.meta?.["phaseIndex"] as number | undefined) ?? 0).toBeLessThan(
       (phenomenonPhase?.meta?.["phaseIndex"] as number | undefined) ?? 0
     );
+
+    const afterPhenomenonClose = reduceSessionState(next, {
+      type: "domain/close_modal",
+      atMs: 81,
+      modalId: next.modal.active?.id,
+    });
+    expect(afterPhenomenonClose.modal.active?.type).toBe("PLANE");
+    expect(afterPhenomenonClose.modal.active?.planeId).toBe("plane-entered");
   });
 });
 

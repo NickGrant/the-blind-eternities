@@ -4,6 +4,7 @@ import type { SessionState } from "../../state/session.types";
 
 type SessionActionIntent =
   | typeof DOMAIN_INTENT.ROLL_DIE
+  | typeof DOMAIN_INTENT.MANUAL_WALK
   | typeof DOMAIN_INTENT.CONFIRM_MOVE
   | typeof DOMAIN_INTENT.CANCEL_MOVE
   | typeof DOMAIN_INTENT.RESTART_SESSION;
@@ -20,6 +21,7 @@ type SessionActionIntent =
 export class ControlBarSessionComponent {
   @Input() fsmState: SessionState["fsm"]["state"] = "SETUP";
   @Input() showRollButton = false;
+  @Input() showWalkButton = false;
   @Input() rollButtonDisabled = false;
   @Input() isQuitConfirming = false;
 

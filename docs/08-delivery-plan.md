@@ -36,7 +36,7 @@ Goal:
 
 ### Milestone 8 - Phenomenon Card Support
 
-Status: In progress
+Status: Complete
 
 Goal:
 - Finalize article-aligned phenomenon semantics and add acceptance tests for enter-plane vs phenomenon ordering

@@ -7,6 +7,7 @@ This document captures currently implemented runtime UX behavior and clearly sep
 - Setup includes:
   - deck set selection
   - game mode selection (`Blind Eternities`, `Planechase`)
+  - dice input mode selection (app roll vs physical die)
   - Blind Eternities rules toggles:
     - `Reveal nearby cards on move` (Fog-of-War distance `1`; off means distance `0`)
     - `Prevent immediate backtracking` (optional anti-stall)
@@ -16,6 +17,7 @@ This document captures currently implemented runtime UX behavior and clearly sep
 ## Implemented Turn Flow
 
 - `Roll Die` resolves immediately.
+- If physical-die mode is enabled, `Walk` replaces `Roll Die` and manually triggers planeswalk movement flow.
 - Outcomes:
   - `blank`: no modal, return to idle
   - `chaos`: open current plane modal

@@ -52,6 +52,20 @@
       />
       <label class="btn btn-outline-primary" for="game-mode-planechase">Planechase</label>
     </div>
+    <div class="control-bar__set-options control-bar__set-options--switch-stack control-bar__set-options--inline-switch">
+      <div class="form-check form-switch">
+        <input
+          id="physical-die-switch"
+          class="form-check-input"
+          type="checkbox"
+          [checked]="usePhysicalDie"
+          (change)="onPhysicalDieChange($event)"
+        />
+        <label class="form-check-label" for="physical-die-switch">
+          Use physical die (show Walk button)
+        </label>
+      </div>
+    </div>
   </div>
 
   @if (selectedGameMode === GAME_MODE.BLIND_ETERNITIES) {

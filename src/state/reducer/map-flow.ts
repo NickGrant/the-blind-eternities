@@ -125,6 +125,7 @@ export function initMapForSession(
       bootstrapRevealOrder,
       enableHellride: gameMode === "BLIND_ETERNITIES",
       enableAntiStall: intent.enableAntiStall ?? state.config.enableAntiStall ?? false,
+      usePhysicalDie: intent.usePhysicalDie ?? state.config.usePhysicalDie ?? false,
     },
     deck: {
       ...state.deck,
@@ -286,13 +287,15 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     atMs,
   });
 
-  const placeholders = Object.entries(revealedDestination)
-    .filter(([, tile]) => tile.planeId.startsWith("plane@"))
-    .map(([coordKey]) => coordKey)
-    .sort(compareCoordKeys);
+  const placeholders = getPlaceholderAssignmentOrder({
+    tilesByCoord: revealedDestination,
+    destinationCoordKey: partyCoord,
+    fogOfWarDistance: getFogOfWarDistance(state),
+  });
   let drawPile = [...state.deck.drawPile];
   let discardPile = [...state.deck.discardPile];
   const dealtDrawn: string[] = [];
+  const phenomenonModalQueue: string[] = [];
   let phenomenonReplaceCount = 0;
   placeholders.forEach((_, idx) => {
     const take = drawNextPlaneWithPhenomenonReplace({
@@ -305,6 +308,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     drawPile = take.drawPile;
     discardPile = take.discardPile;
     phenomenonReplaceCount += take.phenomenonReplaceCount;
+    phenomenonModalQueue.push(...take.encounteredPhenomenonIds);
     if (take.drawnPlaneId) dealtDrawn.push(take.drawnPlaneId);
   });
   const withAssignedPlanes = { ...revealedDestination };
@@ -331,6 +335,11 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
       drawPile: [...drawPile],
       discardPile: [...discardPile, ...discardedByDecay],
       currentPlaneId,
+      phenomenonGate: {
+        isResolving: phenomenonModalQueue.length > 0,
+        sourcePlaneId: currentPlaneId,
+        pendingPhenomenonIds: phenomenonModalQueue,
+      },
     },
     map: {
       ...state.map,
@@ -504,6 +513,32 @@ function compareCoordKeys(a: CoordKey, b: CoordKey): number {
   return ca.x - cb.x;
 }
 
+function getPlaceholderAssignmentOrder(args: {
+  tilesByCoord: Record<CoordKey, SessionState["map"]["tilesByCoord"][CoordKey]>;
+  destinationCoordKey: CoordKey;
+  fogOfWarDistance: FogOfWarDistance;
+}): CoordKey[] {
+  const allPlaceholders = Object.entries(args.tilesByCoord)
+    .filter(([, tile]) => tile.planeId.startsWith("plane@"))
+    .map(([coordKey]) => coordKey);
+  if (allPlaceholders.length === 0) return [];
+
+  const ordered: CoordKey[] = [];
+  const pushUnique = (coordKey: CoordKey): void => {
+    if (!allPlaceholders.includes(coordKey)) return;
+    if (ordered.includes(coordKey)) return;
+    ordered.push(coordKey);
+  };
+
+  pushUnique(args.destinationCoordKey);
+  if (args.fogOfWarDistance === 1) {
+    const center = parseCoordKey(args.destinationCoordKey);
+    neighborsCardinal(center).map(toCoordKey).forEach(pushUnique);
+  }
+  allPlaceholders.sort(compareCoordKeys).forEach(pushUnique);
+  return ordered;
+}
+
 function drawPlanesWithRecycle(args: {
   drawPile: readonly string[];
   discardPile: readonly string[];
@@ -548,10 +583,12 @@ function drawNextPlaneWithPhenomenonReplace(args: {
   drawPile: string[];
   discardPile: string[];
   phenomenonReplaceCount: number;
+  encounteredPhenomenonIds: string[];
 } {
   let drawPile = [...args.drawPile];
   let discardPile = [...args.discardPile];
   let phenomenonReplaceCount = 0;
+  const encounteredPhenomenonIds: string[] = [];
   let attempts = 0;
   const attemptLimit = drawPile.length + discardPile.length + 4;
 
@@ -571,10 +608,11 @@ function drawNextPlaneWithPhenomenonReplace(args: {
     if (isPhenomenonCardId(cardId, args.cardTypesById)) {
       discardPile = [...discardPile, cardId];
       phenomenonReplaceCount += 1;
+      encounteredPhenomenonIds.push(cardId);
       continue;
     }
-    return { drawnPlaneId: cardId, drawPile, discardPile, phenomenonReplaceCount };
+    return { drawnPlaneId: cardId, drawPile, discardPile, phenomenonReplaceCount, encounteredPhenomenonIds };
   }
 
-  return { drawnPlaneId: undefined, drawPile, discardPile, phenomenonReplaceCount };
+  return { drawnPlaneId: undefined, drawPile, discardPile, phenomenonReplaceCount, encounteredPhenomenonIds };
 }

@@ -74,6 +74,7 @@ export const DOMAIN_INTENT = {
   DEBUG_REVEAL_ALL: "domain/debug_reveal_all",
   BOOTSTRAP_REVEAL_COMPLETE: "domain/bootstrap_reveal_complete",
   ROLL_DIE: "domain/roll_die",
+  MANUAL_WALK: "domain/manual_walk",
   ROLL_RESOLVED: "domain/roll_resolved",
   SELECT_PLANE: "domain/select_plane",
   CONFIRM_MOVE: "domain/confirm_move",
@@ -101,6 +102,7 @@ export type DomainIntent =
       rulesProfile?: RulesProfile;
       enableHellride?: boolean;
       enableAntiStall?: boolean;
+      usePhysicalDie?: boolean;
       initialDeck?: {
         drawPile: string[];
         discardPile: string[];
@@ -120,6 +122,7 @@ export type DomainIntent =
 
   // Rolling
   | { type: typeof DOMAIN_INTENT.ROLL_DIE; atMs: number }
+  | { type: typeof DOMAIN_INTENT.MANUAL_WALK; atMs: number }
   | { type: typeof DOMAIN_INTENT.ROLL_RESOLVED; atMs: number; outcome: DieOutcome }
 
   // Movement

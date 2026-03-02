@@ -1384,3 +1384,75 @@ priority: high
 description: Documentation still marks article alignment as partial for move ordering (`enter plane` before `phenomenon fill/replace`). Add explicit reducer/orchestrator acceptance tests that validate this ordering and associated phase logs.
 Resolution: Added reducer and orchestrator acceptance tests that assert destination plane becomes active/modal-target before phenomenon fill replacement finalization, and that phase logs preserve the required move -> board_fill -> phenomenon_resolve -> finalize ordering.
 
+---
+
+title: Fix Deck Sets overflow on lg-and-smaller stacked layout
+status: complete
+priority: high
+description: In session setup, when containers switch to full-width (`lg` and smaller), Deck Sets buttons stop stacking/reflowing correctly and produce horizontal scrolling on smaller screens. Update the Deck Sets control so buttons reflow without any mobile scrollbars.
+Resolution: Updated Deck Sets responsive grid rules at the `lg` stacked breakpoint to force single-column reflow in full-width containers, preventing horizontal overflow/scrollbars on smaller screens.
+
+---
+
+title: Eliminate style budget warning in app shell styles
+status: complete
+priority: medium
+description: `npm run build` still reports a style budget warning for `src/app/app.scss`. Evaluate existing style rules for consolidation opportunities (duplicate selectors, repeated declarations, and extractable shared patterns), then refactor to improve output size so production build passes cleanly without style budget warnings.
+Resolution: Consolidated toast animation/presentation styles out of `app.scss` into global styles and reduced component stylesheet payload; latest `npm run build` completes without the prior `app.scss` budget warning.
+
+---
+
+title: Update delivery plan milestone statuses to match current completion
+status: complete
+priority: medium
+description: `docs/08-delivery-plan.md` still lists Milestone 8 as in-progress despite completed alignment and acceptance-test coverage. Reconcile milestone statuses and goal text with actual shipped state.
+Resolution: Updated delivery plan milestone status to reflect Milestone 8 completion and aligned milestone goal wording with shipped phenomenon ordering acceptance coverage.
+
+---
+
+title: Refresh README current project status for release-readiness context
+status: complete
+priority: low
+description: `README.md` still uses broad status text (`UAT, bug-fix, polish`) that is now stale. Update the status block to reflect current near-release state and current outstanding work path.
+Resolution: Updated README status section to reflect implemented milestone progress and the current release-readiness/final-polish phase.
+
+---
+
+title: Run pre-release card/art pipeline validation pass
+status: complete
+priority: medium
+description: Before release candidate, run and record `cards:sync:mtgjson`, throttled `art:cache:fetch` (if needed), and `art:coverage` outputs to confirm metadata/art integrity and capture any drift as issues.
+Resolution: Executed metadata sync and coverage validation (`cards:sync:mtgjson`, `art:coverage`) and documented results in `docs/18-release-validation-report.md`; no missing playable art remained so throttled fetch was not required.
+
+---
+
+title: Improve lithomancy canvas card-name readability (remove dark blur shadow on dark text)
+status: complete
+priority: medium
+description: In the Lithomancy theme, canvas card names use dark text with a dark drop shadow, which makes labels look blurry. Adjust the name text/shadow styling for this theme so card names stay sharp and readable.
+Resolution: Updated Phaser card-name text rendering to use a Lithomancy-specific shadow profile with no dark blur/offset, keeping labels crisp while preserving existing shadow styling for other themes.
+
+---
+
+title: Correct Blind Eternities phenomenon resolution flow (modal + recursive replacement)
+status: complete
+priority: high
+description: In Blind Eternities mode, when a phenomenon is revealed it should open its modal immediately. After that modal closes, the slot should auto-replace with a new card; if the replacement is also a phenomenon, repeat this modal-and-replace cycle until a plane occupies the slot. Apply this starting with the destination square first, then for additional revealed squares when Fog of War is enabled, aligned to the reference article resolution order.
+Resolution: Implemented phenomenon modal queue flow in movement resolution so revealed phenomena are surfaced as `PHENOMENON` modals (destination-first ordering with fog-reveal prioritization) and chained phenomena continue modal sequencing until resolution returns to landed-plane modal. Added reducer/orchestrator tests to validate the updated close-flow behavior.
+
+---
+
+title: Add optional physical-dice mode with manual planeswalk trigger
+status: complete
+priority: medium
+description: Add a session setup option for players using real physical planar dice. When enabled, gameplay should replace random in-app die rolling with a manual `Walk` control so players can trigger movement after resolving their physical die result.
+Resolution: Added `usePhysicalDie` session config with setup toggle (`Dice Input`) and new `manual_walk` domain intent. In physical-dice mode the Roll button is replaced by `Walk`, random in-app rolling is disabled, and manual walk routes through the correct Blind Eternities/Planechase movement flows. Added reducer and control-bar tests for the new behavior.
+
+---
+
+title: Execute and record release UAT smoke workflow results
+status: complete
+priority: high
+description: Run `docs/17-uat-smoke-workflow.md` and `docs/14-uat-release-checklist.md`, then document pass/fail results and any defects discovered as actionable issues.
+Resolution: Completed manual smoke verification for Blind Eternities and Planechase flows, updated release validation documentation/checklist, and confirmed no new UAT defects requiring additional active issues.
+

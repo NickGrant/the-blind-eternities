@@ -4,6 +4,12 @@
   </button>
 }
 
+@if (showWalkButton) {
+  <button type="button" class="btn btn-primary control-bar__button-slot" (click)="emitAction(DOMAIN_INTENT.MANUAL_WALK)">
+    Walk
+  </button>
+}
+
 @if (fsmState === "AWAIT_MOVE") {
   <button
     type="button"

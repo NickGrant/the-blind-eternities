@@ -219,11 +219,45 @@ describe("ControlBarComponent (class-only)", () => {
     expect(cmp.showRollButton()).toBe(true);
     expect(cmp.rollButtonDisabled()).toBe(false);
   });
+
+  it("includes usePhysicalDie in start_session payload when enabled", () => {
+    const { cmp, dispatchMock } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.setUsePhysicalDie(true);
+    cmp.startSession();
+
+    const intent = dispatchMock.mock.calls[0][0];
+    expect(intent.type).toBe("domain/start_session");
+    if (intent.type === "domain/start_session") {
+      expect(intent.usePhysicalDie).toBe(true);
+    }
+  });
+
+  it("shows Walk and hides Roll Die in IDLE when physical-die mode is active", () => {
+    const { cmp } = buildComponent({
+      fsmState: "IDLE",
+      deckMock: buildDeckMock(),
+      configureState: (state) => {
+        state.config.usePhysicalDie = true;
+      },
+    });
+
+    expect(cmp.showWalkButton()).toBe(true);
+    expect(cmp.showRollButton()).toBe(false);
+  });
 });
 
-function buildComponent(args: { fsmState: ReturnType<typeof createNewSessionState>["fsm"]["state"]; deckMock: DeckMock }) {
+function buildComponent(args: {
+  fsmState: ReturnType<typeof createNewSessionState>["fsm"]["state"];
+  deckMock: DeckMock;
+  configureState?: (state: ReturnType<typeof createNewSessionState>) => void;
+}) {
   const initial = createNewSessionState({ atMs: 1 });
   initial.fsm.state = args.fsmState;
+  args.configureState?.(initial);
 
   const _state = signal(initial);
   const storeMock: Pick<SessionStore, "state"> = {

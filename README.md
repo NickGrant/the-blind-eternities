@@ -57,5 +57,6 @@ App URL: `http://localhost:4200/`
 ## Current Status
 
 - Milestones 0 through 6: complete
-- Current phase: UAT, bug-fix, and polish
+- Milestones 7 through 9: implemented and documented
+- Current phase: release-readiness verification and final UX polish
 - Active backlog source: `ISSUES.md`

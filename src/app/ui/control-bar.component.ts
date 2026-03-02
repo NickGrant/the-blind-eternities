@@ -50,11 +50,16 @@ export class ControlBarComponent {
   readonly helpModeLabel = computed(() =>
     this.activeGameMode() === GAME_MODE.BLIND_ETERNITIES ? "Blind Eternities" : "Planechase"
   );
-  readonly showRollButton = computed(() => this.fsmState() === "IDLE" || this.rollToastVisibleState());
+  readonly showRollButton = computed(() => !this.activeUsePhysicalDie() && (this.fsmState() === "IDLE" || this.rollToastVisibleState()));
   readonly rollButtonDisabled = computed(() => this.rollToastVisibleState() || this.fsmState() !== "IDLE");
+  readonly showWalkButton = computed(() => this.fsmState() === "IDLE" && this.activeUsePhysicalDie());
+  readonly activeUsePhysicalDie = computed(() =>
+    this.fsmState() === "SETUP" ? this.usePhysicalDie() : this.state().config.usePhysicalDie === true
+  );
   readonly selectedGameMode = signal<GameMode>(GAME_MODE.BLIND_ETERNITIES);
   readonly selectedFogOfWarDistance = signal<FogOfWarDistance>(FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL);
   readonly enableAntiStall = signal(false);
+  readonly usePhysicalDie = signal(false);
   readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
 
@@ -105,6 +110,7 @@ export class ControlBarComponent {
       gameMode: this.selectedGameMode(),
       fogOfWarDistance: this.selectedFogOfWarDistance(),
       enableAntiStall: this.enableAntiStall(),
+      usePhysicalDie: this.usePhysicalDie(),
     });
   }
 
@@ -127,6 +133,10 @@ export class ControlBarComponent {
 
   setEnableAntiStall(value: boolean): void {
     this.enableAntiStall.set(value);
+  }
+
+  setUsePhysicalDie(value: boolean): void {
+    this.usePhysicalDie.set(value);
   }
 
   /**
@@ -157,6 +167,7 @@ export class ControlBarComponent {
   dispatch(
     type:
       | typeof DOMAIN_INTENT.ROLL_DIE
+      | typeof DOMAIN_INTENT.MANUAL_WALK
       | typeof DOMAIN_INTENT.CONFIRM_MOVE
       | typeof DOMAIN_INTENT.CANCEL_MOVE
       | typeof DOMAIN_INTENT.RESTART_SESSION
