@@ -5,6 +5,10 @@ import sharp from "sharp";
 const THEME_BACKGROUND_DIR = path.resolve("src/assets/theme-backgrounds");
 const args = new Set(process.argv.slice(2));
 const dryRun = args.has("--dry-run");
+const quality = readIntArg("--quality", 85, 30, 100);
+const effort = readIntArg("--effort", 10, 1, 10);
+const maxRmse = readFloatArg("--max-rmse", undefined, 0, 255);
+const reportPath = readStringArg("--report");
 
 async function getPngPaths(dirPath) {
   const entries = await fs.readdir(dirPath, { withFileTypes: true });
@@ -21,13 +25,15 @@ async function optimizePng(filePath) {
   const output = await input
     .png({
       compressionLevel: 9,
-      effort: 10,
+      effort,
       adaptiveFiltering: true,
       palette: true,
-      quality: 85,
+      quality,
       dither: 0.8,
     })
     .toBuffer();
+  const beforeBuffer = await fs.readFile(filePath);
+  const rmse = await computeRmse(beforeBuffer, output);
 
   if (!dryRun) {
     await fs.writeFile(filePath, output);
@@ -41,6 +47,7 @@ async function optimizePng(filePath) {
     beforeBytes: before.size,
     afterBytes,
     deltaBytes: before.size - afterBytes,
+    rmse,
   };
 }
 
@@ -63,7 +70,7 @@ async function main() {
   }
 
   console.log(
-    `${dryRun ? "[DRY RUN] " : ""}Optimizing ${pngPaths.length} PNG file(s) in src/assets/theme-backgrounds...`
+    `${dryRun ? "[DRY RUN] " : ""}Optimizing ${pngPaths.length} PNG file(s) in src/assets/theme-backgrounds (quality=${quality}, effort=${effort})...`
   );
 
   const results = [];
@@ -76,12 +83,85 @@ async function main() {
 
   results.forEach((result) => {
     console.log(
-      `- ${result.name}: ${result.width}x${result.height}, ${formatBytes(result.beforeBytes)} -> ${formatBytes(result.afterBytes)} (${formatPercent(result.beforeBytes, result.afterBytes)} saved)`
+      `- ${result.name}: ${result.width}x${result.height}, ${formatBytes(result.beforeBytes)} -> ${formatBytes(result.afterBytes)} (${formatPercent(result.beforeBytes, result.afterBytes)} saved, rmse=${result.rmse.toFixed(3)})`
     );
   });
   console.log(
     `Total: ${formatBytes(beforeTotal)} -> ${formatBytes(afterTotal)} (${formatPercent(beforeTotal, afterTotal)} saved)`
   );
+
+  if (typeof maxRmse === "number") {
+    const exceeded = results.filter((result) => result.rmse > maxRmse);
+    if (exceeded.length > 0) {
+      exceeded.forEach((result) => {
+        console.error(
+          `[RMSE FAIL] ${result.name}: ${result.rmse.toFixed(3)} > max ${maxRmse.toFixed(3)}`
+        );
+      });
+      process.exitCode = 1;
+    }
+  }
+
+  if (reportPath) {
+    const payload = {
+      generatedAt: new Date().toISOString(),
+      dryRun,
+      quality,
+      effort,
+      maxRmse: typeof maxRmse === "number" ? maxRmse : null,
+      totals: {
+        beforeBytes: beforeTotal,
+        afterBytes: afterTotal,
+        savedPercent: Number.parseFloat(formatPercent(beforeTotal, afterTotal)),
+      },
+      files: results,
+    };
+    const outPath = path.resolve(reportPath);
+    await fs.mkdir(path.dirname(outPath), { recursive: true });
+    await fs.writeFile(outPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+    console.log(`Report written: ${outPath}`);
+  }
+}
+
+async function computeRmse(beforePngBuffer, afterPngBuffer) {
+  const before = await sharp(beforePngBuffer).raw().toBuffer({ resolveWithObject: true });
+  const after = await sharp(afterPngBuffer).raw().toBuffer({ resolveWithObject: true });
+  if (
+    before.info.width !== after.info.width ||
+    before.info.height !== after.info.height ||
+    before.info.channels !== after.info.channels
+  ) {
+    return Number.POSITIVE_INFINITY;
+  }
+  let squaredError = 0;
+  for (let i = 0; i < before.data.length; i += 1) {
+    const delta = before.data[i] - after.data[i];
+    squaredError += delta * delta;
+  }
+  const mse = squaredError / before.data.length;
+  return Math.sqrt(mse);
+}
+
+function readIntArg(name, fallback, min, max) {
+  const raw = readStringArg(name);
+  if (!raw) return fallback;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function readFloatArg(name, fallback, min, max) {
+  const raw = readStringArg(name);
+  if (!raw) return fallback;
+  const parsed = Number.parseFloat(raw);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function readStringArg(name) {
+  const prefix = `${name}=`;
+  const arg = [...args].find((value) => value.startsWith(prefix));
+  return arg ? arg.slice(prefix.length).trim() : undefined;
 }
 
 main().catch((error) => {

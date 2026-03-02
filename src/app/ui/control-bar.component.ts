@@ -126,8 +126,22 @@ export class ControlBarComponent {
     this.setFogOfWarDistance(enabled ? FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL : FOG_OF_WAR_DISTANCE.CURRENT_ONLY);
   }
 
+  setFogEnhancedRevealFromEvent(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    this.setFogEnhancedRevealEnabled(target?.checked === true);
+  }
+
   setEnableAntiStall(value: boolean): void {
     this.enableAntiStall.set(value);
+  }
+
+  setEnableAntiStallFromEvent(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    this.setEnableAntiStall(target?.checked === true);
+  }
+
+  getSetCountTooltip(count: number): string {
+    return `${count} playable cards`;
   }
 
   /**

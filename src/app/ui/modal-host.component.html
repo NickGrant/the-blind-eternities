@@ -25,6 +25,9 @@
       </header>
 
       <div class="modal-body modal-host__body">
+        @if (modalArtUrl(); as artUrl) {
+          <img class="modal-host__art" [src]="artUrl" [alt]="modalTitle() + ' art'" />
+        }
         <p class="mb-0" [id]="'modal-body-' + activeModal()!.id" [innerHTML]="modalBodyHtml()"></p>
       </div>
 

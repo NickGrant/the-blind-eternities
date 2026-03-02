@@ -59,6 +59,16 @@
     padding-bottom: var(--be-space-2);
   }
 
+  &__art {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: var(--be-radius-md);
+    border: 1px solid var(--be-color-border-contrast);
+    margin: 0 0 var(--be-space-2) 0;
+  }
+
   &__footer {
     border-top: 0;
     padding-top: 0;

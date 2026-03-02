@@ -16,6 +16,7 @@ This runbook defines how to contribute safely and consistently.
 3. Run verification commands:
    - `npm run test:unit`
    - `npm run build`
+   - `npm run test:contrast` (for theme/accessibility-sensitive UI changes)
 4. Update `ISSUES.md`:
    - set status to `complete` when finished
    - append `Resolution:` line (1-2 sentences)
@@ -35,6 +36,17 @@ This runbook defines how to contribute safely and consistently.
 - Avoid introducing undocumented features.
 - Update docs when runtime behavior or operational workflow changes.
 - Treat failing tests/build as blockers unless user explicitly accepts risk.
+
+## Asset Optimization Workflow
+
+- Theme backgrounds can be normalized/optimized with:
+  - `npm run assets:optimize:themes`
+  - `npm run assets:optimize:themes:dry`
+- Guardrail run (no file writes) for quality and report output:
+  - `npm run assets:optimize:themes:guardrail`
+- When running optimization in a change set:
+  - include before/after size summary in PR/issue notes
+  - commit both optimized assets and any generated report intended for review
 
 ## Frontend Structure Standards
 

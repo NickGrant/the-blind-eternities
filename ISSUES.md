@@ -61,6 +61,13 @@ description: Add support for a `?dev-mode` URL query parameter that enables dev 
 
 ---
 
+title: Slightly reduce switch height and increase spacing between switches
+status: unstarted
+priority: medium
+description: Tune setup switch styling by reducing switch control height slightly and adding more vertical spacing between stacked switches for better visual balance.
+
+---
+
 ### Documentation
 
 title: Update docs to reflect fog-of-war values 0/1 and current setup UX

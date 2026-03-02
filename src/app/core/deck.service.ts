@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import cardsCatalog from "../../assets/cards.json";
 import { createShuffledDeck } from "../../state/deck/deck-model";
 import type { CardKind } from "../../state/session.types";
 import { DEFAULT_SELECTABLE_PLANE_SET_CODES, PLANE_SET_LABELS } from "./plane-set-config";
@@ -52,13 +51,32 @@ export class DeckValidationError extends Error {}
  */
 @Injectable({ providedIn: "root" })
 export class DeckService {
-  private readonly planes: PlaneCard[] = this.buildCards((cardsCatalog as CardsCatalog).planes ?? [], "PLANE");
-  private readonly phenomena: PlaneCard[] = this.buildCards((cardsCatalog as CardsCatalog).phenomena ?? [], "PHENOMENON");
-  private readonly cards: PlaneCard[] = [...this.planes, ...this.phenomena];
+  private planes: PlaneCard[] = [];
+  private phenomena: PlaneCard[] = [];
+  private cards: PlaneCard[] = [];
+  private cardsById = new Map<string, PlaneCard>();
+  private planesById = new Map<string, PlaneCard>();
+  private playablePlanes: PlaneCard[] = [];
+  private playableCards: PlaneCard[] = [];
 
-  private readonly planesById = new Map(this.planes.map((p) => [p.id, p] as const));
-  private readonly playablePlanes = this.planes.filter((p) => typeof p.rulesText === "string" && p.rulesText.length > 0);
-  private readonly playableCards = this.cards.filter((p) => typeof p.rulesText === "string" && p.rulesText.length > 0);
+  /**
+   * Loads card catalog JSON at runtime to avoid bundling large static metadata.
+   */
+  async loadCatalog(url = "assets/cards.json"): Promise<void> {
+    const response = await fetch(new URL(url, document.baseURI).toString(), { cache: "no-cache" });
+    if (!response.ok) {
+      throw new Error(`Failed to load cards catalog (${response.status} ${response.statusText})`);
+    }
+    const catalog = (await response.json()) as CardsCatalog;
+    this.hydrateCatalog(catalog);
+  }
+
+  /**
+   * Replaces in-memory catalog and rebuilds derived indexes.
+   */
+  hydrateCatalog(catalog: CardsCatalog): void {
+    this.initializeCatalog(catalog);
+  }
 
   /**
    * Returns all known planes from local catalog.
@@ -99,8 +117,8 @@ export class DeckService {
    */
   listPlaneSetOptions(): readonly PlaneSetOption[] {
     const counts = new Map<string, number>();
-    this.playablePlanes.forEach((plane) => {
-      const codes = this.resolvePlaneSetCodes(plane);
+    this.playableCards.forEach((card) => {
+      const codes = this.resolvePlaneSetCodes(card);
       const uniqueCodes = [...new Set(codes)];
       uniqueCodes.forEach((code) => {
         counts.set(code, (counts.get(code) ?? 0) + 1);
@@ -129,8 +147,8 @@ export class DeckService {
    * Returns display name for a plane id.
    */
   getPlaneName(id: string | undefined): string | undefined {
-    const plane = this.getPlane(id);
-    if (plane?.name) return plane.name;
+    const card = this.getCard(id);
+    if (card?.name) return card.name;
     if (!id) return undefined;
     return this.humanizePlaneId(id);
   }
@@ -146,17 +164,40 @@ export class DeckService {
    * Returns rules text for modals, falling back to chaos text when needed.
    */
   getPlaneRulesText(id: string | undefined): string | undefined {
-    const plane = this.getPlane(id);
-    if (!plane) return undefined;
-    if (plane.rulesText) return plane.rulesText;
-    return plane.chaosText;
+    return this.getCardRulesText(id);
   }
 
   /**
    * Returns card art URL for a plane if present.
    */
   getPlaneArtUrl(id: string | undefined): string | undefined {
-    const art = this.getPlane(id)?.artUrl;
+    const art = this.getCard(id)?.artUrl;
+    return art?.trim() || undefined;
+  }
+
+  /**
+   * Returns metadata for any card id (plane or phenomenon).
+   */
+  getCard(id: string | undefined): PlaneCard | undefined {
+    if (!id) return undefined;
+    return this.cardsById.get(id);
+  }
+
+  /**
+   * Returns rules text for any card type, falling back to chaos text.
+   */
+  getCardRulesText(id: string | undefined): string | undefined {
+    const card = this.getCard(id);
+    if (!card) return undefined;
+    if (card.rulesText) return card.rulesText;
+    return card.chaosText;
+  }
+
+  /**
+   * Returns art URL for any card type.
+   */
+  getCardArtUrl(id: string | undefined): string | undefined {
+    const art = this.getCard(id)?.artUrl;
     return art?.trim() || undefined;
   }
 
@@ -168,6 +209,7 @@ export class DeckService {
     seed?: string;
     includedSetCodes?: readonly string[];
   }): { drawPile: string[]; discardPile: string[]; cardTypesById: Record<string, CardKind> } {
+    this.assertCatalogLoaded();
     const include = new Set((args.includedSetCodes ?? []).map((code) => code.trim()).filter((code) => code.length > 0));
 
     const sourcePlanes =
@@ -266,5 +308,21 @@ export class DeckService {
     if (tokens.includes("PHENOMENON")) return "PHENOMENON";
     if (tokens.includes("PLANE")) return "PLANE";
     return args.defaultKind;
+  }
+
+  private assertCatalogLoaded(): void {
+    if (this.playablePlanes.length === 0) {
+      throw new Error("Card catalog not loaded or has no playable plane cards.");
+    }
+  }
+
+  private initializeCatalog(catalog: CardsCatalog): void {
+    this.planes = this.buildCards(catalog.planes ?? [], "PLANE");
+    this.phenomena = this.buildCards(catalog.phenomena ?? [], "PHENOMENON");
+    this.cards = [...this.planes, ...this.phenomena];
+    this.cardsById = new Map(this.cards.map((card) => [card.id, card] as const));
+    this.planesById = new Map(this.planes.map((p) => [p.id, p] as const));
+    this.playablePlanes = this.planes.filter((p) => typeof p.rulesText === "string" && p.rulesText.length > 0);
+    this.playableCards = this.cards.filter((p) => typeof p.rulesText === "string" && p.rulesText.length > 0);
   }
 }

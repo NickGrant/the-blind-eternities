@@ -2481,7 +2481,8 @@
       ],
       "number": "1",
       "mtgjsonId": "5c1ec268-409d-511e-9f83-10c0801ff353",
-      "scryfallId": "42ecb371-53aa-4368-8ddd-88ae8e90ae0c"
+      "scryfallId": "42ecb371-53aa-4368-8ddd-88ae8e90ae0c",
+      "artUrl": "assets/plane-art/phenomenon-chaotic-aether.jpg"
     },
     {
       "id": "phenomenon-interplanar-tunnel",
@@ -2499,7 +2500,8 @@
       ],
       "number": "2",
       "mtgjsonId": "55f9a223-082b-561f-abdd-888f8e3d039e",
-      "scryfallId": "56e4874c-9d3d-4a1c-a027-186a33ce0da7"
+      "scryfallId": "56e4874c-9d3d-4a1c-a027-186a33ce0da7",
+      "artUrl": "assets/plane-art/phenomenon-interplanar-tunnel.jpg"
     },
     {
       "id": "phenomenon-morphic-tide",
@@ -2517,7 +2519,8 @@
       ],
       "number": "3",
       "mtgjsonId": "4d8e3f9e-a22a-543b-a092-62d5f609910c",
-      "scryfallId": "54327aa2-319d-4430-a266-03cadeed6146"
+      "scryfallId": "54327aa2-319d-4430-a266-03cadeed6146",
+      "artUrl": "assets/plane-art/phenomenon-morphic-tide.jpg"
     },
     {
       "id": "phenomenon-mutual-epiphany",
@@ -2535,7 +2538,8 @@
       ],
       "number": "4",
       "mtgjsonId": "1209fccc-a286-55ed-8820-d94a135eac64",
-      "scryfallId": "3205818c-c7a9-4b70-a403-854c2ad9456d"
+      "scryfallId": "3205818c-c7a9-4b70-a403-854c2ad9456d",
+      "artUrl": "assets/plane-art/phenomenon-mutual-epiphany.jpg"
     },
     {
       "id": "phenomenon-planewide-disaster",
@@ -2553,7 +2557,8 @@
       ],
       "number": "5",
       "mtgjsonId": "024490b2-9ea8-5c39-970c-62bc9a04ec39",
-      "scryfallId": "10fc16b9-3913-400f-bd27-02fcd5c28147"
+      "scryfallId": "10fc16b9-3913-400f-bd27-02fcd5c28147",
+      "artUrl": "assets/plane-art/phenomenon-planewide-disaster.jpg"
     },
     {
       "id": "phenomenon-reality-shaping",
@@ -2571,7 +2576,8 @@
       ],
       "number": "6",
       "mtgjsonId": "5c97953d-d501-546d-8107-179a13b385bb",
-      "scryfallId": "211014b3-ad13-41b3-bfb6-b907108769fd"
+      "scryfallId": "211014b3-ad13-41b3-bfb6-b907108769fd",
+      "artUrl": "assets/plane-art/phenomenon-reality-shaping.jpg"
     },
     {
       "id": "phenomenon-spatial-merging",
@@ -2589,7 +2595,8 @@
       ],
       "number": "7",
       "mtgjsonId": "6d857443-ba87-500f-8889-3246224b2476",
-      "scryfallId": "de44957b-3dcb-45db-a6a7-b5c6e64b582a"
+      "scryfallId": "de44957b-3dcb-45db-a6a7-b5c6e64b582a",
+      "artUrl": "assets/plane-art/phenomenon-spatial-merging.jpg"
     },
     {
       "id": "phenomenon-time-distortion",
@@ -2607,7 +2614,8 @@
       ],
       "number": "8",
       "mtgjsonId": "5970fc35-de32-5ae7-a7ee-2412b3479877",
-      "scryfallId": "ba38fb01-ea16-4a2d-964a-41f7b4d74024"
+      "scryfallId": "ba38fb01-ea16-4a2d-964a-41f7b4d74024",
+      "artUrl": "assets/plane-art/phenomenon-time-distortion.jpg"
     },
     {
       "id": "phenomenon-caught-in-a-parallel-universe",
@@ -2624,7 +2632,8 @@
       ],
       "number": "572",
       "mtgjsonId": "38be451d-cfa3-52e5-81e8-1e20077ec531",
-      "scryfallId": "d8ddc6d0-50cc-4914-a6f2-00fb93d4402a"
+      "scryfallId": "d8ddc6d0-50cc-4914-a6f2-00fb93d4402a",
+      "artUrl": "assets/plane-art/phenomenon-caught-in-a-parallel-universe.jpg"
     },
     {
       "id": "phenomenon-fixed-point-in-time",
@@ -2641,7 +2650,8 @@
       ],
       "number": "582",
       "mtgjsonId": "47604611-0a78-5ea8-b0ef-21531a47ce40",
-      "scryfallId": "a05478f9-3a9a-4887-a8e7-63550eaa6030"
+      "scryfallId": "a05478f9-3a9a-4887-a8e7-63550eaa6030",
+      "artUrl": "assets/plane-art/phenomenon-fixed-point-in-time.jpg"
     },
     {
       "id": "phenomenon-human-time-lord-meta-crisis",
@@ -2658,7 +2668,8 @@
       ],
       "number": "585",
       "mtgjsonId": "5abd4084-405d-5312-ba65-82fc5461cc61",
-      "scryfallId": "f5def75a-f511-42e8-a652-7de4abfbd968"
+      "scryfallId": "f5def75a-f511-42e8-a652-7de4abfbd968",
+      "artUrl": "assets/plane-art/phenomenon-human-time-lord-meta-crisis.jpg"
     },
     {
       "id": "phenomenon-unleash-the-flux",
@@ -2675,7 +2686,8 @@
       ],
       "number": "605",
       "mtgjsonId": "18ff2672-ceda-531f-9608-f7632e79d300",
-      "scryfallId": "8e3c04ad-a8b5-453a-aff4-dce743b1c693"
+      "scryfallId": "8e3c04ad-a8b5-453a-aff4-dce743b1c693",
+      "artUrl": "assets/plane-art/phenomenon-unleash-the-flux.jpg"
     }
   ]
 }

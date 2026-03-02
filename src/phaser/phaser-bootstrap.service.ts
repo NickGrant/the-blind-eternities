@@ -6,6 +6,7 @@ import { SessionStore } from "../app/core/session.store";
 import { SessionOrchestrator } from "../app/core/session-orchestrator.service";
 import { DeckService } from "../app/core/deck.service";
 import { DOMAIN_INTENT, MODAL_TYPE } from "../state/intents.types";
+import { getThemeBootstrapBackground, readThemeIdFromDom } from "./scenes/map-theme";
 
 @Injectable({ providedIn: "root" })
 export class PhaserBootstrapService {
@@ -84,10 +85,6 @@ export class PhaserBootstrapService {
   }
 
   private resolveBootstrapThemeBackground(): string {
-    const theme = document.documentElement.getAttribute("data-be-theme");
-    if (theme === "lithomancy") return "#f3e6cd";
-    if (theme === "neon-dynasty") return "#0f1230";
-    if (theme === "halo-fountain") return "#082634";
-    return "#0d1315";
+    return getThemeBootstrapBackground(readThemeIdFromDom());
   }
 }

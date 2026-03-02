@@ -13,6 +13,8 @@ const run = async () => {
   const cardsText = await fs.readFile(cardsPath, "utf8");
   const cards = JSON.parse(cardsText);
   const planes = Array.isArray(cards.planes) ? cards.planes : [];
+  const phenomena = Array.isArray(cards.phenomena) ? cards.phenomena : [];
+  const entries = [...planes, ...phenomena];
 
   let alreadyCached = 0;
   let updatedFromDisk = 0;
@@ -21,17 +23,17 @@ const run = async () => {
   /** @type {{id: string, name: string, reason: string}[]} */
   const failedEntries = [];
 
-  for (const plane of planes) {
-    if (!plane || typeof plane.id !== "string") continue;
-    const fileName = `${plane.id}.jpg`;
+  for (const entry of entries) {
+    if (!entry || typeof entry.id !== "string") continue;
+    const fileName = `${entry.id}.jpg`;
     const diskPath = path.join(cacheDir, fileName);
     const appPath = `assets/plane-art/${fileName}`;
     const exists = await fileExists(diskPath);
 
     if (exists) {
       alreadyCached += 1;
-      if (plane.artUrl !== appPath) {
-        plane.artUrl = appPath;
+      if (entry.artUrl !== appPath) {
+        entry.artUrl = appPath;
         updatedFromDisk += 1;
       }
       continue;
@@ -41,25 +43,25 @@ const run = async () => {
       continue;
     }
 
-    const queryName = typeof plane.name === "string" && plane.name.trim().length > 0
-      ? plane.name.trim()
-      : humanizePlaneId(plane.id);
+    const queryName = typeof entry.name === "string" && entry.name.trim().length > 0
+      ? entry.name.trim()
+      : humanizePlaneId(entry.id);
 
     try {
       const card = await fetchScryfallCard(queryName);
       if (!card) {
         failed += 1;
-        failedEntries.push({ id: plane.id, name: queryName, reason: "Card lookup returned no result." });
+        failedEntries.push({ id: entry.id, name: queryName, reason: "Card lookup returned no result." });
         continue;
       }
       if (card?.oracle_text && typeof card.oracle_text === "string") {
-        plane.rulesText = card.oracle_text.trim();
+        entry.rulesText = card.oracle_text.trim();
       }
       const uris = card?.image_uris ?? {};
       const imageUrl = uris.art_crop ?? uris.normal ?? uris.large ?? undefined;
       if (!imageUrl) {
         failed += 1;
-        failedEntries.push({ id: plane.id, name: queryName, reason: "Card record did not include a usable image URL." });
+        failedEntries.push({ id: entry.id, name: queryName, reason: "Card record did not include a usable image URL." });
         continue;
       }
 
@@ -67,7 +69,7 @@ const run = async () => {
         const image = await fetchBinary(imageUrl);
         await fs.writeFile(diskPath, image);
       }
-      plane.artUrl = appPath;
+      entry.artUrl = appPath;
       fetched += 1;
 
       if (args.delayMs > 0) {
@@ -76,7 +78,7 @@ const run = async () => {
     } catch (error) {
       failed += 1;
       const message = error instanceof Error ? error.message : String(error);
-      failedEntries.push({ id: plane.id, name: queryName, reason: message });
+      failedEntries.push({ id: entry.id, name: queryName, reason: message });
     }
   }
 

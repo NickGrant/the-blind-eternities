@@ -34,11 +34,14 @@ export class ModalHostComponent implements AfterViewChecked {
     const modal = this.activeModal();
     if (!modal) return "";
     if (modal.body) return this.formatModalBodyHtml(modal.body);
-    if (modal.type === "PLANE") {
-      const rules = this.deckService.getPlaneRulesText(modal.planeId);
-      if (rules) return this.formatModalBodyHtml(rules);
-    }
+    const rules = this.deckService.getCardRulesText(modal.planeId);
+    if (rules) return this.formatModalBodyHtml(rules);
     return this.formatModalBodyHtml("No additional details.");
+  });
+  readonly modalArtUrl = computed(() => {
+    const modal = this.activeModal();
+    if (!modal?.planeId) return undefined;
+    return this.deckService.getCardArtUrl(modal.planeId);
   });
 
   constructor(

@@ -9,6 +9,14 @@ import {
   isSelectableTile,
   type ViewportConfig,
 } from "./map-rendering";
+import { MapZoomHud } from "./map-zoom-hud";
+import {
+  THEME_BACKGROUND_ASSETS,
+  THEME_PALETTES,
+  readThemeIdFromDom,
+  type MapThemeId,
+  type ThemePalette,
+} from "./map-theme";
 
 type SceneDeps = {
   onSelectPlane: (coordKey: CoordKey) => void;
@@ -16,103 +24,6 @@ type SceneDeps = {
   onInspectPlane?: (planeId: string) => void;
   getPlaneName?: (planeId: string | undefined) => string | undefined;
   getPlaneArtUrl?: (planeId: string | undefined) => string | undefined;
-};
-
-type MapThemeId = "phyrexian" | "neon-dynasty" | "lithomancy" | "halo-fountain";
-type ThemePalette = {
-  cameraBg: number;
-  tileFill: number;
-  idleStroke: number;
-  partyStroke: number;
-  selectionStroke: number;
-  hellrideStroke: number;
-  faceDownFill: number;
-  faceDownStroke: number;
-  faceUpFallbackFill: number;
-  nameBackdropFill: number;
-  nameBackdropStroke: number;
-  nameText: string;
-  labelFontFamily: string;
-  zoomHudPanel: number;
-  zoomHudText: string;
-};
-
-const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
-  phyrexian: {
-    cameraBg: 0x080b0b,
-    tileFill: 0x121717,
-    idleStroke: 0x6e8f80,
-    partyStroke: 0xb8d8c8,
-    selectionStroke: 0xc6ff50,
-    hellrideStroke: 0x79e4bf,
-    faceDownFill: 0x151f1f,
-    faceDownStroke: 0x476257,
-    faceUpFallbackFill: 0x1a2827,
-    nameBackdropFill: 0x070c0c,
-    nameBackdropStroke: 0x33574b,
-    nameText: "#e7f5ec",
-    labelFontFamily: "Copperplate Gothic, Palatino Linotype, serif",
-    zoomHudPanel: 0x091111,
-    zoomHudText: "#d0efe0",
-  },
-  "neon-dynasty": {
-    cameraBg: 0x0d1129,
-    tileFill: 0x141a3e,
-    idleStroke: 0x6d79ff,
-    partyStroke: 0x4de4ff,
-    selectionStroke: 0xff4db7,
-    hellrideStroke: 0x39d8ff,
-    faceDownFill: 0x1d2554,
-    faceDownStroke: 0x5a65cf,
-    faceUpFallbackFill: 0x252f66,
-    nameBackdropFill: 0x081128,
-    nameBackdropStroke: 0x3554da,
-    nameText: "#f5f7ff",
-    labelFontFamily: "Century Gothic, Franklin Gothic Medium, Segoe UI, sans-serif",
-    zoomHudPanel: 0x0a1133,
-    zoomHudText: "#d5dcff",
-  },
-  lithomancy: {
-    cameraBg: 0xf7eedf,
-    tileFill: 0xefdfc2,
-    idleStroke: 0xb79263,
-    partyStroke: 0x805a33,
-    selectionStroke: 0xd39138,
-    hellrideStroke: 0x7aabcc,
-    faceDownFill: 0xe9d4ae,
-    faceDownStroke: 0xb08857,
-    faceUpFallbackFill: 0xf4e6cb,
-    nameBackdropFill: 0xe5cd9f,
-    nameBackdropStroke: 0xad8452,
-    nameText: "#3b2818",
-    labelFontFamily: "Garamond, Book Antiqua, Palatino Linotype, serif",
-    zoomHudPanel: 0xddc599,
-    zoomHudText: "#3f2a19",
-  },
-  "halo-fountain": {
-    cameraBg: 0x0b2430,
-    tileFill: 0x133444,
-    idleStroke: 0xd8b87b,
-    partyStroke: 0xf1dfb2,
-    selectionStroke: 0xffefbf,
-    hellrideStroke: 0xb6e7ff,
-    faceDownFill: 0x194255,
-    faceDownStroke: 0x8d7a57,
-    faceUpFallbackFill: 0x215168,
-    nameBackdropFill: 0x0b2a37,
-    nameBackdropStroke: 0xbf9b61,
-    nameText: "#fff3d7",
-    labelFontFamily: "Didot, Bodoni MT, Times New Roman, serif",
-    zoomHudPanel: 0x0d2d3b,
-    zoomHudText: "#f6dfb2",
-  },
-};
-
-const THEME_BACKGROUND_ASSETS: Record<MapThemeId, string> = {
-  phyrexian: "assets/theme-backgrounds/phyrexian.png",
-  "neon-dynasty": "assets/theme-backgrounds/neon-dynasty.png",
-  lithomancy: "assets/theme-backgrounds/lithomancy.png",
-  "halo-fountain": "assets/theme-backgrounds/halo-fountain.png",
 };
 
 export class MapScene extends Phaser.Scene {
@@ -143,12 +54,7 @@ export class MapScene extends Phaser.Scene {
   private uiZoom = 1;
   private pinchStartDistance: number | null = null;
   private pinchStartZoom = 1;
-  private zoomHud?: {
-    panel: Phaser.GameObjects.Rectangle;
-    zoomOut: Phaser.GameObjects.Text;
-    zoomIn: Phaser.GameObjects.Text;
-    label: Phaser.GameObjects.Text;
-  };
+  private zoomHud?: MapZoomHud;
   private readonly baseViewport = {
     tileWidth: 390,
     tileHeight: 234,
@@ -203,6 +109,7 @@ export class MapScene extends Phaser.Scene {
     const state = this.lastState;
     if (!state) {
       this.clearRenderedObjects();
+      this.updateZoomHudEnabled();
       return;
     }
 
@@ -299,6 +206,8 @@ export class MapScene extends Phaser.Scene {
         objects,
       });
     });
+
+    this.updateZoomHudEnabled();
   }
 
   private renderCardFace(args: {
@@ -544,7 +453,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private syncTheme(force = false): void {
-    const nextTheme = this.readThemeId();
+    const nextTheme = readThemeIdFromDom();
     if (!force && nextTheme === this.activeThemeId) return;
     this.activeThemeId = nextTheme;
     this.palette = THEME_PALETTES[nextTheme];
@@ -552,19 +461,6 @@ export class MapScene extends Phaser.Scene {
     this.setupBackground();
     this.updateZoomHudTheme();
     this.renderFromState();
-  }
-
-  private readThemeId(): MapThemeId {
-    const raw = document.documentElement.getAttribute("data-be-theme");
-    if (
-      raw === "phyrexian" ||
-      raw === "neon-dynasty" ||
-      raw === "lithomancy" ||
-      raw === "halo-fountain"
-    ) {
-      return raw;
-    }
-    return "phyrexian";
   }
 
   private ensureThemeBackgroundTexture(themeId: MapThemeId): string {
@@ -700,6 +596,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private applyZoom(nextZoom: number): void {
+    if (!this.canUseZoomControls()) return;
     const clamped = Math.max(this.minZoom, Math.min(this.maxZoom, nextZoom));
     if (Math.abs(clamped - this.uiZoom) < 0.0001) return;
     this.uiZoom = clamped;
@@ -717,72 +614,30 @@ export class MapScene extends Phaser.Scene {
   }
 
   private setupZoomHud(): void {
-    const panel = this.add
-      .rectangle(0, 0, 136, 36, this.palette.zoomHudPanel, 0.76)
-      .setOrigin(0, 0)
-      .setDepth(500)
-      .setScrollFactor(0, 0);
-    const zoomOut = this.add
-      .text(0, 0, "-", {
-        fontFamily: "Arial, sans-serif",
-        fontSize: "20px",
-        fontStyle: "bold",
-        color: "#ffffff",
-      })
-      .setOrigin(0.5, 0.5)
-      .setDepth(501)
-      .setScrollFactor(0, 0)
-      .setInteractive({ useHandCursor: true });
-    const zoomIn = this.add
-      .text(0, 0, "+", {
-        fontFamily: "Arial, sans-serif",
-        fontSize: "20px",
-        fontStyle: "bold",
-        color: "#ffffff",
-      })
-      .setOrigin(0.5, 0.5)
-      .setDepth(501)
-      .setScrollFactor(0, 0)
-      .setInteractive({ useHandCursor: true });
-    const label = this.add
-      .text(0, 0, "", {
-        fontFamily: "Arial, sans-serif",
-        fontSize: "12px",
-        fontStyle: "bold",
-        color: this.palette.zoomHudText,
-      })
-      .setOrigin(0.5, 0.5)
-      .setDepth(501)
-      .setScrollFactor(0, 0);
-
-    zoomOut.on("pointerup", () => this.applyZoom(this.uiZoom - this.zoomStep));
-    zoomIn.on("pointerup", () => this.applyZoom(this.uiZoom + this.zoomStep));
-
-    this.zoomHud = { panel, zoomOut, zoomIn, label };
-    this.layoutZoomHud();
-    this.updateZoomHudLabel();
+    this.zoomHud = new MapZoomHud({
+      scene: this,
+      palette: this.palette,
+      onZoomOut: () => this.applyZoom(this.uiZoom - this.zoomStep),
+      onZoomIn: () => this.applyZoom(this.uiZoom + this.zoomStep),
+    });
+    this.zoomHud.setLabel(this.uiZoom);
+    this.zoomHud.setEnabled(this.canUseZoomControls());
   }
 
   private updateZoomHudTheme(): void {
-    if (!this.zoomHud) return;
-    this.zoomHud.panel.setFillStyle(this.palette.zoomHudPanel, 0.76);
-    this.zoomHud.label.setColor(this.palette.zoomHudText);
+    this.zoomHud?.updateTheme(this.palette);
   }
 
   private layoutZoomHud(): void {
-    if (!this.zoomHud) return;
-    const baseX = 12;
-    const baseY = 12;
-
-    this.zoomHud.panel.setPosition(baseX, baseY);
-    this.zoomHud.zoomOut.setPosition(baseX + 18, baseY + 18);
-    this.zoomHud.label.setPosition(baseX + 68, baseY + 18);
-    this.zoomHud.zoomIn.setPosition(baseX + 118, baseY + 18);
+    this.zoomHud?.layout();
   }
 
   private updateZoomHudLabel(): void {
-    if (!this.zoomHud) return;
-    this.zoomHud.label.setText(`Zoom ${Math.round(this.uiZoom * 100)}%`);
+    this.zoomHud?.setLabel(this.uiZoom);
+  }
+
+  private updateZoomHudEnabled(): void {
+    this.zoomHud?.setEnabled(this.canUseZoomControls());
   }
 
   private isPinching(): boolean {
@@ -800,6 +655,10 @@ export class MapScene extends Phaser.Scene {
 
   private canPanCanvas(): boolean {
     return this.lastState?.config.gameMode !== "REGULAR_PLANECHASE";
+  }
+
+  private canUseZoomControls(): boolean {
+    return this.tilesByCoord.size > 0;
   }
 
 }

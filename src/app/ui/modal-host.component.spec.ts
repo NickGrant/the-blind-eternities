@@ -7,6 +7,13 @@ import type { SessionStore } from "../core/session.store";
 import { DeckService } from "../core/deck.service";
 import { createNewSessionState } from "../../state/session.factory";
 import type { DomainIntent } from "../../state/intents.types";
+import cardsCatalog from "../../assets/cards.json";
+
+function createDeckService(): DeckService {
+  const service = new DeckService();
+  service.hydrateCatalog(cardsCatalog);
+  return service;
+}
 
 describe("ModalHostComponent (class-only)", () => {
   it("dispatches close_modal for active modal", () => {
@@ -35,7 +42,7 @@ describe("ModalHostComponent (class-only)", () => {
     const cmp = new ModalHostComponent(
       storeMock as SessionStore,
       orchestratorMock as SessionOrchestrator,
-      new DeckService()
+      createDeckService()
     );
 
     cmp.closeActiveModal();
@@ -68,7 +75,7 @@ describe("ModalHostComponent (class-only)", () => {
     const cmp = new ModalHostComponent(
       storeMock as SessionStore,
       orchestratorMock as SessionOrchestrator,
-      new DeckService()
+      createDeckService()
     );
 
     expect(cmp.modalTitle()).toBe("Akoum");
@@ -98,10 +105,39 @@ describe("ModalHostComponent (class-only)", () => {
     const cmp = new ModalHostComponent(
       storeMock as SessionStore,
       orchestratorMock as SessionOrchestrator,
-      new DeckService()
+      createDeckService()
     );
 
     expect(cmp.modalBodyHtml()).toBe("Line one<br /><br />Line two<br /><br />Line three");
+  });
+
+  it("uses phenomenon metadata for modal body and art when available", () => {
+    const initial = createNewSessionState({ atMs: 10 });
+    initial.modal.active = {
+      id: "m2c",
+      type: "PHENOMENON",
+      planeId: "phenomenon-chaotic-aether",
+      resumeToState: "IDLE",
+    };
+    initial.modal.isOpen = true;
+
+    const _state = signal(initial);
+    const storeMock: Pick<SessionStore, "state" | "setState"> = {
+      state: _state.asReadonly(),
+      setState: (next) => _state.set(next),
+    };
+    const orchestratorMock: Pick<SessionOrchestrator, "dispatch"> = {
+      dispatch: vi.fn(),
+    };
+
+    const cmp = new ModalHostComponent(
+      storeMock as SessionStore,
+      orchestratorMock as SessionOrchestrator,
+      createDeckService()
+    );
+
+    expect(cmp.modalBodyHtml()).toContain("encounter Chaotic Aether");
+    expect(cmp.modalArtUrl()).toContain("assets/plane-art/phenomenon-chaotic-aether.jpg");
   });
 
   it("closes modal on Escape key", () => {
@@ -127,7 +163,7 @@ describe("ModalHostComponent (class-only)", () => {
     const cmp = new ModalHostComponent(
       storeMock as SessionStore,
       orchestratorMock as SessionOrchestrator,
-      new DeckService()
+      createDeckService()
     );
 
     cmp.onDocumentKeydown(new KeyboardEvent("keydown", { key: "Escape" }));
@@ -159,7 +195,7 @@ describe("ModalHostComponent (class-only)", () => {
     const cmp = new ModalHostComponent(
       storeMock as SessionStore,
       orchestratorMock as SessionOrchestrator,
-      new DeckService()
+      createDeckService()
     );
 
     cmp.onModalPointerDown({
@@ -207,7 +243,7 @@ describe("ModalHostComponent (class-only)", () => {
     const cmp = new ModalHostComponent(
       storeMock as SessionStore,
       orchestratorMock as SessionOrchestrator,
-      new DeckService()
+      createDeckService()
     );
 
     cmp.onModalPointerDown({
@@ -251,7 +287,7 @@ describe("ModalHostComponent (class-only)", () => {
     const cmp = new ModalHostComponent(
       storeMock as SessionStore,
       orchestratorMock as SessionOrchestrator,
-      new DeckService()
+      createDeckService()
     );
 
     (cmp as unknown as { modalPanel: { nativeElement: HTMLElement } }).modalPanel = {
