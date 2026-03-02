@@ -16,8 +16,10 @@ App URL: `http://localhost:4200/`
 - `npm run start`: Start development server
 - `npm run build`: Create production build
 - `npm run build:pages`: Build for GitHub Pages (`/the-blind-eternities/` base href)
+- `npm run lint`: Type-style quality gate (`tsc --noEmit` for app + specs)
 - `npm run test:unit`: Run unit test suite (Vitest)
 - `npm run art:cache:fetch`: Fetch a small, throttled batch of plane art
+- `npm run art:coverage`: Report cached art coverage by kind/set and missing playable art IDs
 - `npm run cards:sync:mtgjson`: Sync plane metadata from MTGJSON
 - `npm run deploy:pages`: Publish local build output to `gh-pages` branch
 
@@ -25,6 +27,10 @@ App URL: `http://localhost:4200/`
 
 - Auto-deploy is configured via [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) on push to `main`.
 - Live site URL: `https://nickgrant.github.io/the-blind-eternities/`
+- Analytics secret setup (no ID in git):
+  1. Add repository secret `GTAG_ID` in GitHub Actions settings.
+  2. Pages workflow injects it at build time via `npm run env:prepare:prod`.
+  3. Leave `src/environments/environment.prod.ts` committed with `analyticsMeasurementId: undefined`.
 - Manual local deploy is also available:
   1. `npm run build:pages`
   2. `npm run deploy:pages`

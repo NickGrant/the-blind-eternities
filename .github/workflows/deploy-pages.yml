@@ -31,6 +31,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Prepare production environment
+        run: npm run env:prepare:prod
+        env:
+          GTAG_ID: ${{ secrets.GTAG_ID }}
+
       - name: Build app for Pages
         run: npm run build:pages
 
