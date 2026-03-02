@@ -248,6 +248,10 @@ describe("reduceSessionState (Milestone 4 dice/movement/turn loop)", () => {
     moving.config.ensurePlusEnabled = false;
     moving.config.fogOfWarDistance = 0;
     moving.deck.drawPile = ["phenomenon-spatial-merging", "plane-replacement"];
+    moving.deck.cardTypesById = {
+      "phenomenon-spatial-merging": "PHENOMENON",
+      "plane-replacement": "PLANE",
+    };
     moving.map.tilesByCoord = {
       "0,0": mkTile("0,0"),
       "1,0": mkTile("1,0", false),

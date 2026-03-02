@@ -104,6 +104,7 @@ export type DomainIntent =
       initialDeck?: {
         drawPile: string[];
         discardPile: string[];
+        cardTypesById?: Record<string, "PLANE" | "PHENOMENON" | "UNKNOWN">;
       };
     }
   | { type: typeof DOMAIN_INTENT.RESTART_SESSION; atMs: number }

@@ -883,6 +883,102 @@ Resolution: Updated issue schema guidance in `ISSUES.md` and operating rules in 
 
 ---
 
+title: Align button groups to Bootstrap 5.3 checkbox/radio group pattern
+status: complete
+priority: low
+description: Button groups should follow the Bootstrap 5.3 checkbox/radio button-group pattern for semantics and interaction behavior.
+Resolution: Updated setup button-group markup to use Bootstrap-style `btn-group`/`btn-check`/label patterns with group roles and accessible labels for both Deck Sets and Game Mode controls.
+
+---
+
+title: Convert remaining checkboxes to switch-style controls
+status: complete
+priority: low
+description: Remaining checkbox-style option controls should use switch presentation.
+Resolution: Converted optional rules checkbox treatment to switch-style UI and kept Fog of War as a switch control with consistent styling and behavior.
+
+---
+
+title: Remove "(Fog Value 1)" text from Fog of War label
+status: complete
+priority: low
+description: Remove the explicit "(Fog Value 1)" phrase from the Fog of War label copy.
+Resolution: Simplified Fog of War switch label copy by removing the parenthetical value reference while preserving behavior.
+
+---
+
+title: Move playable-plane count text inside Deck Sets box
+status: complete
+priority: low
+description: The playable planes helper text should be shown within the Deck Sets section.
+Resolution: Moved the playable-plane count hint into the Deck Sets panel so setup context remains grouped with set selection controls.
+
+---
+
+title: Keep buttonless game-control sections the same height as buttoned sections
+status: complete
+priority: low
+description: Control sections without active buttons should maintain comparable height to avoid layout jitter against sections that include buttons.
+Resolution: Normalized minimum heights for toggle buttons and control action buttons to keep control-row layout visually stable when button presence changes.
+
+---
+
+title: Replace Phaser procedural theme backgrounds with generated art assets
+status: complete
+priority: high
+description: Current Phaser-drawn theme backgrounds are not sufficient. Replace procedural/vector-drawn scene backgrounds with generated rendered art assets per theme. Use the prompt and negative-prompt direction from the most recent UX theme refinement issue in ISSUES_ARCHIVE.md as the source of truth for asset generation and visual alignment.
+Resolution: Replaced Phaser procedural background drawing with per-theme rendered art assets (`src/assets/theme-backgrounds/*.svg`) and updated map scene background loading to use these assets with async texture loading and a fallback texture path.
+
+---
+
+title: Update session configuration UI to Bootstrap-style button groups and fog switch
+status: complete
+priority: high
+description: Refactor setup controls for clearer UX. Deck Sets should remove set code text from display labels and be presented as a Bootstrap button-group style control using the radio button group pattern as a baseline. Game Mode should also become a button group in the same style, with Blind Eternities selected by default. Replace Fog of War select/radio controls with a single switch where the label describes Fog value `1` behavior, and default the switch to ON (value `1`).
+Resolution: Updated setup controls to button-group toggles for deck sets and game mode, removed set-code text from deck-set labels, kept Blind Eternities as default mode, and replaced fog controls with a single switch for Fog value `1` behavior (default ON in setup; regular mode forces fog `0`).
+
+---
+
+title: Refine visual themes with stronger differentiation, prompt-driven art direction, and custom generated assets
+status: complete
+priority: high
+description: Expand theme implementation to create materially distinct visual systems across all supported themes and incorporate the following prompt/negative-prompt direction as implementation targets for palettes, textures, imagery, and UI embellishments. Include custom image generation when needed (for separate UX surfaces, background variants, decorative overlays, and theme-specific graphic accents).
+Resolution: Expanded theme token systems and scene rendering so each theme now has materially distinct palettes, typography, panel chrome, overlays, and Phaser background motifs aligned to the intended art direction. Added stronger theme-specific UI polish and procedural background embellishments so visual identity changes meaningfully across all four themes.
+
+---
+
+title: Replace phenomenon ID-prefix heuristic with explicit card-type metadata
+status: complete
+priority: medium
+description: Phenomenon handling currently relies on card ID prefix checks (`phenomenon-`). Replace this with explicit card-type metadata in catalog/deck flow so phenomenon detection is data-driven and resilient to naming variance.
+Resolution: Added explicit `cardTypesById` metadata in deck/session flow and switched phenomenon replacement checks to metadata lookup instead of ID prefix heuristics. Deck initialization now includes normalized card-kind mapping and tests cover phenomenon handling via metadata.
+
+---
+
+title: Add "What is Blind Eternities?" link to source article
+status: complete
+priority: medium
+description: Add a clearly visible help link in the player-facing UI (for example in the How to Use section) labeled similarly to "What is Blind Eternities?" that opens the Blind Eternities article in a new tab so players can quickly read the original variant context and rules background.
+Resolution: Added a player-facing help link in the How to Use section that opens the Blind Eternities article in a new tab with safe external-link attributes.
+
+---
+
+title: Cleanup session setup dialog controls (selects + Planechase naming)
+status: complete
+priority: medium
+description: Refine setup dialog inputs for clarity and compactness. Replace Fog of War radio buttons with a select control where option values are `0` and `1`, and option labels include the descriptive behavior text. Replace Game Mode radio buttons with a select control and rename the displayed mode label from `Regular Planechase` to `Planechase` while keeping behavior unchanged.
+Resolution: Replaced setup radios with select controls for Game Mode and Fog of War distance, keeping values explicit (`0`/`1`) and descriptions user-readable. Updated player-facing mode labeling to `Planechase` while preserving existing regular-mode behavior.
+
+---
+
+title: How to Use section should be two columns on desktop
+status: complete
+priority: medium
+description: Update the player-facing How to Use layout to render in a two-column format on desktop/wider breakpoints while preserving a single-column layout on mobile for readability.
+Resolution: Added desktop breakpoint styling to render How to Use content in two columns while retaining a single-column flow on smaller screens.
+
+---
+
 title: Replace "Rules Profile" setup with numeric "Fog of War" setting (1 or 2)
 status: complete
 priority: high

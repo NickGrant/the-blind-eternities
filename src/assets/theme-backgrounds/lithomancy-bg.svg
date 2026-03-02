@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef6ff"/>
+      <stop offset="0.45" stop-color="#f6efe1"/>
+      <stop offset="1" stop-color="#dfc39a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.52" cy="0.22" r="0.42">
+      <stop offset="0" stop-color="#fff8de" stop-opacity="0.7"/>
+      <stop offset="0.56" stop-color="#f0dba9" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#e8cc97" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#sky)"/>
+  <rect width="1024" height="1024" fill="url(#sun)"/>
+  <g fill="#d9bb88" fill-opacity="0.45">
+    <polygon points="180,480 230,320 280,480"/>
+    <polygon points="320,520 380,290 440,520"/>
+    <polygon points="480,470 540,220 600,470"/>
+    <polygon points="630,520 690,310 750,520"/>
+    <polygon points="760,460 810,300 860,460"/>
+  </g>
+  <g fill="#bea071" fill-opacity="0.32">
+    <polygon points="214,454 230,388 246,454"/>
+    <polygon points="358,488 380,380 402,488"/>
+    <polygon points="518,432 540,304 562,432"/>
+    <polygon points="668,484 690,382 712,484"/>
+    <polygon points="794,436 810,370 826,436"/>
+  </g>
+  <rect y="740" width="1024" height="284" fill="#d5b382" fill-opacity="0.72"/>
+</svg>

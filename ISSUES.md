@@ -11,6 +11,7 @@
   - `unstarted`
   - `in-progress`
   - `reopened`
+  - `blocked`
 - Valid priorities for active items:
   - `low`
   - `medium`
@@ -25,43 +26,84 @@
 
 ### Functional
 
-title: Replace phenomenon ID-prefix heuristic with explicit card-type metadata
-status: unstarted
-priority: medium
-description: Phenomenon handling currently relies on card ID prefix checks (`phenomenon-`). Replace this with explicit card-type metadata in catalog/deck flow so phenomenon detection is data-driven and resilient to naming variance.
-
----
-
-title: Refine visual themes with stronger differentiation, prompt-driven art direction, and custom generated assets
+title: Replace SVG theme backgrounds with raster art assets
 status: unstarted
 priority: high
-description: Expand theme implementation to create materially distinct visual systems across all supported themes and incorporate the following prompt/negative-prompt direction as implementation targets for palettes, textures, imagery, and UI embellishments. Include custom image generation when needed (for separate UX surfaces, background variants, decorative overlays, and theme-specific graphic accents).
-details:
-- phyrexian
-  - visual prompt: A towering biomechanical entity formed from slick obsidian metal and fused organic sinew, dripping viscous black oil across ribbed cathedral-scale structures, asymmetrical bladed silhouette, harsh green internal glow veins pulsing beneath reflective tar-like armor, industrial gothic architecture rising behind it, oppressive vertical composition, high contrast lighting, wet specular highlights on black chrome surfaces, cinematic dark fantasy realism, ultra-detailed textures, no warm color tones.
-  - negative prompt: warm lighting, gold trim, marble architecture, neon pink, bright cyan, medieval fantasy, natural greenery, soft painterly lighting, symmetrical beauty, art deco patterns, clean ivory stone
-- neon dynasty
-  - visual prompt: Rain-soaked cyberpunk megacity at night inspired by futuristic Tokyo, dense vertical skyline with glowing holographic signage, electric blue and magenta neon reflections across wet asphalt, chrome architecture with subtle Japanese design motifs, atmospheric mist diffusing cool light, lone silhouetted figure in foreground, cinematic perspective depth, cool temperature palette dominated by cyan, indigo, and hot pink, high-detail digital illustration, reflective surfaces, no warm gold tones.
-  - negative prompt: marble columns, gold filigree, cathedral interiors, black oil textures, gothic horror, sandstone ruins, bright daylight, earthy browns, symmetrical art deco interior
-- lithomancy
-  - visual prompt: Monumental floating stone hedrons suspended in bright open sky, ivory and pale limestone architecture carved with sacred geometric glyphs, soft golden ambient sunlight beams illuminating smooth carved surfaces, serene celestial atmosphere, minimal color variation beyond ivory, pale gold, and sky blue, symmetrical composition with central floating monolith, clean negative space, high-key lighting, crisp detail, mystical yet peaceful tone.
-  - negative prompt: dark oppressive shadows, neon lighting, biomechanical metal, oil sheen, rust, art deco gold interiors, cyberpunk signage, asymmetrical horror shapes
-- halo fountain
-  - visual prompt: Grand Art Deco interior centered around a radiant marble fountain glowing with warm golden halo light, symmetrical arches and polished ivory columns with geometric deco patterns, champagne and brushed gold trim reflecting soft ambient illumination, elegant high-society atmosphere, celestial nightclub cathedral aesthetic, balanced composition, soft highlight bloom, warm tonal dominance, refined luxury, high-detail digital painting.
-  - negative prompt: neon magenta lighting, wet asphalt streets, black oil biomechanical horror, floating stone ruins, harsh green glow, dystopian grime, industrial decay
+description: Replace current Phaser theme background SVG files with raster art assets (theme-specific generated renders) for higher visual fidelity. PNG assets now exist and this issue is unblocked. Implementation requirements:
+- normalize file naming so each theme key maps cleanly and consistently (for example `phyrexian`, `neon-dynasty`, `lithomancy`, `halo-fountain`; fix current `phyrexia.png` naming mismatch)
+- convert/normalize image dimensions and format settings as needed so assets are consistent for runtime loading
+- optimize/compress PNG files to reduce transfer and bundle weight while preserving acceptable visual quality
+- update Phaser theme background loader mapping to use the raster assets
+- remove legacy SVG background files after raster migration is validated
 
 ---
 
-title: Add "What is Blind Eternities?" link to source article
+title: Add Bootstrap dependency and global stylesheet integration
 status: unstarted
-priority: medium
-description: Add a clearly visible help link in the player-facing UI (for example in the How to Use section) labeled similarly to "What is Blind Eternities?" that opens the Blind Eternities article in a new tab so players can quickly read the original variant context and rules background.
+priority: high
+description: Install Bootstrap 5.3 in project dependencies and wire its stylesheet globally so Bootstrap classes used in templates are actually backed by framework CSS instead of custom reimplementation.
 
 ---
 
-title: Cleanup session setup dialog controls (selects + Planechase naming)
+title: Remove custom control-bar button-group CSS and use Bootstrap-native button groups
+status: unstarted
+priority: high
+description: Refactor control-bar button group implementation to rely on Bootstrap `btn-group`, `btn-check`, and button variant classes with minimal local overrides. Remove duplicated state/focus/checked styling currently implemented in `control-bar.component.scss`.
+
+---
+
+title: Replace custom switch styling with Bootstrap `form-check form-switch` pattern
 status: unstarted
 priority: medium
-description: Refine setup dialog inputs for clarity and compactness. Replace Fog of War radio buttons with a select control where option values are `0` and `1`, and option labels include the descriptive behavior text. Replace Game Mode radio buttons with a select control and rename the displayed mode label from `Regular Planechase` to `Planechase` while keeping behavior unchanged.
+description: Update Fog of War and optional rules switches to Bootstrap switch markup (`form-check form-switch` + `form-check-input`/`form-check-label`) and remove custom switch appearance rules from component SCSS.
+
+---
+
+title: Migrate control bar action buttons to Bootstrap button variants/utilities
+status: unstarted
+priority: medium
+description: Replace custom `control-bar__button*` visual variants with Bootstrap button classes (`btn`, `btn-primary`, `btn-secondary`, `btn-danger`, disabled state) and keep component CSS focused on layout spacing only.
+
+---
+
+title: Refactor modal host shell to Bootstrap modal structure without behavior regression
+status: unstarted
+priority: high
+description: The modal uses fully custom styling and structure. Migrate to Bootstrap modal classes/structure (`modal`, `modal-dialog`, `modal-content`, `modal-header`, `modal-body`, `modal-footer`) while preserving existing project-specific behavior (draggable panel, queued count, keyboard handling, viewport clamping).
+
+---
+
+title: Refactor debug panel controls to Bootstrap button and details styling
+status: unstarted
+priority: medium
+description: Debug panel currently duplicates button/chip/panel styling. Migrate buttons and status chips to Bootstrap classes/utilities and reduce custom CSS to component-specific layout concerns.
+
+---
+
+title: Replace custom error banner styling with Bootstrap alert component pattern
+status: unstarted
+priority: medium
+description: Update error banner to use Bootstrap alert semantics and classes (`alert`, severity variant, heading/body structure) and remove duplicated alert border/background/text styling from local SCSS.
+
+---
+
+title: Reduce app shell panel/card style duplication via Bootstrap cards and utilities
+status: unstarted
+priority: medium
+description: App shell reimplements panel surfaces, headers, spacing, and list presentation. Migrate reusable panel blocks (`Game Controls`, `Event Log`, `Debug`) to Bootstrap card/layout utility classes and keep theme-specific overrides token-based.
+
+---
+
+title: Add Bootstrap-conformance guardrails to documentation
+status: unstarted
+priority: low
+description: Update coding/style guidance docs to require Bootstrap-first implementation for common UI primitives (buttons, groups, switches, alerts, cards, modals) and prohibit duplicating framework component styles unless explicitly justified.
+
+---
+
+title: Phenomena not appearing in live gameplay; validate card data pipeline
+status: unstarted
+priority: high
+description: Phenomenon cards are not surfacing during real gameplay runs. Investigate deck composition and runtime filtering to confirm phenomena are included when expected, and verify `cards.json` contains complete/valid phenomenon metadata required by current detection logic.
 
 ---

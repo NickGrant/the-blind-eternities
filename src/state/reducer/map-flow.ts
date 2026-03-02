@@ -70,6 +70,7 @@ export function initMapForSession(
   const deck = intent.initialDeck ?? {
     drawPile: [...state.deck.drawPile],
     discardPile: [...state.deck.discardPile],
+    cardTypesById: { ...(state.deck.cardTypesById ?? {}) },
   };
 
   const tilesSeeded = {
@@ -130,6 +131,7 @@ export function initMapForSession(
       drawPile: [...dealt.drawPile],
       discardPile: [...deck.discardPile],
       currentPlaneId: undefined,
+      cardTypesById: { ...(deck.cardTypesById ?? state.deck.cardTypesById ?? {}) },
     },
     map: {
       ...state.map,
@@ -296,6 +298,7 @@ export function applyMapPostMove(state: SessionState, atMs: number): SessionStat
     const take = drawNextPlaneWithPhenomenonReplace({
       drawPile,
       discardPile,
+      cardTypesById: state.deck.cardTypesById ?? {},
       atMs: atMs + idx,
       seed: state.rng.seed,
     });
@@ -530,13 +533,14 @@ function drawPlanesWithRecycle(args: {
   return { drawn, drawPile, discardPile };
 }
 
-function isPhenomenonCardId(cardId: string): boolean {
-  return cardId.startsWith("phenomenon-");
+function isPhenomenonCardId(cardId: string, cardTypesById: Record<string, "PLANE" | "PHENOMENON" | "UNKNOWN">): boolean {
+  return cardTypesById[cardId] === "PHENOMENON";
 }
 
 function drawNextPlaneWithPhenomenonReplace(args: {
   drawPile: readonly string[];
   discardPile: readonly string[];
+  cardTypesById: Record<string, "PLANE" | "PHENOMENON" | "UNKNOWN">;
   atMs: number;
   seed?: string;
 }): {
@@ -564,7 +568,7 @@ function drawNextPlaneWithPhenomenonReplace(args: {
     discardPile = take.discardPile;
     const cardId = take.drawn[0];
     if (!cardId) break;
-    if (isPhenomenonCardId(cardId)) {
+    if (isPhenomenonCardId(cardId, args.cardTypesById)) {
       discardPile = [...discardPile, cardId];
       phenomenonReplaceCount += 1;
       continue;

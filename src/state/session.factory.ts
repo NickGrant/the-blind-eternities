@@ -46,6 +46,7 @@ export const createNewSessionState = (args: {
       drawPile: [],
       discardPile: [],
       currentPlaneId: undefined,
+      cardTypesById: {},
       phenomenonGate: {
         isResolving: false,
         sourcePlaneId: undefined,

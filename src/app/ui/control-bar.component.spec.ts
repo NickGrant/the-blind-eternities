@@ -40,7 +40,7 @@ describe("ControlBarComponent (class-only)", () => {
     if (intent.type === "domain/start_session") {
       expect(intent.includedSetCodes).toEqual(["OPCA"]);
       expect(intent.gameMode).toBe("BLIND_ETERNITIES");
-      expect(intent.fogOfWarDistance).toBe(0);
+      expect(intent.fogOfWarDistance).toBe(1);
     }
   });
 
@@ -61,6 +61,18 @@ describe("ControlBarComponent (class-only)", () => {
     }
   });
 
+  it("switches game mode via setGameMode", () => {
+    const { cmp } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.setGameMode("REGULAR_PLANECHASE");
+    expect(cmp.selectedGameMode()).toBe("REGULAR_PLANECHASE");
+    cmp.setGameMode("BLIND_ETERNITIES");
+    expect(cmp.selectedGameMode()).toBe("BLIND_ETERNITIES");
+  });
+
   it("allows selecting cardinal fog distance before session start", () => {
     const { cmp, dispatchMock } = buildComponent({
       fsmState: "SETUP",
@@ -75,6 +87,18 @@ describe("ControlBarComponent (class-only)", () => {
     if (intent.type === "domain/start_session") {
       expect(intent.fogOfWarDistance).toBe(1);
     }
+  });
+
+  it("maps fog switch enablement to fog distances", () => {
+    const { cmp } = buildComponent({
+      fsmState: "SETUP",
+      deckMock: buildDeckMock(),
+    });
+
+    cmp.setFogEnhancedRevealEnabled(true);
+    expect(cmp.selectedFogOfWarDistance()).toBe(1);
+    cmp.setFogEnhancedRevealEnabled(false);
+    expect(cmp.selectedFogOfWarDistance()).toBe(0);
   });
 
   it("includes anti-stall toggle in start_session payload when enabled", () => {

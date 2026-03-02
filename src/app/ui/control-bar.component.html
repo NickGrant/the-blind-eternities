@@ -2,64 +2,61 @@
   @if (fsmState() === "SETUP") {
     <div class="control-bar__set-picker">
       <div class="control-bar__set-picker-title">Deck Sets</div>
-      <div class="control-bar__set-options">
+      <div class="control-bar__set-options control-bar__set-options--button-group btn-group" role="group" aria-label="Deck sets">
         @for (set of planeSets(); track set.code) {
-          <label class="control-bar__set-option">
-            <input
-              type="checkbox"
-              [checked]="isSetSelected(set.code)"
-              (change)="toggleSet(set.code)"
-            />
-            {{ set.label }} ({{ set.code }}) - {{ set.count }}
+          <input
+            class="control-bar__btn-check btn-check"
+            type="checkbox"
+            [id]="'set-' + set.code"
+            [checked]="isSetSelected(set.code)"
+            (change)="toggleSet(set.code)"
+          />
+          <label class="control-bar__btn-toggle btn btn-outline-primary" [for]="'set-' + set.code">
+            {{ set.label }} ({{ set.count }})
           </label>
         }
       </div>
+      <span class="control-bar__hint">
+        Playable planes from selection: {{ selectedPlayableCount() }} (minimum {{ minimumSessionPlanes }}).
+      </span>
     </div>
 
     <div class="control-bar__set-picker">
       <div class="control-bar__set-picker-title">Game Mode</div>
-      <div class="control-bar__set-options">
-        <label class="control-bar__set-option">
-          <input
-            type="radio"
-            name="game-mode"
-            [checked]="selectedGameMode() === GAME_MODE.BLIND_ETERNITIES"
-            (change)="setGameMode(GAME_MODE.BLIND_ETERNITIES)"
-          />
-          Blind Eternities
-        </label>
-        <label class="control-bar__set-option">
-          <input
-            type="radio"
-            name="game-mode"
-            [checked]="selectedGameMode() === GAME_MODE.REGULAR_PLANECHASE"
-            (change)="setGameMode(GAME_MODE.REGULAR_PLANECHASE)"
-          />
-          Regular Planechase
-        </label>
+      <div class="control-bar__set-options control-bar__set-options--button-group btn-group" role="group" aria-label="Game mode">
+        <input
+          class="control-bar__btn-check btn-check"
+          type="radio"
+          name="game-mode"
+          id="game-mode-blind-eternities"
+          [checked]="selectedGameMode() === GAME_MODE.BLIND_ETERNITIES"
+          (change)="setGameMode(GAME_MODE.BLIND_ETERNITIES)"
+        />
+        <label class="control-bar__btn-toggle btn btn-outline-primary" for="game-mode-blind-eternities">Blind Eternities</label>
+
+        <input
+          class="control-bar__btn-check btn-check"
+          type="radio"
+          name="game-mode"
+          id="game-mode-planechase"
+          [checked]="selectedGameMode() === GAME_MODE.REGULAR_PLANECHASE"
+          (change)="setGameMode(GAME_MODE.REGULAR_PLANECHASE)"
+        />
+        <label class="control-bar__btn-toggle btn btn-outline-primary" for="game-mode-planechase">Planechase</label>
       </div>
     </div>
     @if (selectedGameMode() === GAME_MODE.BLIND_ETERNITIES) {
       <div class="control-bar__set-picker">
         <div class="control-bar__set-picker-title">Fog of War</div>
         <div class="control-bar__set-options">
-          <label class="control-bar__set-option">
+          <label class="control-bar__set-option control-bar__set-option--switch">
             <input
-              type="radio"
-              name="fog-of-war"
-              [checked]="selectedFogOfWarDistance() === FOG_OF_WAR_DISTANCE.CURRENT_ONLY"
-              (change)="setFogOfWarDistance(FOG_OF_WAR_DISTANCE.CURRENT_ONLY)"
-            />
-            0: Reveal only the square you enter.
-          </label>
-          <label class="control-bar__set-option">
-            <input
-              type="radio"
-              name="fog-of-war"
+              type="checkbox"
+              role="switch"
               [checked]="selectedFogOfWarDistance() === FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL"
-              (change)="setFogOfWarDistance(FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL)"
+              (change)="setFogEnhancedRevealEnabled(($any($event.target)).checked)"
             />
-            1: Reveal entered square and adjacent cardinal squares.
+            Reveal entered square and adjacent cardinal squares
           </label>
         </div>
       </div>
@@ -68,23 +65,20 @@
       <div class="control-bar__set-picker">
         <div class="control-bar__set-picker-title">Optional Rules</div>
         <div class="control-bar__set-options">
-          <label class="control-bar__set-option">
-            <input type="checkbox" [checked]="enableAntiStall()" (change)="setEnableAntiStall(($any($event.target)).checked)" />
+          <label class="control-bar__set-option control-bar__set-option--switch">
+            <input type="checkbox" role="switch" [checked]="enableAntiStall()" (change)="setEnableAntiStall(($any($event.target)).checked)" />
             Prevent immediate backtracking
           </label>
         </div>
       </div>
     }
-    <button type="button" class="control-bar__button" (click)="startSession()" [disabled]="!canStartSession()">
+    <button type="button" class="control-bar__button control-bar__button--slot" (click)="startSession()" [disabled]="!canStartSession()">
       Start Session
     </button>
-    <span class="control-bar__hint">
-      Playable planes from selection: {{ selectedPlayableCount() }} (minimum {{ minimumSessionPlanes }}).
-    </span>
   }
 
   @if (showRollButton()) {
-    <button type="button" class="control-bar__button" [disabled]="rollButtonDisabled()" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">
+    <button type="button" class="control-bar__button control-bar__button--slot" [disabled]="rollButtonDisabled()" (click)="dispatch(DOMAIN_INTENT.ROLL_DIE)">
       Roll Die
     </button>
   }
@@ -92,7 +86,7 @@
   @if (fsmState() === "AWAIT_MOVE") {
     <button
       type="button"
-      class="control-bar__button control-bar__button--secondary"
+      class="control-bar__button control-bar__button--secondary control-bar__button--slot"
       (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
     >
       Cancel Move
@@ -102,12 +96,12 @@
   }
 
   @if (fsmState() === "CONFIRM_MOVE") {
-    <button type="button" class="control-bar__button" (click)="dispatch(DOMAIN_INTENT.CONFIRM_MOVE)">
+    <button type="button" class="control-bar__button control-bar__button--slot" (click)="dispatch(DOMAIN_INTENT.CONFIRM_MOVE)">
       Confirm Move
     </button>
     <button
       type="button"
-      class="control-bar__button control-bar__button--secondary"
+      class="control-bar__button control-bar__button--secondary control-bar__button--slot"
       (click)="dispatch(DOMAIN_INTENT.CANCEL_MOVE)"
     >
       Back
@@ -115,21 +109,21 @@
   }
 
   @if (fsmState() === "ERROR") {
-    <button type="button" class="control-bar__button" (click)="dispatch(DOMAIN_INTENT.RESTART_SESSION)">
+    <button type="button" class="control-bar__button control-bar__button--slot" (click)="dispatch(DOMAIN_INTENT.RESTART_SESSION)">
       Restart Session
     </button>
   }
 
   @if (fsmState() !== "SETUP") {
     @if (isQuitConfirming()) {
-      <button type="button" class="control-bar__button control-bar__button--danger" (click)="quitSession()">
+      <button type="button" class="control-bar__button control-bar__button--danger control-bar__button--slot" (click)="quitSession()">
         Confirm Quit
       </button>
-      <button type="button" class="control-bar__button control-bar__button--secondary" (click)="cancelQuitSession()">
+      <button type="button" class="control-bar__button control-bar__button--secondary control-bar__button--slot" (click)="cancelQuitSession()">
         Keep Playing
       </button>
     } @else {
-      <button type="button" class="control-bar__button control-bar__button--secondary" (click)="quitSession()">
+      <button type="button" class="control-bar__button control-bar__button--secondary control-bar__button--slot" (click)="quitSession()">
         Quit Session
       </button>
     }
@@ -148,7 +142,7 @@
         </p>
       } @else {
         <p>
-          In Regular Planechase mode, planeswalk replaces the current center plane with the next card automatically.
+          In Planechase mode, planeswalk replaces the current center plane with the next card automatically.
           The active plane stays centered on screen.
         </p>
       }
@@ -158,6 +152,12 @@
       </p>
       <p>
         Tip: drag modals from anywhere except buttons. Press <kbd>Esc</kbd> to close a modal quickly.
+      </p>
+      <p>
+        Want the original variant context?
+        <a class="control-bar__help-link" [href]="BLIND_ETERNITIES_ARTICLE_URL" target="_blank" rel="noopener noreferrer">
+          What is Blind Eternities?
+        </a>
       </p>
       <p>
         Hellride is always active in Blind Eternities mode; diagonal highlights show optional diagonal moves into unrevealed spaces.

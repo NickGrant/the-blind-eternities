@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#060a09"/>
+      <stop offset="0.55" stop-color="#111916"/>
+      <stop offset="1" stop-color="#020403"/>
+    </linearGradient>
+    <radialGradient id="oil" cx="0.76" cy="0.24" r="0.72">
+      <stop offset="0" stop-color="#7fbf95" stop-opacity="0.26"/>
+      <stop offset="0.6" stop-color="#2a4338" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#0b120f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#base)"/>
+  <rect width="1024" height="1024" fill="url(#oil)"/>
+  <g opacity="0.4" fill="#182722">
+    <ellipse cx="120" cy="220" rx="170" ry="60"/>
+    <ellipse cx="360" cy="520" rx="200" ry="70"/>
+    <ellipse cx="700" cy="320" rx="220" ry="80"/>
+    <ellipse cx="880" cy="760" rx="190" ry="68"/>
+  </g>
+  <g stroke="#5aa37e" stroke-opacity="0.22" stroke-width="5">
+    <path d="M60 0v1024"/>
+    <path d="M180 0v1024"/>
+    <path d="M320 0v1024"/>
+    <path d="M470 0v1024"/>
+    <path d="M640 0v1024"/>
+    <path d="M820 0v1024"/>
+    <path d="M980 0v1024"/>
+  </g>
+  <g fill="#21342c" fill-opacity="0.58">
+    <polygon points="0,1024 82,680 170,1024"/>
+    <polygon points="170,1024 260,600 360,1024"/>
+    <polygon points="360,1024 450,640 550,1024"/>
+    <polygon points="550,1024 640,620 740,1024"/>
+    <polygon points="740,1024 820,700 900,1024"/>
+    <polygon points="900,1024 980,640 1024,1024"/>
+  </g>
+</svg>

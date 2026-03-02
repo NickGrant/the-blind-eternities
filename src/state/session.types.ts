@@ -14,6 +14,7 @@ export type FsmState =
 export type GameMode = "BLIND_ETERNITIES" | "REGULAR_PLANECHASE";
 export type RulesProfile = "BLIND_FOG_OF_WAR" | "BLIND_CLASSIC_PLUS" | "REGULAR_STANDARD";
 export type FogOfWarDistance = 0 | 1;
+export type CardKind = "PLANE" | "PHENOMENON" | "UNKNOWN";
 
 export type SessionState = {
   meta: {
@@ -63,6 +64,7 @@ export type SessionState = {
     drawPile: string[];
     discardPile: string[];
     currentPlaneId?: string;
+    cardTypesById?: Record<string, CardKind>;
 
     phenomenonGate?: {
       isResolving: boolean;

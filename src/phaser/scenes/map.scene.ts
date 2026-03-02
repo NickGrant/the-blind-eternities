@@ -32,75 +32,87 @@ type ThemePalette = {
   nameBackdropFill: number;
   nameBackdropStroke: number;
   nameText: string;
+  labelFontFamily: string;
   zoomHudPanel: number;
   zoomHudText: string;
 };
 
 const THEME_PALETTES: Record<MapThemeId, ThemePalette> = {
   phyrexian: {
-    cameraBg: 0x0d1315,
-    tileFill: 0x111a1e,
-    idleStroke: 0x7fa39a,
-    partyStroke: 0xb6d6cf,
-    selectionStroke: 0xe3ff7a,
-    hellrideStroke: 0x7de0ff,
-    faceDownFill: 0x1a252a,
-    faceDownStroke: 0x516660,
-    faceUpFallbackFill: 0x202f34,
-    nameBackdropFill: 0x090f11,
-    nameBackdropStroke: 0x3f5750,
-    nameText: "#e7f4ed",
-    zoomHudPanel: 0x091114,
-    zoomHudText: "#d8f3e5",
+    cameraBg: 0x080b0b,
+    tileFill: 0x121717,
+    idleStroke: 0x6e8f80,
+    partyStroke: 0xb8d8c8,
+    selectionStroke: 0xc6ff50,
+    hellrideStroke: 0x79e4bf,
+    faceDownFill: 0x151f1f,
+    faceDownStroke: 0x476257,
+    faceUpFallbackFill: 0x1a2827,
+    nameBackdropFill: 0x070c0c,
+    nameBackdropStroke: 0x33574b,
+    nameText: "#e7f5ec",
+    labelFontFamily: "Copperplate Gothic, Palatino Linotype, serif",
+    zoomHudPanel: 0x091111,
+    zoomHudText: "#d0efe0",
   },
   "neon-dynasty": {
-    cameraBg: 0x0f1230,
-    tileFill: 0x121738,
-    idleStroke: 0x8d7dff,
-    partyStroke: 0x5bd2ff,
-    selectionStroke: 0xff73d2,
-    hellrideStroke: 0x54f8ff,
-    faceDownFill: 0x20264e,
-    faceDownStroke: 0x6b6bd8,
-    faceUpFallbackFill: 0x242f63,
-    nameBackdropFill: 0x0a1231,
-    nameBackdropStroke: 0x3c5ace,
+    cameraBg: 0x0d1129,
+    tileFill: 0x141a3e,
+    idleStroke: 0x6d79ff,
+    partyStroke: 0x4de4ff,
+    selectionStroke: 0xff4db7,
+    hellrideStroke: 0x39d8ff,
+    faceDownFill: 0x1d2554,
+    faceDownStroke: 0x5a65cf,
+    faceUpFallbackFill: 0x252f66,
+    nameBackdropFill: 0x081128,
+    nameBackdropStroke: 0x3554da,
     nameText: "#f5f7ff",
-    zoomHudPanel: 0x0a1130,
-    zoomHudText: "#cbdbff",
+    labelFontFamily: "Century Gothic, Franklin Gothic Medium, Segoe UI, sans-serif",
+    zoomHudPanel: 0x0a1133,
+    zoomHudText: "#d5dcff",
   },
   lithomancy: {
-    cameraBg: 0xf3e6cd,
-    tileFill: 0xebd9b3,
-    idleStroke: 0xb78a57,
-    partyStroke: 0x835d36,
-    selectionStroke: 0xd5902f,
-    hellrideStroke: 0x6aa0d0,
-    faceDownFill: 0xe4cfa2,
-    faceDownStroke: 0xae8455,
-    faceUpFallbackFill: 0xf0dfbf,
-    nameBackdropFill: 0xe1c695,
-    nameBackdropStroke: 0xa97d4b,
+    cameraBg: 0xf7eedf,
+    tileFill: 0xefdfc2,
+    idleStroke: 0xb79263,
+    partyStroke: 0x805a33,
+    selectionStroke: 0xd39138,
+    hellrideStroke: 0x7aabcc,
+    faceDownFill: 0xe9d4ae,
+    faceDownStroke: 0xb08857,
+    faceUpFallbackFill: 0xf4e6cb,
+    nameBackdropFill: 0xe5cd9f,
+    nameBackdropStroke: 0xad8452,
     nameText: "#3b2818",
-    zoomHudPanel: 0xd9bf8f,
+    labelFontFamily: "Garamond, Book Antiqua, Palatino Linotype, serif",
+    zoomHudPanel: 0xddc599,
     zoomHudText: "#3f2a19",
   },
   "halo-fountain": {
-    cameraBg: 0x082634,
-    tileFill: 0x0d3341,
-    idleStroke: 0x70c5cc,
-    partyStroke: 0xb7f2f3,
-    selectionStroke: 0x95ffd4,
-    hellrideStroke: 0x84d8ff,
-    faceDownFill: 0x123c4d,
-    faceDownStroke: 0x58a8b0,
-    faceUpFallbackFill: 0x185165,
-    nameBackdropFill: 0x062a35,
-    nameBackdropStroke: 0x4a9ea5,
-    nameText: "#e4ffff",
-    zoomHudPanel: 0x082a37,
-    zoomHudText: "#ccf6ff",
+    cameraBg: 0x0b2430,
+    tileFill: 0x133444,
+    idleStroke: 0xd8b87b,
+    partyStroke: 0xf1dfb2,
+    selectionStroke: 0xffefbf,
+    hellrideStroke: 0xb6e7ff,
+    faceDownFill: 0x194255,
+    faceDownStroke: 0x8d7a57,
+    faceUpFallbackFill: 0x215168,
+    nameBackdropFill: 0x0b2a37,
+    nameBackdropStroke: 0xbf9b61,
+    nameText: "#fff3d7",
+    labelFontFamily: "Didot, Bodoni MT, Times New Roman, serif",
+    zoomHudPanel: 0x0d2d3b,
+    zoomHudText: "#f6dfb2",
   },
+};
+
+const THEME_BACKGROUND_ASSETS: Record<MapThemeId, string> = {
+  phyrexian: "assets/theme-backgrounds/phyrexian-bg.svg",
+  "neon-dynasty": "assets/theme-backgrounds/neon-dynasty-bg.svg",
+  lithomancy: "assets/theme-backgrounds/lithomancy-bg.svg",
+  "halo-fountain": "assets/theme-backgrounds/halo-fountain-bg.svg",
 };
 
 export class MapScene extends Phaser.Scene {
@@ -121,6 +133,7 @@ export class MapScene extends Phaser.Scene {
   >();
   private readonly artTextureByUrl = new Map<string, string>();
   private readonly pendingArtLoads = new Set<string>();
+  private readonly pendingThemeBackgroundLoads = new Set<MapThemeId>();
   private background?: Phaser.GameObjects.TileSprite;
   private activeThemeId: MapThemeId = "phyrexian";
   private palette: ThemePalette = THEME_PALETTES.phyrexian;
@@ -318,7 +331,7 @@ export class MapScene extends Phaser.Scene {
     const labelBackdrop = this.add.rectangle(args.x, nameY - 10, artWidth - 6, 26, this.palette.nameBackdropFill, 0.72);
     labelBackdrop.setStrokeStyle(1, this.palette.nameBackdropStroke, 0.45);
     const label = this.add.text(args.x, nameY, name, {
-      fontFamily: "Arial, sans-serif",
+      fontFamily: this.palette.labelFontFamily,
       fontSize: `${labelFontSizePx}px`,
       color: this.palette.nameText,
       fontStyle: "bold",
@@ -558,52 +571,48 @@ export class MapScene extends Phaser.Scene {
   private ensureThemeBackgroundTexture(themeId: MapThemeId): string {
     const key = `bg-theme-${themeId}`;
     if (this.textures.exists(key)) return key;
+    this.requestThemeBackgroundLoad(themeId);
+    return this.ensureFallbackBackgroundTexture();
+  }
+
+  private ensureFallbackBackgroundTexture(): string {
+    const key = "bg-theme-fallback";
+    if (this.textures.exists(key)) return key;
     const graphics = this.add.graphics();
-    this.drawThemeBackground(graphics, themeId);
-    graphics.generateTexture(key, 256, 256);
+    graphics.fillStyle(this.palette.cameraBg, 1);
+    graphics.fillRect(0, 0, 32, 32);
+    graphics.generateTexture(key, 32, 32);
     graphics.destroy();
     return key;
   }
 
-  private drawThemeBackground(graphics: Phaser.GameObjects.Graphics, themeId: MapThemeId): void {
-    const fill = (color: number, alpha = 1) => graphics.fillStyle(color, alpha);
-    if (themeId === "lithomancy") {
-      fill(0xf0dfbf);
-      graphics.fillRect(0, 0, 256, 256);
-      for (let i = 0; i < 14; i += 1) {
-        fill(0xc99f66, 0.24);
-        const x = (i * 37) % 256;
-        const y = (i * 53) % 256;
-        graphics.fillTriangle(x, y + 16, x + 10, y - 14, x + 20, y + 16);
-      }
-      return;
-    }
-    if (themeId === "phyrexian") {
-      fill(0x10181a);
-      graphics.fillRect(0, 0, 256, 256);
-      for (let i = 0; i < 24; i += 1) {
-        fill(0x243831, 0.28);
-        graphics.fillEllipse((i * 29) % 256, (i * 41) % 256, 26 + (i % 8), 10 + ((i * 3) % 9));
-      }
-      return;
-    }
-    if (themeId === "neon-dynasty") {
-      fill(0x131a3f);
-      graphics.fillRect(0, 0, 256, 256);
-      for (let i = 0; i < 22; i += 1) {
-        fill(i % 2 === 0 ? 0x6b7bff : 0x29d7ff, 0.24);
-        const y = (i * 11) % 256;
-        graphics.fillRect(0, y, 256, 2);
-      }
-      return;
-    }
+  private requestThemeBackgroundLoad(themeId: MapThemeId): void {
+    if (this.pendingThemeBackgroundLoads.has(themeId)) return;
 
-    fill(0x0b3340);
-    graphics.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 32; i += 1) {
-      fill(0x71d8d3, 0.16);
-      graphics.fillCircle((i * 31) % 256, (i * 17) % 256, 2 + (i % 4));
-    }
+    const key = `bg-theme-${themeId}`;
+    const url = THEME_BACKGROUND_ASSETS[themeId];
+    this.pendingThemeBackgroundLoads.add(themeId);
+
+    const cleanup = () => {
+      this.load.off(`filecomplete-image-${key}`, onComplete);
+      this.load.off("loaderror", onError);
+    };
+    const onComplete = () => {
+      cleanup();
+      this.pendingThemeBackgroundLoads.delete(themeId);
+      this.setupBackground();
+    };
+    const onError = (file: { key?: string }) => {
+      if (file?.key !== key) return;
+      cleanup();
+      this.pendingThemeBackgroundLoads.delete(themeId);
+      console.warn(`Failed to load theme background asset: ${url}`);
+    };
+
+    this.load.on(`filecomplete-image-${key}`, onComplete);
+    this.load.on("loaderror", onError);
+    this.load.image(key, url);
+    if (!this.load.isLoading()) this.load.start();
   }
 
   private updateBackgroundScroll(): void {

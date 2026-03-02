@@ -14,6 +14,8 @@ import { DOMAIN_INTENT, FOG_OF_WAR_DISTANCE, GAME_MODE, type FogOfWarDistance, t
  * Renders primary session controls and pre-session set selection.
  */
 export class ControlBarComponent {
+  protected readonly BLIND_ETERNITIES_ARTICLE_URL =
+    "https://terriblemagic.blogspot.com/2016/05/the-blind-eternities-planechase-variant.html";
   private readonly rollToastVisibleState = signal(false);
   @Input() set rollToastVisible(value: boolean) {
     this.rollToastVisibleState.set(value);
@@ -43,12 +45,12 @@ export class ControlBarComponent {
   );
   readonly revealProfile = computed(() => this.getRevealProfileLabel(this.activeFogOfWarDistance()));
   readonly helpModeLabel = computed(() =>
-    this.activeGameMode() === GAME_MODE.BLIND_ETERNITIES ? "Blind Eternities" : "Regular Planechase"
+    this.activeGameMode() === GAME_MODE.BLIND_ETERNITIES ? "Blind Eternities" : "Planechase"
   );
   readonly showRollButton = computed(() => this.fsmState() === "IDLE" || this.rollToastVisibleState());
   readonly rollButtonDisabled = computed(() => this.rollToastVisibleState() || this.fsmState() !== "IDLE");
   readonly selectedGameMode = signal<GameMode>(GAME_MODE.BLIND_ETERNITIES);
-  readonly selectedFogOfWarDistance = signal<FogOfWarDistance>(FOG_OF_WAR_DISTANCE.CURRENT_ONLY);
+  readonly selectedFogOfWarDistance = signal<FogOfWarDistance>(FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL);
   readonly enableAntiStall = signal(false);
   readonly isQuitConfirming = signal(false);
   private readonly selectedSets = signal<Set<string>>(new Set());
@@ -110,6 +112,7 @@ export class ControlBarComponent {
   setGameMode(mode: GameMode): void {
     this.selectedGameMode.set(mode);
     if (mode === GAME_MODE.REGULAR_PLANECHASE) {
+      this.selectedFogOfWarDistance.set(FOG_OF_WAR_DISTANCE.CURRENT_ONLY);
       this.enableAntiStall.set(false);
       return;
     }
@@ -117,6 +120,10 @@ export class ControlBarComponent {
 
   setFogOfWarDistance(distance: FogOfWarDistance): void {
     this.selectedFogOfWarDistance.set(distance);
+  }
+
+  setFogEnhancedRevealEnabled(enabled: boolean): void {
+    this.setFogOfWarDistance(enabled ? FOG_OF_WAR_DISTANCE.CURRENT_PLUS_CARDINAL : FOG_OF_WAR_DISTANCE.CURRENT_ONLY);
   }
 
   setEnableAntiStall(value: boolean): void {

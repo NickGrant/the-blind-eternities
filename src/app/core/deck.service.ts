@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import cardsCatalog from "../../assets/cards.json";
 import { createShuffledDeck } from "../../state/deck/deck-model";
+import type { CardKind } from "../../state/session.types";
 import { DEFAULT_SELECTABLE_PLANE_SET_CODES, PLANE_SET_LABELS } from "./plane-set-config";
 
 export type PlaneCard = {
@@ -11,6 +12,7 @@ export type PlaneCard = {
   rulesText?: string;
   chaosText?: string;
   artUrl?: string;
+  cardKind?: CardKind;
 };
 
 type CardsCatalog = {
@@ -22,6 +24,8 @@ type CardsCatalog = {
     artUrl?: string;
     setCode?: string;
     setCodes?: string[];
+    typeLine?: string;
+    types?: string[];
   }>;
 };
 
@@ -59,6 +63,10 @@ export class DeckService {
       rulesText: p.rulesText?.trim() || undefined,
       chaosText: p.chaosText?.trim() || undefined,
       artUrl: p.artUrl?.trim() || undefined,
+      cardKind: this.resolveCardKind({
+        typeLine: p.typeLine,
+        types: Array.isArray(p.types) ? p.types : [],
+      }),
     }));
 
   private readonly planesById = new Map(this.planes.map((p) => [p.id, p] as const));
@@ -173,7 +181,7 @@ export class DeckService {
     atMs: number;
     seed?: string;
     includedSetCodes?: readonly string[];
-  }): { drawPile: string[]; discardPile: string[] } {
+  }): { drawPile: string[]; discardPile: string[]; cardTypesById: Record<string, CardKind> } {
     const include = new Set((args.includedSetCodes ?? []).map((code) => code.trim()).filter((code) => code.length > 0));
     const sourcePlanes =
       include.size > 0
@@ -194,11 +202,19 @@ export class DeckService {
       throw new Error("No playable plane cards available in cards catalog.");
     }
 
-    return createShuffledDeck({
+    const shuffled = createShuffledDeck({
       planeIds: sourcePlanes.map((p) => p.id),
       atMs: args.atMs,
       seed: args.seed,
     });
+    const cardTypesById: Record<string, CardKind> = {};
+    sourcePlanes.forEach((plane) => {
+      cardTypesById[plane.id] = plane.cardKind ?? "UNKNOWN";
+    });
+    return {
+      ...shuffled,
+      cardTypesById,
+    };
   }
 
   /**
@@ -218,5 +234,17 @@ export class DeckService {
       .filter((chunk) => chunk.length > 0)
       .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
       .join(" ");
+  }
+
+  /**
+   * Derives a normalized card kind from MTGJSON-like type metadata.
+   */
+  private resolveCardKind(args: { typeLine?: string; types: string[] }): CardKind {
+    const tokens = [...args.types, ...(args.typeLine ? args.typeLine.split(/[\s—-]+/g) : [])]
+      .map((token) => token.trim().toUpperCase())
+      .filter((token) => token.length > 0);
+    if (tokens.includes("PHENOMENON")) return "PHENOMENON";
+    if (tokens.includes("PLANE")) return "PLANE";
+    return "UNKNOWN";
   }
 }
