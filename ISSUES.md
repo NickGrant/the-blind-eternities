@@ -54,6 +54,13 @@ description: The team does not have a single command that reports total playable
 
 ---
 
+title: Support ?dev-mode URL param outside dev builds
+status: unstarted
+priority: medium
+description: Add support for a `?dev-mode` URL query parameter that enables dev mode even when running non-dev environments (for example production/GitHub Pages), with safe defaults when the parameter is absent.
+
+---
+
 ### Documentation
 
 title: Update docs to reflect fog-of-war values 0/1 and current setup UX
