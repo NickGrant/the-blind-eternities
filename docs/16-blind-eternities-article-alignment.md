@@ -11,7 +11,7 @@ Use this matrix for UAT and drift checks.
 | Planeswalk in Blind Eternities | Move to new square, reveal/fill nearby cardinals as needed | Implemented movement + fill pipeline | Aligned | Reveal distance controls use numeric `0`/`1` semantics |
 | Hellride | Diagonal option into unrevealed/void spaces | Always enabled in Blind Eternities movement flow | Aligned | No setup toggle |
 | Phenomenon on fill | Resolve immediately, do not persist, replace with plane draw | Implemented replace-on-fill logic | Aligned | Detection is card-type metadata driven |
-| Enter-plane vs phenomenon ordering | Enter plane first, then phenomenon resolution during fill | Documented in spec and phase logs | Partial | Add explicit acceptance tests tied to this matrix |
+| Enter-plane vs phenomenon ordering | Enter plane first, then phenomenon resolution during fill | Covered by reducer/orchestrator acceptance tests and phase logs | Aligned | Verified via test suite acceptance coverage |
 | Diagonal reveal behavior | Cardinal reveal logic only; diagonal exclusions | Current reveal/fill uses cardinal policy | Aligned | Hellride remains movement-only |
 | Anti-stall/backtrack | Optional variant behavior | Optional setup toggle implemented | Intentional deviation | Keep optional and off by default |
 

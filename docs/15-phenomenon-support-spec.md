@@ -43,4 +43,4 @@ When movement resolves in Blind Eternities:
 
 ## Open Follow-Up (Tracked in ISSUES)
 
-- Validate exact enter-plane effect ordering with acceptance tests tied to article matrix.
+- No open follow-up items.
